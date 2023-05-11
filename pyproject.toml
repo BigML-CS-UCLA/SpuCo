@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spuco"
+version = "0.0.1"
+authors = [
+    { name = "Siddharth Joshi", email = "sjoshi804@cs.ucla.edu" }
+]
+
+description = "SpuCo: Spurious Correlations Datasets and Benchmarks"
+readme = "README.md"
+requires-python = ">=3.10.0"
+
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+        "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "matplotlib>=3.7.1",
+    "numpy>=1.23.5",
+    "setuptools>=61.0",
+    "torch>=2.0.0",
+    "torchvision>=0.15.1",
+    "tqdm>=4.65.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=23.1.0",    
+    "flake8>=3.9.2",
+    "pytest>=7.2.1",
+    "properscoring",
+    "build",
+    "twine"
+]
+docs = [
+    "ipython>=7.34.0",
+    "nbsphinx>=0.8.12",
+    "sphinx>=5.3.0",
+    "sphinx_rtd_theme>=1.1.1"
+]
+
+[project.urls]
+"Source" = "https://github.com/sjoshi804/SpuCo"
