@@ -1,6 +1,6 @@
 import torch
 from torch import nn, optim 
-from spuco.datasets import InvariantTrainsetWrapper
+from torch.utils.data import Dataset
 from spuco.util import Trainer
 
 class ERM():
@@ -10,7 +10,7 @@ class ERM():
     def __init__(
         self,
         model: nn.Module,
-        trainset: InvariantTrainsetWrapper,
+        trainset: Dataset,
         batch_size: int,
         optimizer: optim.Optimizer,
         num_epochs: int,
@@ -24,7 +24,7 @@ class ERM():
         :param model: The neural network model to train.
         :type model: nn.Module
         :param trainset: The trainset to use for training.
-        :type trainset: InvariantTrainsetWrapper
+        :type trainset: Dataset
         :param batch_size: The batch size to use during training.
         :type batch_size: int
         :param optimizer: The optimizer to use during training.
@@ -38,7 +38,7 @@ class ERM():
         :param verbose: If True, prints verbose training information. Default is False.
         :type verbose: bool, optional
         """
-        
+
         self.trainer = Trainer(
             trainset=trainset,
             model=model,

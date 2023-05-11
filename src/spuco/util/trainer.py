@@ -49,8 +49,12 @@ class Trainer:
         self.device = device
         
         if forward_pass is None:
-            def forward_pass(self, ):
-                self.forward_pas
+            def forward_pass(self, batch):
+                inputs, labels = batch
+                inputs, labels = inputs.to(self.device), labels.to(self.device)
+                outputs = self.model(inputs)
+                loss = self.criterion(outputs, labels)
+                return loss, outputs, labels
             self.forward_pass = forward_pass 
         else:
             self.forward_pass = forward_pass
@@ -65,7 +69,7 @@ class Trainer:
             with tqdm(self.trainloader, unit="batch", total=len(self.trainloader), disable=not self.verbose) as pbar:
                 pbar.set_description(f"Epoch {epoch}")
                 for batch in pbar:
-                    loss, outputs, labels = self.forward_pass(batch)
+                    loss, outputs, labels = self.forward_pass(self, batch)
                     accuracy = Trainer.compute_accuracy(outputs, labels)
 
                     # backward pass and optimization
