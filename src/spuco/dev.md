@@ -23,11 +23,11 @@ Group Inference and Evaluatiod Methods will have their hyperparameters loadable 
 GroupInference Object
 Invariant Training Object
 
-Define Standard Validation Split over Base Images
-
 Outputs Final Performance
 
 MixMatchMethods can go here
+
+- Learning from Failure
 
 ### Group Inference
 
@@ -35,26 +35,23 @@ These methods will need dataset and a model (same architecture as later?) that c
 
 They will output group partition
 
-- Normal but Controlled Training:
-    - JTT: 
-    - Clustering: 
-        kMeans on, pass function to get embeddings / logits / last layer gradients or something else
-    - LfF: Define a loss function
+- Model Outputs:
+    - JTT: 1
+    - Clustering: 2
 - EIIL - training to find worst-case group partition given logits 
-- Validation Methods
-    - SSA: training model on validation data with labels being spurious feature
+- SSA: training model on validation data with labels being spurious feature
 
 ### Invariant Training 
 
 Input: group partition
 
-- GroupDRO
+- GroupDRO: done
 - Contrastive Learning CNC style
 - Yu Method (later)
 
 ## Finetuning
 
-- DFR
+- DFR: 3
 - Yihao Method (later)
 
 
@@ -63,3 +60,16 @@ Input: group partition
 SPURIOUS well-defined
 Larger dataset
 Can I overcome keyword search
+
+# TODO:
+
+quick:
+- JTT - done
+- Clustering
+- JTT (E2E)
+- DFR
+
+longer:
+- eiil
+- ssa
+- 

@@ -4,6 +4,8 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, SubsetRandomSampler
 
+from spuco.evaluate import SpuriousTargetWrapper
+
 class Evaluator:
     def __init__(
         self,
@@ -36,14 +38,26 @@ class Evaluator:
         self.testloaders = {}
         self.group_partition = group_partition
         self.group_weights = group_weights
-        for key in group_partition.keys():
-            sampler = SubsetRandomSampler(group_partition[key])
-            self.testloaders[key] = DataLoader(testset, batch_size=batch_size, sampler=sampler)
-        self.accuracies = None
         self.model = model
         self.device = device
         self.verbose = verbose
-    
+        self.accuracies = None
+
+        # Create DataLoaders 
+
+        # Group-Wise DataLoader
+        for key in group_partition.keys():
+            sampler = SubsetRandomSampler(group_partition[key])
+            self.testloaders[key] = DataLoader(testset, batch_size=batch_size, sampler=sampler)
+        
+        # SpuriousTarget Dataloader
+        spurious = torch.zeros(len(testset))
+        for key in self.group_partition.keys():
+            for i in self.group_partition[key]:
+                spurious[i] = key[1]
+        spurious_dataset = SpuriousTargetWrapper(dataset=testset, spurious_labels=spurious)
+        self.spurious_dataloader = DataLoader(spurious_dataset, batch_size=batch_size)
+
     def evaluate(self):
         """
         Evaluates the PyTorch model on the test dataset and computes the accuracy for each group.
@@ -51,34 +65,26 @@ class Evaluator:
         self.model.eval()
         self.accuracies = {}
         for key in sorted(self.group_partition.keys()):
-            self.accuracies[key] = self.evaluate_group(key)
-
-    def evaluate_group(self, key: Tuple[int, int]):
-        """
-        Evaluates the PyTorch model on a group of the test dataset and computes the accuracy.
-
-        :param key: Key for the group to evaluate.
-        :type key: Tuple[int, int]
-
-        :returns: Accuracy of the PyTorch model on the group.
-        :rtype: float
-        """
+            self.accuracies[key] = self._evaluate_accuracy(self.testloaders[key])
+            if self.verbose:
+                print(f"Group {key} Test Accuracy: {self.accuracies[key]}")
+        return self.accuracies
+    
+    def _evaluate_accuracy(self, testloader: DataLoader):
         with torch.no_grad():
             correct = 0
-            total = 0
-            for inputs, labels in self.testloaders[key]:
+            total = 0    
+            for inputs, labels in testloader:
                 inputs, labels = inputs.to(self.device), labels.to(self.device)
                 outputs = self.model(inputs)
                 predicted = torch.argmax(outputs, dim=1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
-            accuracy = 100 * correct / total
-            
-            if self.verbose:
-                print(f"Group {key} Test Accuracy: {accuracy}")
-
-            return accuracy
+            return 100 * correct / total
         
+    def evaluate_spurious_task(self):
+        return self._evaluate_accuracy(self.spurious_dataloader)
+
     @property
     def worst_group_accuracy(self):
         """

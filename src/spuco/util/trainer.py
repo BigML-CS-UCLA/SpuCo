@@ -60,12 +60,18 @@ class Trainer:
         else:
             self.forward_pass = forward_pass
 
-        self.trainloader = DataLoader(self.trainset, batch_size=self.batch_size, sampler=self.sampler)
+        self.trainloader = DataLoader(
+            self.trainset, 
+            batch_size=self.batch_size, 
+            shuffle=(self.sampler is None), 
+            sampler=self.sampler
+        )
 
     def train(self, epoch: int) -> None:
         """
         Trains the PyTorch model for 1 epoch
         """
+        self.model.train()
         with tqdm(self.trainloader, unit="batch", total=len(self.trainloader), disable=not self.verbose) as pbar:
             pbar.set_description(f"Epoch {epoch}")
             for batch in pbar:
@@ -95,3 +101,17 @@ class Trainer:
         total = labels.size(0)
         correct = (predicted == labels).sum().item()
         return 100. * correct / total
+    
+    def get_trainset_outputs(self):
+        with torch.no_grad():
+            self.model.eval()
+            eval_trainloader = DataLoader(
+                dataset=self.trainset,
+                batch_size=self.batch_size,
+                shuffle=False
+            )
+            with tqdm(eval_trainloader, unit="batch", total=len(self.trainloader), disable=not self.verbose) as pbar:
+                outputs = []
+                for input, _ in pbar:
+                    outputs.append(self.model(input.to(self.device)))
+                return torch.cat(outputs, dim=0)

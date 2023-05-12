@@ -1,7 +1,6 @@
 from typing import Callable, Dict, List, Tuple
 import torch 
 from torch import nn, optim
-import torch.nn.functional as F
 from spuco.invariant_train import InvariantTrainSampler, InvariantTrainsetWrapper
 from spuco.util.trainer import Trainer
 import random  # TODO: Do we want to control the randomness here?
@@ -66,7 +65,6 @@ class GroupDRO():
         batch_size: int,
         optimizer: optim.Optimizer,
         num_epochs: int,
-        group_partition: Dict[Tuple[int, int], List[int]],
         criterion=nn.CrossEntropyLoss(reduction='none'), 
         device: torch.device = torch.device("cpu"),
         verbose=False
@@ -75,7 +73,7 @@ class GroupDRO():
         Initializes GroupDRO
         """
 
-        assert batch_size >= len(group_partition), "batch_size must be >= number of groups (Group DRO requires at least 1 example from each group)"
+        assert batch_size >= len(trainset.group_partition), "batch_size must be >= number of groups (Group DRO requires at least 1 example from each group)"
 
         def forward_pass(self, batch):
             inputs, labels, groups = batch
@@ -85,7 +83,7 @@ class GroupDRO():
             return loss, outputs, labels
         
         self.num_epochs = num_epochs
-        self.group_partition = group_partition
+        self.group_partition = trainset.group_partition
         self.group_weighted_loss = GroupWeightedLoss(criterion=criterion, num_groups=len(self.group_partition), device=device)
         self.trainer = Trainer(
             trainset=trainset,

@@ -39,12 +39,12 @@ class ERM():
         :type verbose: bool, optional
         """
 
+        self.num_epochs = num_epochs
         self.trainer = Trainer(
             trainset=trainset,
             model=model,
             batch_size=batch_size,
             optimizer=optimizer,
-            num_epochs=num_epochs,
             criterion=criterion,
             verbose=verbose,
             device=device
@@ -54,4 +54,5 @@ class ERM():
         """
         Trains the model using the given hyperparameters.
         """
-        self.trainer.train()
+        for epoch in range(self.num_epochs):
+            self.trainer.train(epoch)

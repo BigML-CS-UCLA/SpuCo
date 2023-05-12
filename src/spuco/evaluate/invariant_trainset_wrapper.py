@@ -10,7 +10,6 @@ class InvariantTrainsetWrapper(Dataset):
     ):
         self.dataset = dataset
         self.group = torch.zeros(len(self.dataset))
-        self.group_partition = group_partition
         
         group_idx = 0
         for key in sorted(group_partition.keys()):
