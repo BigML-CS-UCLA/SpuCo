@@ -1,10 +1,10 @@
-from typing import Callable, List, Tuple
+from typing import Callable, Dict, List, Tuple
 import torch 
 from torch import nn, optim
 import torch.nn.functional as F
-
-from spuco.invariant_train.invariant_trainset_wrapper import InvariantTrainsetWrapper
+from spuco.invariant_train import InvariantTrainSampler, InvariantTrainsetWrapper
 from spuco.util.trainer import Trainer
+import random  # TODO: Do we want to control the randomness here?
 
 class GroupWeightedLoss(nn.Module):
     def __init__(
@@ -27,7 +27,8 @@ class GroupWeightedLoss(nn.Module):
         self.criterion = criterion
         self.device = device
         self.num_groups = num_groups
-        self.group_weights = F.normalize(torch.ones(self.num_groups).to(device), p=1, dim=0)
+        self.group_weights = torch.ones(self.num_groups).to(self.device)
+        self.group_weights.data = self.group_weights.data / self.group_weights.data.sum()
         self.group_weight_lr = group_weight_lr
 
     def forward(self, outputs, labels, groups):
@@ -49,13 +50,10 @@ class GroupWeightedLoss(nn.Module):
         return loss
 
     def update_group_weights(self, group_loss):
-        """
-        Updates the group weights based on the group losses.
-        
-        :param group_loss: The group losses.
-        :type group_loss: torch.Tensor
-        """
-        self.group_weights = F.normalize(self.group_weights * torch.exp(self.group_weight_lr * group_loss), p=1, dim=0)
+        group_weights = self.group_weights
+        group_weights = group_weights * torch.exp(self.group_weight_lr * group_loss)
+        group_weights = group_weights / group_weights.sum()
+        self.group_weights.data = group_weights.data
 
 class GroupDRO():
     """
@@ -68,31 +66,17 @@ class GroupDRO():
         batch_size: int,
         optimizer: optim.Optimizer,
         num_epochs: int,
-        num_groups: int,
+        group_partition: Dict[Tuple[int, int], List[int]],
         criterion=nn.CrossEntropyLoss(reduction='none'), 
         device: torch.device = torch.device("cpu"),
         verbose=False
     ):
         """
-        Initializes a ERM instance.
-
-        :param model: The neural network model to train.
-        :type model: nn.Module
-        :param trainset: The trainset to use for training.
-        :type trainset: InvariantTrainsetWrapper
-        :param batch_size: The batch size to use during training.
-        :type batch_size: int
-        :param optimizer: The optimizer to use during training.
-        :type optimizer: torch.optim.Optimizer
-        :param num_epochs: The number of epochs to train for.
-        :type num_epochs: int
-        :param criterion: The loss function to use. Default is nn.CrossEntropyLoss().
-        :type criterion: nn.Module, optional
-        :param device: The device to use for training. Default is torch.device("cpu").
-        :type device: torch.device, optional
-        :param verbose: If True, prints verbose training information. Default is False.
-        :type verbose: bool, optional
+        Initializes GroupDRO
         """
+
+        assert batch_size >= len(group_partition), "batch_size must be >= number of groups (Group DRO requires at least 1 example from each group)"
+
         def forward_pass(self, batch):
             inputs, labels, groups = batch
             inputs, labels, groups = inputs.to(self.device), labels.to(self.device), groups.to(self.device)
@@ -100,21 +84,36 @@ class GroupDRO():
             loss = self.criterion(outputs, labels, groups)
             return loss, outputs, labels
         
-        self.group_weighted_loss = GroupWeightedLoss(criterion=criterion, num_groups=num_groups, device=device)
+        self.num_epochs = num_epochs
+        self.group_partition = group_partition
+        self.group_weighted_loss = GroupWeightedLoss(criterion=criterion, num_groups=len(self.group_partition), device=device)
         self.trainer = Trainer(
             trainset=trainset,
             model=model,
             batch_size=batch_size,
             optimizer=optimizer,
-            num_epochs=num_epochs,
             criterion=self.group_weighted_loss,
             forward_pass=forward_pass,
+            sampler=InvariantTrainSampler(indices=[]),
             verbose=verbose,
             device=device
         )
 
+        max_group_len = max([len(self.group_partition[key]) for key in self.group_partition.keys()])
+        self.base_indices = []
+        self.sampling_weights = []
+        for key in self.group_partition.keys():
+            self.base_indices.extend(self.group_partition[key])
+            self.sampling_weights.extend([max_group_len / len(self.group_partition[key])] * len(self.group_partition[key]))
+        
     def train(self):
         """
         Trains the model using the given hyperparameters.
         """
-        self.trainer.train()
+        for epoch in range(self.num_epochs):
+            self.trainer.sampler.indices = random.choices(
+                population=self.base_indices,
+                weights=self.sampling_weights, 
+                k=len(self.trainer.trainset)
+            )
+            self.trainer.train(epoch)

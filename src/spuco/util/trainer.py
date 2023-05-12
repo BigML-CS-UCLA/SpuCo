@@ -1,5 +1,6 @@
 from typing import Any, Callable, Optional, Tuple
 import torch
+from torch.utils.data import Sampler
 from torch import nn, optim
 from torch.utils.data import Dataset, DataLoader
 from tqdm import tqdm
@@ -12,9 +13,9 @@ class Trainer:
             model: nn.Module,
             batch_size: int,
             optimizer: optim.Optimizer,
-            num_epochs: int,
             criterion: nn.Module = nn.CrossEntropyLoss(),
             forward_pass: Optional[Callable[[Any], Tuple[torch.Tensor, torch.Tensor, torch.Tensor]]] = None,
+            sampler: Sampler = None,
             device: torch.device = torch.device("cpu"),
             verbose: bool = False
     ) -> None:
@@ -29,8 +30,6 @@ class Trainer:
         :type batch_size: int
         :param optimizer: The optimizer to use for training.
         :type optimizer: torch.optim.Optimizer
-        :param num_epochs: The number of epochs to train for.
-        :type num_epochs: int
         :param criterion: The loss function to use during training.
         :type criterion: torch.nn.Module, optional
         :param forward_pass: The forward pass function to use during training.
@@ -40,11 +39,13 @@ class Trainer:
         :param verbose: Whether to print training progress.
         :type verbose: bool, optional
         """
+        self.trainset = trainset
         self.model = model
+        self.batch_size = batch_size
         self.optimizer = optimizer
         self.criterion = criterion
         self.batch_size = batch_size
-        self.num_epochs = num_epochs
+        self.sampler = sampler
         self.verbose = verbose
         self.device = device
         
@@ -59,25 +60,24 @@ class Trainer:
         else:
             self.forward_pass = forward_pass
 
-        self.trainloader = DataLoader(trainset, batch_size=self.batch_size, shuffle=True)
+        self.trainloader = DataLoader(self.trainset, batch_size=self.batch_size, sampler=self.sampler)
 
-    def train(self) -> None:
+    def train(self, epoch: int) -> None:
         """
-        Trains the PyTorch model.
+        Trains the PyTorch model for 1 epoch
         """
-        for epoch in range(self.num_epochs):
-            with tqdm(self.trainloader, unit="batch", total=len(self.trainloader), disable=not self.verbose) as pbar:
-                pbar.set_description(f"Epoch {epoch}")
-                for batch in pbar:
-                    loss, outputs, labels = self.forward_pass(self, batch)
-                    accuracy = Trainer.compute_accuracy(outputs, labels)
+        with tqdm(self.trainloader, unit="batch", total=len(self.trainloader), disable=not self.verbose) as pbar:
+            pbar.set_description(f"Epoch {epoch}")
+            for batch in pbar:
+                loss, outputs, labels = self.forward_pass(self, batch)
+                accuracy = Trainer.compute_accuracy(outputs, labels)
 
-                    # backward pass and optimization
-                    self.optimizer.zero_grad()
-                    loss.backward()
-                    self.optimizer.step()
+                # backward pass and optimization
+                self.optimizer.zero_grad()
+                loss.backward()
+                self.optimizer.step()
 
-                    pbar.set_postfix(loss=loss.item(), accuracy=f"{accuracy}%")
+                pbar.set_postfix(loss=loss.item(), accuracy=f"{accuracy}%")
     
     @staticmethod
     def compute_accuracy(outputs: torch.Tensor, labels: torch.Tensor) -> float:

@@ -21,10 +21,4 @@ class InvariantTrainsetWrapper(Dataset):
         return self.dataset.__getitem__(index) + (self.group[index],)
     
     def __len__(self):
-        """
-        Gets the length of the dataset.
-
-        :return: Length of the dataset.
-        :rtype: int
-        """
         return len(self.dataset)
