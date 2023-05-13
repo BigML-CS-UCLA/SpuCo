@@ -54,7 +54,6 @@ Input: group partition
 - DFR: 3
 - Yihao Method (later)
 
-
 # TODO:
 
 SPURIOUS well-defined
@@ -65,11 +64,11 @@ Can I overcome keyword search
 
 quick:
 - JTT - done
-- Clustering
-- JTT (E2E)
+- Clustering - done, not tested
+- JTT (E2E) - 
 - DFR
 
 longer:
-- eiil
+- eiil - done, not tested
 - ssa
-- 
+- cnc
