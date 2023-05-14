@@ -24,3 +24,20 @@ def label_examples(unlabled_dataloader: DataLoader, model: nn.Module, device: to
         labels.append(torch.argmax(model(X.to(device)), dim=-1))
     labels = torch.cat(labels, dim=0)
     return labels.detach().cpu().tolist()
+
+def pairwise_similarity(Z1: torch.tensor, Z2: torch.tensor, block_size: int = 1024):
+        similarity_matrices = []
+        for i in range(Z1.shape[0] // block_size + 1):
+            similarity_matrices_i = []
+            e = Z1[i*block_size:(i+1)*block_size]
+            for j in range(Z2.shape[0] // block_size + 1):
+                e_t = Z2[j*block_size:(j+1)*block_size].t()
+                similarity_matrices_i.append(
+                    np.array(
+                    torch.cosine_similarity(e[:, :, None], e_t[None, :, :]).detach().cpu()
+                    )
+                )
+            similarity_matrices.append(similarity_matrices_i)
+        similarity_matrix = np.block(similarity_matrices)
+
+        return similarity_matrix
