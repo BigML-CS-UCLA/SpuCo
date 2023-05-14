@@ -71,7 +71,7 @@ Can I overcome keyword search
 - [x] clustering 
 - [x] groupdro 
 - [x] sampling 
-- [ ] ssa
+- [x] ssa
 - [ ] cnc 
 - [ ] lff
 - [ ] dfr
