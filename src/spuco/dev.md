@@ -78,7 +78,8 @@ Can I overcome keyword search
 - [ ] sampling (up and down, class, group) 
 
 General TODO:
-- [ ] lr_scheduler support in trainer 
+- [ ] lr_scheduler, optim, model zoo
+- [ ] lr supprt in trainer
 - [ ] control randomness from python random 
 
 # Engineering Goals 

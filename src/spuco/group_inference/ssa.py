@@ -5,7 +5,7 @@ from torch.utils.data import Dataset, DataLoader
 from tqdm import tqdm
 from collections import Counter
 from spuco.group_inference import BaseGroupInference
-from spuco.util import GroupLabeledDataset, CustomIndicesSampler, Trainer
+from spuco.utils import GroupLabeledDataset, CustomIndicesSampler, Trainer
 import torch
 import numpy as np 
 
@@ -43,12 +43,12 @@ class SSA(BaseGroupInference):
         self.labeled_train_indices = indices[int(len(indices) * labeled_valset_size):]
 
     def infer_groups(self) -> Dict[Tuple[int, int], List[int]]:
-        spurious_labels = torch.argmax(X, dim=-1)
+        spurious_labels = torch.zeros(len(self.group_unlabeled_dataset))
+        for k in 
+        return 
 
-        return super().infer_groups()
-
-    def ssa_kth_fold(k: int):
-        pass 
+    def ssa_kth_fold(self, k: int):
+        trainer = SSATrainer(self, k)
 
 
 class SSATrainer:
@@ -56,7 +56,6 @@ class SSATrainer:
             self,
             ssa: SSA,
             split_num: int,
-            num_iters: int
     ):
         """
         Constructor for the SSATrainer class.
@@ -65,9 +64,9 @@ class SSATrainer:
         self.tau_g_min = self.ssa.tau_g_min
         self.best_model = None
         self.model = deepcopy(self.ssa.model).to(self.device)
-        self.optim = # TODO: model zoo refactor 
+        self.optim = self.ssa.optimizer # FIXME: model zoo refactor
         self.split_num = split_num
-        self.num_iters = num_iters
+        self.num_iters = self.ssa.num_iters
         self.verbose = ssa.verbose
         
         # Create member variable for best model, accuracy

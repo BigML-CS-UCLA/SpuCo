@@ -1,6 +1,7 @@
 import torch.nn as nn
+from models import BaseEncoder
  
-class MLP(nn.Module):
+class MLP(BaseEncoder):
     def __init__(
         self,
         input_dim: int,
@@ -22,4 +23,11 @@ class MLP(nn.Module):
         x = self.relu(self.fc2(x))
         x = self.dropout(x)
         x = self.fc3(x)
+        return x
+    
+    def encode(self, x):
+        x = x.view(-1, self.input_dim)
+        x = self.relu(self.fc1(x))
+        x = self.dropout(x)
+        x = self.relu(self.fc2(x))
         return x

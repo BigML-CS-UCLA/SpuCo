@@ -2,7 +2,7 @@ from typing import List
 import torch 
 from torch import nn, optim
 from torch.utils.data import Dataset
-from spuco.util import Trainer, CustomIndicesSampler
+from spuco.utils import Trainer, CustomIndicesSampler
 import random 
 
 class CustomSampleERM():

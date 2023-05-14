@@ -1,8 +1,7 @@
-from typing import Any
 from torch.utils.data import Dataset 
 import torch 
 
-class SpuriousTargetWrapper(Dataset):
+class SpuriousTargetDataset(Dataset):
     """
     Wrapper class that takes a Dataset and the spurious labels of the data
     and returns a dataset where the labels are the spurious labels. 

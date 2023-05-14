@@ -2,7 +2,7 @@ import numpy as np
 import torch
 from tqdm import tqdm
 
-from spuco.util.submodular import FacilityLocation, lazy_greedy
+from spuco.utils.submodular import FacilityLocation, lazy_greedy
 
 def cluster_by_exemplars(similarity_matrix, num_exemplars, verbose=False):
     """

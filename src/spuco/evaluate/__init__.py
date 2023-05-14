@@ -1,2 +1,1 @@
-from .spurious_target_wrapper import SpuriousTargetWrapper
 from .evaluator import Evaluator

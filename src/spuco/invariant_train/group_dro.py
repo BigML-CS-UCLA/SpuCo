@@ -2,7 +2,7 @@ from typing import Callable, Dict, List, Tuple
 import torch 
 from torch import nn, optim
 from spuco.invariant_train import InvariantTrainSampler, InvariantTrainsetWrapper
-from spuco.util.trainer import Trainer
+from spuco.utils.trainer import Trainer
 import random  # TODO: Do we want to control the randomness here?
 
 class GroupWeightedLoss(nn.Module):

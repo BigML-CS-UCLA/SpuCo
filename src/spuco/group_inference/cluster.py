@@ -7,7 +7,7 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 
 from spuco.group_inference import BaseGroupInference
-from spuco.util import (cluster_by_exemplars, convert_labels_to_partition,
+from spuco.utils import (cluster_by_exemplars, convert_labels_to_partition,
                         convert_partition_to_labels, pairwise_similarity)
 
 class ClusterAlg(Enum):

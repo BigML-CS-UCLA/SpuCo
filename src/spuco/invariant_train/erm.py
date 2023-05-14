@@ -1,7 +1,7 @@
 import torch
 from torch import nn, optim 
 from torch.utils.data import Dataset
-from spuco.util import Trainer
+from spuco.utils import Trainer
 
 class ERM():
     """
