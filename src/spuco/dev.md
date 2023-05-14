@@ -57,6 +57,10 @@ Input: group partition
 # Dataset Desiderata
 
 SPURIOUS well-defined
+
+- insert some core features outliers in minority group - makes upsampling methods struggle because upsampling noisy examples
+- some core features in majority group - makes misclassification methods upsample these methods 
+
 Larger dataset
 Can I overcome keyword search
 
@@ -65,8 +69,19 @@ Can I overcome keyword search
 - [x] jtt
 - [x] eiil
 - [x] clustering 
-- [ ] cnc 
 - [x] groupdro 
-- [x] sampling (up and down) 
-- [ ] dfr
+- [x] sampling 
 - [ ] ssa
+- [ ] cnc 
+- [ ] lff
+- [ ] dfr
+- [ ] sampling (up and down, class, group) 
+
+General TODO:
+- [ ] lr_scheduler support in trainer 
+- [ ] control randomness from python random 
+
+# Engineering Goals 
+
+- Can we get some namespace / dictionary to group the methods that are similar
+- Can we get some hyperparameters function or object to basically easily see what hyperparameters each method has

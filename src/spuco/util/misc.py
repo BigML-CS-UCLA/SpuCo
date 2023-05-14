@@ -1,3 +1,6 @@
+import torch 
+from torch import nn 
+from torch.utils.data import DataLoader
 from typing import Dict, List 
 import numpy as np 
 
@@ -14,3 +17,10 @@ def convert_partition_to_labels(partition: Dict[int, List[int]]) -> List[int]:
     for key in partition.keys():
         labels[partition[key]] = key 
     return labels.tolist()
+
+def label_examples(unlabled_dataloader: DataLoader, model: nn.Module, device: torch.device):
+    labels = []
+    for X in unlabled_dataloader:
+        labels.append(torch.argmax(model(X.to(device)), dim=-1))
+    labels = torch.cat(labels, dim=0)
+    return labels.detach().cpu().tolist()

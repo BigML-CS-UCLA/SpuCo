@@ -2,8 +2,7 @@ from typing import List
 import torch 
 from torch import nn, optim
 from torch.utils.data import Dataset
-from spuco.invariant_train import InvariantTrainSampler
-from spuco.util.trainer import Trainer
+from spuco.util import Trainer, CustomIndicesSampler
 import random 
 
 class CustomSampleERM():
@@ -30,7 +29,7 @@ class CustomSampleERM():
             batch_size=batch_size,
             optimizer=optimizer,
             criterion=criterion,
-            sampler=InvariantTrainSampler(indices=self.indices),
+            sampler=CustomIndicesSampler(indices=self.indices, shuffle=True),
             verbose=verbose,
             device=device
         )
@@ -40,6 +39,4 @@ class CustomSampleERM():
         Trains the model using the given hyperparameters.
         """
         for epoch in range(self.num_epochs):
-            random.shuffle(self.indices)
-            self.trainer.sampler.indices = self.indices
             self.trainer.train(epoch)
