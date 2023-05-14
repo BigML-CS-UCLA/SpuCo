@@ -52,7 +52,7 @@ class EIIL(BaseGroupInference):
         group_labels = group_labels.int().detach().cpu().numpy()
         group_labels[self.labels==1] += 2
         
-        # Partition using group labels to get grop partition 
+        # Partition using group labels to get group partition 
         group_partition = {}
         for i in range(len(group_labels)):
             if group_labels[i] not in group_partition:

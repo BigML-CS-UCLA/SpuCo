@@ -4,7 +4,6 @@ from tqdm import tqdm
 
 from spuco.util.submodular import FacilityLocation, lazy_greedy
 
-
 def cluster_by_exemplars(similarity_matrix, num_exemplars, verbose=False):
     """
     Returns dictionary mapping exemplar index to list of tuples (index, similarity_to_exemplar)

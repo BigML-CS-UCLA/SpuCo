@@ -2,7 +2,7 @@ from typing import Dict, List, Tuple
 import torch
 from torch.utils.data import Dataset
 
-class InvariantTrainsetWrapper(Dataset):
+class InvariantTrainset(Dataset):
     def __init__(
         self, 
         dataset: Dataset,

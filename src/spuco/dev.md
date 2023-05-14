@@ -54,21 +54,19 @@ Input: group partition
 - DFR: 3
 - Yihao Method (later)
 
-# TODO:
+# Dataset Desiderata
 
 SPURIOUS well-defined
 Larger dataset
 Can I overcome keyword search
 
-# TODO:
+# v0 Baselines
 
-quick:
-- JTT - done
-- Clustering - done, not tested
-- JTT (E2E) - 
-- DFR
-
-longer:
-- eiil - done, not tested
-- ssa
-- cnc
+- [x] jtt
+- [x] eiil
+- [x] clustering 
+- [ ] cnc 
+- [x] groupdro 
+- [x] sampling (up and down) 
+- [ ] dfr
+- [ ] ssa
