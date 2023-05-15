@@ -4,3 +4,4 @@ from .misc import convert_labels_to_partition, convert_partition_to_labels, pair
 from .custom_indices_sampler import CustomIndicesSampler
 from .group_labeled_dataset import GroupLabeledDataset
 from .spurious_target_dataset import SpuriousTargetDataset
+from .trainer import Trainer 

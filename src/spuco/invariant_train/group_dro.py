@@ -64,7 +64,6 @@ class GroupDRO():
         batch_size: int,
         optimizer: optim.Optimizer,
         num_epochs: int,
-        criterion=nn.CrossEntropyLoss(reduction='none'), 
         device: torch.device = torch.device("cpu"),
         verbose=False
     ):
@@ -83,7 +82,7 @@ class GroupDRO():
         
         self.num_epochs = num_epochs
         self.group_partition = trainset.group_partition
-        self.group_weighted_loss = GroupWeightedLoss(criterion=criterion, num_groups=len(self.group_partition), device=device)
+        self.group_weighted_loss = GroupWeightedLoss(criterion=nn.CrossEntropyLoss(reduction="none"), num_groups=len(self.group_partition), device=device)
         self.trainer = Trainer(
             trainset=trainset,
             model=model,

@@ -3,7 +3,7 @@ from spuco.group_inference import BaseGroupInference
 from torch.utils.data import Dataset 
 import torch
 
-from spuco.train import Trainer 
+from spuco.models import Trainer 
 
 class JTTInference(BaseGroupInference):
     def __init__(

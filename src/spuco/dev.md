@@ -73,8 +73,8 @@ Can I overcome keyword search
 - [x] sampling 
 - [x] ssa
 - [x] cnc 
-- [ ] lff
-- [ ] dfr
+- [x] lff
+- [x] dfr
 
 General TODO:
 - [ ] lr_scheduler, optim, model zoo
