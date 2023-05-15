@@ -3,7 +3,6 @@ import torch
 from torch import nn, optim
 from torch.utils.data import Dataset
 from spuco.utils import Trainer, CustomIndicesSampler
-import random 
 
 class CustomSampleERM():
     """

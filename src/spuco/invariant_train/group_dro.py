@@ -1,8 +1,7 @@
-from typing import Callable, Dict, List, Tuple
+from typing import Callable
 import torch 
 from torch import nn, optim
-from spuco.invariant_train import InvariantTrainSampler, InvariantTrainsetWrapper
-from spuco.utils.trainer import Trainer
+from spuco.utils import Trainer, GroupLabeledDataset, CustomIndicesSampler
 import random  # TODO: Do we want to control the randomness here?
 
 class GroupWeightedLoss(nn.Module):
@@ -61,7 +60,7 @@ class GroupDRO():
     def __init__(
         self,
         model: nn.Module,
-        trainset: InvariantTrainsetWrapper,
+        trainset: GroupLabeledDataset,
         batch_size: int,
         optimizer: optim.Optimizer,
         num_epochs: int,
@@ -92,7 +91,7 @@ class GroupDRO():
             optimizer=optimizer,
             criterion=self.group_weighted_loss,
             forward_pass=forward_pass,
-            sampler=InvariantTrainSampler(indices=[]),
+            sampler=CustomIndicesSampler(indices=[]),
             verbose=verbose,
             device=device
         )

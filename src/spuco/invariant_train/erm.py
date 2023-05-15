@@ -40,7 +40,7 @@ class ERM(BaseInvariantTrain):
         :type verbose: bool, optional
         """
 
-        super.__init__()
+        super().__init__()
         self.num_epochs = num_epochs
         self.trainer = Trainer(
             trainset=trainset,
