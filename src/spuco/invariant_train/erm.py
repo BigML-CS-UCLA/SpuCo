@@ -57,4 +57,4 @@ class ERM(BaseInvariantTrain):
         Trains the model using the given hyperparameters.
         """
         for epoch in range(self.num_epochs):
-            self.trainer.train(epoch)
+            self.trainer.train_epoch(epoch)

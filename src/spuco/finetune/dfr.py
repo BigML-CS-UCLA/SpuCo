@@ -21,4 +21,4 @@ class DFR():
 
     def train(self):
         for epoch in range(self.num_epochs):
-            self.trainer.train(epoch)
+            self.trainer.train_epoch(epoch)

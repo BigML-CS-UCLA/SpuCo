@@ -67,7 +67,11 @@ class Trainer:
             sampler=self.sampler
         )
 
-    def train(self, epoch: int) -> None:
+    def train(self, num_epochs: int):
+        for epoch in range(num_epochs):
+            self.train_epoch(epoch) 
+            
+    def train_epoch(self, epoch: int) -> None:
         """
         Trains the PyTorch model for 1 epoch
         """

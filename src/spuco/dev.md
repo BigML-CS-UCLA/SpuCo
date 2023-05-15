@@ -64,20 +64,21 @@ SPURIOUS well-defined
 Larger dataset
 Can I overcome keyword search
 
-# v0 Baselines
+# v0 Baselines Finalized
 
+- [x] erm
+- [x] groupdro 
 - [x] jtt
 - [x] eiil
-- [x] clustering 
-- [x] groupdro 
-- [x] sampling 
-- [x] ssa
-- [x] cnc 
-- [x] lff
-- [x] dfr
+- [ ] clustering 
+- [ ] sampling 
+- [ ] ssa
+- [ ] cnc 
+- [ ] lff
+- [ ] dfr
 
 General TODO:
-- [ ] lr_scheduler, optim, model zoo
+- [x] model factory
 - [ ] lr supprt in trainer
 - [ ] control randomness from python random 
 

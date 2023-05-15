@@ -28,7 +28,7 @@ class CorrectNContrastInference(BaseGroupInference):
 
     def infer_groups(self) -> Dict[Tuple[int, int], List[int]]:
         for epoch in range(self.num_epochs):
-            self.trainer.train(epoch)
+            self.trainer.train_epoch(epoch)
 
         spurious = torch.argmax(self.trainer.get_trainset_outputs(), dim=-1)
 

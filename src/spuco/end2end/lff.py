@@ -39,7 +39,7 @@ class LFF():
 
     def train(self):
         for epoch in range(self.num_epochs):
-            self.biased_trainer.train(epoch)
+            self.biased_trainer.train_epoch(epoch)
             outputs = self.biased_trainer.get_trainset_outputs()
             self.bias_loss_vector = self.cross_entropy_no_reduction(outputs, self.trainset_labels.to(self.trainer.device))
 
