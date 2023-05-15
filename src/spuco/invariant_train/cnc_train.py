@@ -2,9 +2,9 @@ import torch
 from torch import optim
 
 from spuco.invariant_train import BaseInvariantTrain
-from spuco.train_factory.models import BaseEncoder
+from spuco.train.models import BaseEncoder
 from spuco.utils import GroupLabeledDataset
-from spuco.utils.trainer import Trainer
+from spuco.train import Trainer
 
 
 class CorrectNContrastTrain(BaseInvariantTrain):
