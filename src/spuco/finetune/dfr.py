@@ -1,5 +1,5 @@
 from torch import nn, optim 
-from models import BaseEncoder
+from train_factory import BaseEncoder
 from spuco.utils import Trainer 
 from torch.utils.data import Dataset
 
