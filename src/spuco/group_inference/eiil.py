@@ -32,7 +32,7 @@ class EIIL(BaseGroupInference):
         optimizer = optim.Adam([env_w], lr=self.lr)
 
         # Train assignment
-        for i in tqdm(range(self.num_steps), disable=not self.verbose):
+        for i in tqdm(range(self.num_steps), disable=not self.verbose, desc="EIIL Inferring Groups"):
             # penalty for env a
             lossa = (loss.squeeze() * env_w.sigmoid()).mean()
             grada = torch.autograd.grad(lossa, [scale], create_graph=True)[0]
@@ -48,15 +48,15 @@ class EIIL(BaseGroupInference):
             optimizer.step()
 
         # Sigmoid to get env assignment
-        group_labels = env_w.sigmoid() > .5
-        group_labels = group_labels.int().detach().cpu().numpy()
-        group_labels[self.labels==1] += 2
+        spurious_labels = env_w.sigmoid() > .5
+        spurious_labels = spurious_labels.int().detach().cpu().numpy()
         
         # Partition using group labels to get group partition 
         group_partition = {}
-        for i in range(len(group_labels)):
-            if group_labels[i] not in group_partition:
-                group_partition[group_labels[i]] = []
-            group_partition[group_labels[i]].append(i)
+        for i in range(len(spurious_labels)):
+            group_label = (self.labels[i].item(), spurious_labels[i])
+            if group_label not in group_partition:
+                group_partition[group_label] = []
+            group_partition[group_label].append(i)
 
         return group_partition

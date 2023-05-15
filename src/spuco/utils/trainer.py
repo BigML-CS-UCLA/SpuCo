@@ -112,6 +112,7 @@ class Trainer:
             )
             with tqdm(eval_trainloader, unit="batch", total=len(self.trainloader), disable=not self.verbose) as pbar:
                 outputs = []
+                pbar.set_description("Getting Trainset Outputs")
                 for input, _ in pbar:
                     outputs.append(self.model(input.to(self.device)))
                 return torch.cat(outputs, dim=0)

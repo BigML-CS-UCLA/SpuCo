@@ -1,21 +1,21 @@
-spuco.util
+spuco.utils
 ==================
 
 Submodules
 ----------
 
-spuco.util.evaluator
+spuco.utils.evaluator
 ---------------------------
 
-.. automodule:: spuco.util.evaluator
+.. automodule:: spuco.utils.evaluator
    :members:
    :undoc-members:
    :show-inheritance:
 
-spuco.util.trainer
+spuco.utils.trainer
 -------------------------
 
-.. automodule:: spuco.util.trainer
+.. automodule:: spuco.utils.trainer
    :members:
    :undoc-members:
    :show-inheritance:
@@ -23,7 +23,7 @@ spuco.util.trainer
 Module contents
 ---------------
 
-.. automodule:: spuco.util
+.. automodule:: spuco.utils
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,6 +1,6 @@
 import torch 
 from torch import nn 
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 from typing import Dict, List 
 import numpy as np 
 
@@ -41,3 +41,9 @@ def pairwise_similarity(Z1: torch.tensor, Z2: torch.tensor, block_size: int = 10
         similarity_matrix = np.block(similarity_matrices)
 
         return similarity_matrix
+
+def get_labels(dataset: Dataset) -> List[int]:
+    labels = []
+    for _, y in dataset:
+        labels.append(y)
+    return labels
