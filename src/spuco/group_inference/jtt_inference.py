@@ -1,9 +1,8 @@
 from typing import Dict, List, Tuple, Optional
 from spuco.group_inference import BaseGroupInference 
+from spuco.utils import Trainer
 from torch.utils.data import Dataset 
 import torch
-
-from spuco.models import Trainer 
 
 class JTTInference(BaseGroupInference):
     def __init__(
