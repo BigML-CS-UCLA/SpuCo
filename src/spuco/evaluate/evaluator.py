@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, SubsetRandomSampler
 
-from spuco.evaluate import SpuriousTargetDataset
+from spuco.utils import SpuriousTargetDataset
 
 class Evaluator:
     def __init__(

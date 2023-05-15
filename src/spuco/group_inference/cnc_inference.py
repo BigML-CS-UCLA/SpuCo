@@ -16,6 +16,7 @@ class CorrectNContrastInference(BaseGroupInference):
         device: torch.device = torch.device("cpu"),
         verbose: bool = False
     ):
+        super().__init__()
         self.trainer = Trainer(
             trainset=trainset,
             model=model, 

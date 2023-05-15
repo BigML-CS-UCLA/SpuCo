@@ -22,6 +22,7 @@ class SSA(BaseGroupInference):
         batch_size: int = 64,
         num_splits: int = 3, 
     ):
+        super().__init__()
         self.group_unlabeled_dataset = group_unlabeled_dataset
         self.group_labeled_dataset = group_labeled_dataset
         self.model = model 

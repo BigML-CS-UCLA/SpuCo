@@ -57,7 +57,7 @@ def _heappop_max(heap):
     return lastelt
 
 
-def lazy_greedy(F, V, B):
+def lazy_greedy(F, V, B, verbose=False):
     """
     Args
     - F: FacilityMaximization Object
@@ -72,8 +72,9 @@ def lazy_greedy(F, V, B):
     heapq._heapify_max(order)
     [_heappush_max(order, (F.inc(sset, index), index)) for index in V]
 
-    print("Submodular Maximization: Selecting subset...")
-    with tqdm(total=B) as pbar:
+    if verbose:
+        print("Submodular Maximization: Selecting subset...")
+    with tqdm(total=B, disable=not verbose) as pbar:
         while order and len(sset) < B:
             el = _heappop_max(order)
             improv = F.inc(sset, el[1])

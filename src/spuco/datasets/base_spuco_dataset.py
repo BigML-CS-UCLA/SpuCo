@@ -63,6 +63,7 @@ class BaseSpuCoDataset(Dataset, ABC):
         root: str,
         spurious_correlation_strength: float,
         spurious_feature_difficulty: SpuriousFeatureDifficulty,
+        num_classes: int,
         train: bool = True,
         transform: Optional[Callable] = None,
         download: bool = False
@@ -86,6 +87,7 @@ class BaseSpuCoDataset(Dataset, ABC):
         self.root = root 
         self.spurious_correlation_strength = spurious_correlation_strength
         self.spurious_feature_difficulty = spurious_feature_difficulty
+        self.num_classes = num_classes
         self.train = train
         self.transform = transform
         self.download = download

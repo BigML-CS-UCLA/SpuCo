@@ -53,7 +53,8 @@ class SpuCoMNIST(BaseSpuCoDataset):
             spurious_correlation_strength=spurious_correlation_strength,
             spurious_feature_difficulty=spurious_feature_difficulty,
             train=train,
-            transform=transform
+            transform=transform,
+            num_classes=len(classes)
         )
 
         self.classes = classes
@@ -146,7 +147,7 @@ class SpuCoMNIST(BaseSpuCoDataset):
         colors = []
         for i in range(len(self.classes)):
             rgb = color_map(cmap_vals[i])[:3]
-            rgb = [np.float(x) for x in np.array(rgb)]
+            rgb = [float(x) for x in np.array(rgb)]
             colors.append(rgb)
         # Append black as no-spurious background
         colors.append([0., 0., 0.])

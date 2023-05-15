@@ -8,15 +8,16 @@ class EIIL(BaseGroupInference):
     def __init__(
         self, 
         logits: torch.Tensor, 
-        labels: List[int],
+        class_labels: List[int],
         num_steps: int, 
         lr: float,
         device: torch.device = torch.device("cpu"),
         verbose: bool = False
 
     ):
+        super().__init__()
         self.logits = logits 
-        self.labels = labels
+        self.class_labels = class_labels
         self.num_steps = num_steps
         self.lr = lr
         self.device = device
@@ -28,7 +29,7 @@ class EIIL(BaseGroupInference):
         # Initialize
         scale = torch.tensor(1.).to(self.device).requires_grad_()
         train_criterion = nn.CrossEntropyLoss(reduction='none')
-        loss = train_criterion(self.logits.to(self.device) * scale, torch.tensor(self.labels).long().to(self.device))
+        loss = train_criterion(self.logits.to(self.device) * scale, torch.tensor(self.class_labels).long().to(self.device))
         env_w = torch.randn(len(self.logits)).to(self.device).requires_grad_()
         optimizer = optim.Adam([env_w], lr=self.lr)
 
@@ -55,7 +56,7 @@ class EIIL(BaseGroupInference):
         # Partition using group labels to get group partition 
         group_partition = {}
         for i in range(len(spurious_labels)):
-            group_label = (self.labels[i], spurious_labels[i])
+            group_label = (self.class_labels[i], spurious_labels[i])
             if group_label not in group_partition:
                 group_partition[group_label] = []
             group_partition[group_label].append(i)

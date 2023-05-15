@@ -1,6 +1,6 @@
 from enum import Enum
-from typing import Dict, List, Optional, Tuple
-
+from typing import Dict, List, Optional
+from tqdm import tqdm 
 import numpy as np
 import torch
 from sklearn.cluster import KMeans
@@ -18,7 +18,7 @@ class Cluster(BaseGroupInference):
     def __init__(
         self,
         Z: torch.Tensor,
-        class_labels: Optional[torch.Tensor] = None,
+        class_labels: Optional[List[int]] = None,
         cluster_alg: ClusterAlg = ClusterAlg.KMEANS,
         num_clusters: int = -1,
         max_clusters: int = -1,
@@ -40,11 +40,11 @@ class Cluster(BaseGroupInference):
             raise ValueError("num_clusters and max_clusters are mutually exclusive")
 
         # Partition into classes if given labels to compute clusters class-wise
-        class_partition = {}
+        self.class_partition = {}
         if class_labels is None:
-            class_partition[-1] = range(len(Z))
+            self.class_partition[-1] = range(len(Z))
         else:
-            class_partition = convert_labels_to_partition(class_labels.long().tolist())
+            self.class_partition = convert_labels_to_partition(class_labels)
         
         # Initialize variables
         self.cluster_alg = cluster_alg
@@ -62,8 +62,8 @@ class Cluster(BaseGroupInference):
     def infer_groups(self) -> Dict[int, List[int]]:
         # Get class-wise group partitions
         cluster_partitions = [] 
-        for class_label in self.class_partition.keys():
-            Z = self.Z[self.class_partition[class_label]]
+        for class_label in tqdm(self.class_partition.keys(), disable=not self.verbose, desc="Clustering class-wise"):
+            Z = self.Z[self.class_partition[class_label]].clone()
             if self.num_clusters < 2:
                 partition = self.silhouette(Z)
             elif self.cluster_alg == ClusterAlg.KMEANS:
@@ -75,8 +75,8 @@ class Cluster(BaseGroupInference):
 
         # Merge class-wise group partitions into one dictionary
         group_partition = {}
-        for partition in cluster_partitions:
-            group_partition.update(partition)
+        for class_index, partition in enumerate(cluster_partitions):
+            group_partition.update(self.process_cluster_partition(partition, class_index))
         return group_partition
     
     def silhouette(self, Z):
@@ -95,17 +95,15 @@ class Cluster(BaseGroupInference):
             # Cluster using num_clusters
             cluster_labels, cluster_partition = None, None 
             if self.cluster_alg == ClusterAlg.KMEANS:
-                cluster_labels, cluster_partition = self.kmeans(num_clusters=num_clusters)
+                cluster_labels, cluster_partition = self.kmeans(Z, num_clusters=num_clusters)
             else: 
-                cluster_labels, cluster_partition = self.kmedoids(similiarity_matrix=similarity_matrix, num_clusters=num_clusters)
+                cluster_labels, cluster_partition = self.kmedoids(Z, similiarity_matrix=similarity_matrix, num_clusters=num_clusters)
             partitions.append(cluster_partition)
 
-            # Compute and save silhouette score
-            silhouette_scores.append(silhouette_score(Z, cluster_labels))  
+            silhouette_scores.append(silhouette_score(Z.cpu().numpy(), cluster_labels))  
             if self.verbose:
                 print("For n_clusters =", num_clusters,
                     "The average silhouette_score is :", silhouette_scores[-1])
-
         # Pick best num_clusters
         best_partition_idx = np.argmax(silhouette_scores)
         return partitions[best_partition_idx]

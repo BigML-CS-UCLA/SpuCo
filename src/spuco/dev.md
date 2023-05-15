@@ -70,7 +70,7 @@ Can I overcome keyword search
 - [x] groupdro 
 - [x] jtt
 - [x] eiil
-- [ ] clustering 
+- [x] clustering 
 - [ ] sampling 
 - [ ] ssa
 - [ ] cnc 
@@ -84,7 +84,8 @@ General TODO:
 
 # Tasks for later 
 
-- [ ] up/down/etc. sampling using custom sample erm (just need to decide which types of sampling we want)
+- [ ] investigate why clustering not solving cmnist - try LeNet, 2 epochs, 5 clusters per class
+- [ ] up/down/etc. sampling using custom sample erm (just need to decide which types of sampling we want), should I change custom sample to do weighted sampling inside it? 
 - [ ] add support for existing datasets e.g. waterbirds, mnli, civil comments, celeba - probably just wrappers around wilds?
 
 # Engineering Goals 

@@ -42,7 +42,7 @@ def pairwise_similarity(Z1: torch.tensor, Z2: torch.tensor, block_size: int = 10
 
         return similarity_matrix
 
-def get_labels(dataset: Dataset) -> List[int]:
+def get_class_labels(dataset: Dataset) -> List[int]:
     labels = []
     for _, y in dataset:
         labels.append(y)

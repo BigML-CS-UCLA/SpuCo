@@ -1,5 +1,4 @@
 import numpy as np
-import torch
 from tqdm import tqdm
 
 from spuco.utils.submodular import FacilityLocation, lazy_greedy
@@ -10,15 +9,15 @@ def cluster_by_exemplars(similarity_matrix, num_exemplars, verbose=False):
     exemplar_index found in exemplar list too
     """
     submodular_function = FacilityLocation(D=similarity_matrix, V=range(len(similarity_matrix)))
-    exemplar_indices, _ = lazy_greedy(F=submodular_function, V=range(len(similarity_matrix)), B=num_exemplars)
+    exemplar_indices, _ = lazy_greedy(F=submodular_function, V=range(len(similarity_matrix)), B=num_exemplars, verbose=verbose)
     clusters = {}
 
     for exemplar_index in exemplar_indices:
         clusters[exemplar_index] = []
 
     for index in tqdm(range(len(similarity_matrix)), desc="Sorting samples by exemplar", disable=not verbose):
-        exemplar_index, similarity = closest_exemplar(index, exemplar_indices, similarity_matrix)
-        clusters[exemplar_index].append((index, similarity))
+        exemplar_index, _  = closest_exemplar(index, exemplar_indices, similarity_matrix)
+        clusters[exemplar_index].append(index)
 
     return clusters
 
