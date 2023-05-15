@@ -1,5 +1,5 @@
 import torch.nn as nn
-from train_factory import BaseEncoder
+from train import BaseEncoder
  
 class MLP(BaseEncoder):
     def __init__(
