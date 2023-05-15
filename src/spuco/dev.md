@@ -72,15 +72,19 @@ Can I overcome keyword search
 - [x] groupdro 
 - [x] sampling 
 - [x] ssa
-- [ ] cnc 
+- [x] cnc 
 - [ ] lff
 - [ ] dfr
-- [ ] sampling (up and down, class, group) 
 
 General TODO:
 - [ ] lr_scheduler, optim, model zoo
 - [ ] lr supprt in trainer
 - [ ] control randomness from python random 
+
+# Tasks for later 
+
+- [ ] up/down/etc. sampling using custom sample erm (just need to decide which types of sampling we want)
+- [ ] add support for existing datasets e.g. waterbirds, mnli, civil comments, celeba - probably just wrappers around wilds?
 
 # Engineering Goals 
 

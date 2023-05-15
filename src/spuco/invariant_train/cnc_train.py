@@ -1,11 +1,13 @@
-from torch import nn, optim
-from spuco.utils import GroupLabeledDataset
-from spuco.models import BaseEncoder
 import torch
+from torch import optim
 
-from spuco.utils.trainer import Trainer 
+from spuco.invariant_train import BaseInvariantTrain
+from spuco.models import BaseEncoder
+from spuco.utils import GroupLabeledDataset
+from spuco.utils.trainer import Trainer
 
-class CorrectNContrastTrain():
+
+class CorrectNContrastTrain(BaseInvariantTrain):
     def __init__(
         self,
         trainset: GroupLabeledDataset,

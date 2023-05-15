@@ -2,8 +2,9 @@ import torch
 from torch import nn, optim 
 from torch.utils.data import Dataset
 from spuco.utils import Trainer
+from spuco.invariant_train import BaseInvariantTrain
 
-class ERM():
+class ERM(BaseInvariantTrain):
     """
     Empirical Risk Minimization (ERM) Trainer.
     """
@@ -39,6 +40,7 @@ class ERM():
         :type verbose: bool, optional
         """
 
+        super.__init__()
         self.num_epochs = num_epochs
         self.trainer = Trainer(
             trainset=trainset,

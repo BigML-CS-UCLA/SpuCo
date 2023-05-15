@@ -1,5 +1,7 @@
 from torch import nn, optim 
 from models import BaseEncoder
+from spuco.utils import Trainer 
+from torch.utils.data import Dataset
 
 class DFR():
     def __init__(
