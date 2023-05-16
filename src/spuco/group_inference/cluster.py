@@ -63,7 +63,7 @@ class Cluster(BaseGroupInference):
         # Get class-wise group partitions
         cluster_partitions = [] 
         for class_label in tqdm(self.class_partition.keys(), disable=not self.verbose, desc="Clustering class-wise"):
-            Z = self.Z[self.class_partition[class_label]].clone()
+            Z = self.Z[self.class_partition[class_label]]
             if self.num_clusters < 2:
                 partition = self.silhouette(Z)
             elif self.cluster_alg == ClusterAlg.KMEANS:
@@ -96,11 +96,12 @@ class Cluster(BaseGroupInference):
             cluster_labels, cluster_partition = None, None 
             if self.cluster_alg == ClusterAlg.KMEANS:
                 cluster_labels, cluster_partition = self.kmeans(Z, num_clusters=num_clusters)
+                silhouette_scores.append(silhouette_score(Z, cluster_labels)) 
             else: 
                 cluster_labels, cluster_partition = self.kmedoids(Z, similiarity_matrix=similarity_matrix, num_clusters=num_clusters)
+                silhouette_scores.append(silhouette_score(Z.cpu().numpy(), cluster_labels)) 
             partitions.append(cluster_partition)
-
-            silhouette_scores.append(silhouette_score(Z.cpu().numpy(), cluster_labels))  
+             
             if self.verbose:
                 print("For n_clusters =", num_clusters,
                     "The average silhouette_score is :", silhouette_scores[-1])
