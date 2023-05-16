@@ -71,7 +71,7 @@ Can I overcome keyword search
 - [x] jtt
 - [x] eiil
 - [x] clustering 
-- [ ] sampling
+- [x] sampling
 - [ ] ssa
 - [ ] cnc 
 - [ ] lff
@@ -84,9 +84,8 @@ General TODO:
 
 # Tasks for later 
 
-- [ ] investigate why clustering not solving cmnist - try LeNet, 2 epochs, 5 clusters per class
 - [ ] tune magnitude and variance patch sizes for LeNet on SpuCoMNIST
-- [ ] up/down/etc. sampling using custom sample erm (just need to decide which types of sampling we want), should I change custom sample to do weighted sampling inside it? 
+- [ ] up/down sampling subclasses of CustomIndicesSampler
 - [ ] add support for existing datasets e.g. waterbirds, mnli, civil comments, celeba - probably just wrappers around wilds?
 
 # Engineering Goals 
