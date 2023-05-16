@@ -30,6 +30,7 @@ Getting Started
    :caption: User Guide
    :maxdepth: 2
 
+   user-guide/quickstart
    user-guide/datasets
    user-guide/models
    user-guide/group_inference
