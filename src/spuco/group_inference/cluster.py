@@ -75,7 +75,7 @@ class Cluster(BaseGroupInference):
 
         # Merge class-wise group partitions into one dictionary
         group_partition = {}
-        for class_index, partition in enumerate(cluster_partitions):
+        for class_index, partition in zip(self.class_partition.keys(), cluster_partitions):
             group_partition.update(self.process_cluster_partition(partition, class_index))
         return group_partition
     

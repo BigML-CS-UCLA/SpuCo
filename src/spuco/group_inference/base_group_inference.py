@@ -17,6 +17,6 @@ class BaseGroupInference(ABC):
         """
         assert self.class_partition is not None, "self.class_partition must be defined for processing"
         group_partition = {}
-        for i, cluster_label in sorted(cluster_partition.keys()):
-            group_partition[(class_index, i)] = [self.class_partition[class_index][i] for i in cluster_partition[cluster_label]]
+        for new_cluster_label, cluster_label in enumerate(sorted(cluster_partition.keys())):
+            group_partition[(class_index, new_cluster_label)] = [self.class_partition[class_index][i] for i in cluster_partition[cluster_label]]
         return group_partition

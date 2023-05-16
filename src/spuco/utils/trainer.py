@@ -78,6 +78,7 @@ class Trainer:
         self.model.train()
         with tqdm(self.trainloader, unit="batch", total=len(self.trainloader), disable=not self.verbose) as pbar:
             pbar.set_description(f"Epoch {epoch}")
+            average_accuracy = 0.
             for batch in pbar:
                 loss, outputs, labels = self.forward_pass(self, batch)
                 accuracy = Trainer.compute_accuracy(outputs, labels)
@@ -88,6 +89,8 @@ class Trainer:
                 self.optimizer.step()
 
                 pbar.set_postfix(loss=loss.item(), accuracy=f"{accuracy}%")
+                average_accuracy += accuracy
+            return average_accuracy / len(pbar)
     
     @staticmethod
     def compute_accuracy(outputs: torch.Tensor, labels: torch.Tensor) -> float:
