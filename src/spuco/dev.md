@@ -85,6 +85,7 @@ General TODO:
 # Tasks for later 
 
 - [ ] tune magnitude and variance patch sizes for LeNet on SpuCoMNIST
+- [ ] validate correctness of 
 - [ ] up/down sampling subclasses of CustomIndicesSampler
 - [ ] add support for existing datasets e.g. waterbirds, mnli, civil comments, celeba - probably just wrappers around wilds?
 

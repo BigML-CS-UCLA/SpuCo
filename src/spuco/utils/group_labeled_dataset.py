@@ -17,6 +17,7 @@ class GroupLabeledDataset(Dataset):
             self.group[group_partition[key]] = group_idx
             group_idx += 1 
         self.num_groups = len(group_partition.keys())
+        self.group = self.group.long().tolist()
         
     def __getitem__(self, index):
         return self.dataset.__getitem__(index) + (self.group[index],)

@@ -4,11 +4,13 @@ from typing import List, Optional, Callable
 import matplotlib.cm as cm
 import numpy as np
 
+from torch.utils.data import Subset
 import torch 
 import torchvision
 import torchvision.transforms as T
 
-from spuco.datasets import BaseSpuCoDataset, SourceData, SpuriousFeatureDifficulty 
+from spuco.datasets import BaseSpuCoDataset, SourceData, SpuriousFeatureDifficulty, TRAIN_SPLIT, VAL_SPLIT, TEST_SPLIT 
+from spuco.datasets.spuco_mnist_config import config
 
 class ColourMap(Enum):
     HSV = "hsv"
@@ -24,35 +26,20 @@ class SpuCoMNIST(BaseSpuCoDataset):
         root: str,
         spurious_feature_difficulty: SpuriousFeatureDifficulty,
         classes: List[List[int]],
-        spurious_correlation_strength: float = -1.,
+        spurious_correlation_strength: float = 0.,
         color_map: ColourMap = ColourMap.HSV,
-        train: bool = True,
+        split: str = TRAIN_SPLIT,
         transform: Optional[Callable] = None
     ):
         """
         Initializes SpuCoMNIST dataset
         
-        :param root: str
-            Root directory of dataset.
-        :param spurious_feature_difficulty: SpuriousFeatureDifficulty
-            Difficulty level for adding spurious features.
-        :param classes: List[List[int]]
-            A list of lists of integer labels. 
-            Each list contains a set of labels that belong to the same disentangled class.
-        :param spurious_correlation_strength: float
-            Strength of correlation for spurious features. Must be between 0 and 1.
-        :param color_map: ColourMap
-            Colormap for the disentangled classes.
-        :param train: bool, default True
-            If True, creates a train dataset. Otherwise, creates a test dataset.
-        :param transform: Optional[Callable], default None
-            A function/transform that takes in a sample and returns a transformed version.
         """
         super().__init__(
             root=root, 
             spurious_correlation_strength=spurious_correlation_strength,
             spurious_feature_difficulty=spurious_feature_difficulty,
-            train=train,
+            split=split,
             transform=transform,
             num_classes=len(classes)
         )
@@ -75,13 +62,26 @@ class SpuCoMNIST(BaseSpuCoDataset):
         """
         self.mnist = torchvision.datasets.MNIST(
             root=self.root, 
-            train=self.train, 
+            train=self.split != TEST_SPLIT, 
             download=self.download,
             transform=T.Compose([
                 T.ToTensor(),
                 T.Lambda(lambda x: torch.cat([x, x, x], dim=0))  # convert grayscale to RGB
             ])
         )
+
+        # Return predetermined train / val split
+        if self.split == TRAIN_SPLIT:
+            self.mnist = Subset(
+                dataset=self.mnist, 
+                indices=[i for i in range(len(self.mnist)) if i not in config[VAL_SPLIT]]
+            )
+        elif self.split == VAL_SPLIT:
+            self.mnist = Subset(
+                dataset=self.mnist, 
+                indices=config[VAL_SPLIT]
+            )
+
         self.data = SourceData(self.mnist)
         
         # Validate Classes
@@ -104,32 +104,45 @@ class SpuCoMNIST(BaseSpuCoDataset):
             if label not in self.partition:
                 self.partition[label] = []
             self.partition[label].append(i)
-
-        # Train: Add spurious correlation iteratively for each class
+        
+        # Train / Val: Add spurious correlation iteratively for each class
         self.spurious = [-1] * len(self.data.X)
-        if self.train:
-            assert self.spurious_correlation_strength >= 0., "spurious correlation strength must be specified for train=True"
-            spurious_distribution = torch.distributions.Bernoulli(probs=torch.tensor(self.spurious_correlation_strength))
+        if self.split == TRAIN_SPLIT or (self.split == VAL_SPLIT and self.spurious_correlation_strength > 0):
+            assert self.spurious_correlation_strength > 0, "spurious correlation strength must be specified for train=True"
             for label in self.partition.keys():
-                spurious_or_not = spurious_distribution.sample((len(self.partition[label]),))
+                # Randomly permute and choose which points will have spurious feature (avoids issue of sampling leading to 
+                # too many examples having spurious ---> no examples for some groups)
+                spurious_or_not = torch.zeros(len(self.partition[label]))
+                spurious_or_not[torch.randperm(len(self.partition[label]))[:int(self.spurious_correlation_strength * len(self.partition[label]))]] = 1
+
+                # Get what the other labels could be for this class (all but spurious)
                 other_labels = [x for x in range(len(self.classes)) if x != label]
+
+                # Determine background of every example 
                 background_label = torch.tensor([label if spurious_or_not[i] else other_labels[i % len(other_labels)] for i in range(len(self.partition[label]))])
                 background_label = background_label[torch.randperm(len(background_label))]
+
+                # Create and apply background for all examples
                 for i, idx in enumerate(self.partition[label]):
                     self.spurious[idx] = background_label[i].item()
                     background = SpuCoMNIST.create_background(self.spurious_feature_difficulty, self.colors[self.spurious[idx]])
                     self.data.X[idx] = (background * (self.data.X[idx] == 0)) + self.data.X[idx]
-        # Test: Create spurious balanced test set
+
+        # Test / Val: Create spurious balanced test set
         else:
             for label in self.partition.keys():
+                # Generate balanced background labels
                 background_label = torch.tensor([i % len(self.classes) for i in range(len(self.partition[label]))])
                 background_label = background_label[torch.randperm(len(background_label))]
+
+                # Create and apply background for all examples
                 for i, idx in enumerate(self.partition[label]):
                     self.spurious[idx] = background_label[i].item()
                     background = SpuCoMNIST.create_background(self.spurious_feature_difficulty, self.colors[self.spurious[idx]])
-                    self.data.X[idx] = (background * (self.data.X[idx] == 0)) + self.data.X[idx]    
+                    self.data.X[idx] = (background * (self.data.X[idx] == 0)) + self.data.X[idx]   
 
-        return self.data
+        # Return data, list containing all class labels, list containing all spurious labels
+        return self.data, range(len(self.classes)), range(len(self.classes))
 
     def init_colors(self, color_map: ColourMap) -> List[List[float]]:
         """

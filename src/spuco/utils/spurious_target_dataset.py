@@ -1,5 +1,5 @@
 from torch.utils.data import Dataset 
-import torch 
+from typing import List
 
 class SpuriousTargetDataset(Dataset):
     """
@@ -9,7 +9,7 @@ class SpuriousTargetDataset(Dataset):
     def __init__(
         self,
         dataset: Dataset,
-        spurious_labels: torch.Tensor
+        spurious_labels: List[int]
     ):
         self.dataset = dataset
         self.spurious_labels = spurious_labels

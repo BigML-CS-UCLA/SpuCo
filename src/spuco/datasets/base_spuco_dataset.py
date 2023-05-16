@@ -3,6 +3,10 @@ from torch.utils.data import Dataset
 from enum import Enum
 from abc import ABC, abstractmethod
 
+TRAIN_SPLIT = "train"
+VAL_SPLIT= "val"
+TEST_SPLIT = "test"
+
 class SpuriousFeatureDifficulty(Enum):
     """
     Enumeration class for spurious feature difficulty levels.
@@ -64,7 +68,8 @@ class BaseSpuCoDataset(Dataset, ABC):
         spurious_correlation_strength: float,
         spurious_feature_difficulty: SpuriousFeatureDifficulty,
         num_classes: int,
-        train: bool = True,
+        split: str = "train",
+        val_size: float = 0.1,
         transform: Optional[Callable] = None,
         download: bool = False
     ):
@@ -88,7 +93,9 @@ class BaseSpuCoDataset(Dataset, ABC):
         self.spurious_correlation_strength = spurious_correlation_strength
         self.spurious_feature_difficulty = spurious_feature_difficulty
         self.num_classes = num_classes
-        self.train = train
+        assert split == TRAIN_SPLIT or split == VAL_SPLIT or split == TEST_SPLIT, f"split must be one of {TRAIN_SPLIT}, {VAL_SPLIT}, {TEST_SPLIT}"
+        self.split = split
+        self.val_size = val_size
         self.transform = transform
         self.download = download
 
@@ -108,8 +115,9 @@ class BaseSpuCoDataset(Dataset, ABC):
             self.validate_data()
 
         # Load Data
-        self.data = self.load_data()
-
+        self.data, classes, spurious_classes = self.load_data()
+        self.num_spurious = len(spurious_classes)
+        
         # Group Partition
         self.group_partition = {}
         for i, group_label in enumerate(zip(self.data.labels, self.spurious)):
@@ -117,9 +125,15 @@ class BaseSpuCoDataset(Dataset, ABC):
                 self.group_partition[group_label] = []
             self.group_partition[group_label].append(i)
 
+        # Validate partition sizes
+        for class_label in classes:
+            for spurious_label in spurious_classes:
+                group_label = (class_label, spurious_label)
+                assert group_label in self.group_partition and len(self.group_partition[group_label]) > 0, f"No examples in {group_label}, considering reducing spurious correlation strength"
+
         # Group Weights
         self.group_weights = None
-        if self.train:
+        if self.split == TRAIN_SPLIT:
             self.group_weights = {}
             for key in self.group_partition.keys():
                 self.group_weights[key] = len(self.group_partition[key]) / len(self.data.X)
