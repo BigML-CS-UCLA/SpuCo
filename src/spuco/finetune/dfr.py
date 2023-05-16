@@ -1,8 +1,9 @@
 from torch import nn, optim 
 from spuco.models import SpuCoModel
 from spuco.utils import Trainer 
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader
 import torch 
+from tqdm import tqdm 
 
 class DFR():
     def __init__(
@@ -13,43 +14,63 @@ class DFR():
         batch_size: int = 64,
         lr: float = 1e-3,
         weight_decay: float = 5e-4,
-        momentum: float = 0.9,
         device: torch.device = torch.device("cpu"),
         verbose: bool = False
     ):
-        in_features = model.classifier.in_features
-        out_features = model.classifier.out_features
-        model.classifier = nn.Linear(in_features, out_features).to(device)
-        optimizer = optim.SGD(
-            model.classifier.parameters(), 
-            lr=lr, 
-            weight_decay=weight_decay,
-            momentum=momentum,
-            nesterov=True
-        )
-
-        def forward_pass(self, batch):
-            inputs, labels = batch
-            inputs, labels = inputs.to(device), labels.to(device)
-            with torch.no_grad():
-                self.model.backbone.eval()
-                outputs = self.model.backbone(inputs)
-            outputs = self.model.classifier(outputs)
-            loss = self.criterion(outputs, labels)
-            return loss, outputs, labels 
-        
-        self.trainer = Trainer(
-            trainset=group_balanced_dataset,
-            model=model,
-            batch_size=batch_size,
-            optimizer=optimizer,
-            forward_pass=forward_pass,
-            device=device,
-            verbose=verbose
-        )
-
+        self.trainset = group_balanced_dataset
+        self.model = model 
         self.num_epochs = num_epochs
+        self.batch_size = batch_size
+        self.lr = lr
+        self.weight_decay = weight_decay
+        self.device = device 
+        self.verbose = verbose
 
     def train(self):
-        for epoch in range(self.num_epochs):
-            self.trainer.train_epoch(epoch)
+        X_train, y_train = self.encode_trainset()
+        in_features = X_train.shape[1]
+        classifer = torch.nn.Linear(in_features, self.model.classifier.out_features).to(self.device)
+        criterion = torch.nn.CrossEntropyLoss()
+        optimizer = torch.optim.SGD(
+            classifer.parameters(), 
+            weight_decay=self.weight_decay, 
+            lr=self.lr)
+        schedule = torch.optim.lr_scheduler.CosineAnnealingLR(
+            optimizer=optimizer, 
+            eta_min=1e-2,
+            T_max=self.num_epochs
+        )
+        
+        pbar = tqdm(range(self.num_epochs), desc="DFR: ", disable=not self.verbose)
+        for epoch in pbar:
+            optimizer.zero_grad()
+            pred = classifer(X_train)
+            loss = criterion(pred, y_train)
+            loss.backward()
+            optimizer.step()
+            schedule.step()
+            if epoch % (self.num_epochs // 10) == 0:
+                acc = (torch.argmax(pred, dim=-1) == y_train).float().mean().item() * 100
+                pbar.set_postfix(epoch=epoch, acc=acc)
+
+        self.model.classifier = classifer
+
+    
+    def encode_trainset(self):
+        X_train = []
+        y_train = []
+
+        trainloader = DataLoader(
+            dataset=self.trainset, 
+            batch_size=self.batch_size,
+            shuffle=False
+        )
+
+        with torch.no_grad():
+            for inputs, labels in trainloader:
+                inputs, labels = inputs.to(self.device), labels.to(self.device)
+                X_train.append(self.model.backbone(inputs))
+                y_train.append(labels)
+            
+            return torch.cat(X_train), torch.cat(y_train)
+
