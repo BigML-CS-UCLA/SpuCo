@@ -71,7 +71,7 @@ Can I overcome keyword search
 - [x] jtt
 - [x] eiil
 - [x] clustering 
-- [ ] sampling 
+- [ ] sampling
 - [ ] ssa
 - [ ] cnc 
 - [ ] lff
@@ -79,7 +79,7 @@ Can I overcome keyword search
 
 General TODO:
 - [x] model factory
-- [ ] lr supprt in trainer
+- [ ] lr scheduler support in trainer
 - [ ] control randomness from python random 
 
 # Tasks for later 
