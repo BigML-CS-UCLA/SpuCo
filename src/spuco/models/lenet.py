@@ -6,9 +6,16 @@ import torch.nn.functional as F
 # https://github.com/BIGBALLON/CIFAR-ZOO,
 
 
-''' LeNet '''
 class LeNet(nn.Module):
-    def __init__(self, channel):
+    """
+    LeNet implementation.
+    """
+    def __init__(self, channel: int):
+        """
+        Initializes LeNet
+
+        :param: 
+        """
         super(LeNet, self).__init__()
         self.features = nn.Sequential(
             nn.Conv2d(channel, 6, kernel_size=5, padding=2),
