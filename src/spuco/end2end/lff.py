@@ -2,8 +2,8 @@ from spuco.utils import Trainer
 from torch import nn, optim
 from torch.utils.data import Dataset, DataLoader
 import torch 
+import numpy as np 
 from tqdm import tqdm
-
 
 class LFF():
     def __init__(
@@ -30,7 +30,6 @@ class LFF():
         self.q = q
         self.device = device
         self.verbose = verbose 
-        self.softmax = nn.Softmax()
         self.trainloader = DataLoader(
             trainset, 
             batch_size=batch_size, 
@@ -39,11 +38,13 @@ class LFF():
 
     def train(self):
         for epoch in range(self.num_epochs):
+            self.bias_model.train()
+            self.debias_model.train()
             with tqdm(self.trainloader, unit="batch", total=len(self.trainloader), disable=not self.verbose) as pbar:
                 pbar.set_description(f"Epoch {epoch}")
                 for inputs, labels in pbar:
                     inputs, labels = inputs.to(self.device), labels.to(self.device)
-                   
+
                     # Bias Model Training
                     bias_outputs = self.bias_model(inputs)
                     bias_loss = self.bias_loss(bias_outputs, labels)
@@ -51,7 +52,7 @@ class LFF():
                     bias_loss.backward()
                     self.bias_optimizer.step()
                     bias_accuracy = Trainer.compute_accuracy(bias_outputs, labels)
-
+        
                     # Compute W(x)
                     with torch.no_grad():
                         # Compute Bias and Debias Loss Vector  
@@ -63,14 +64,16 @@ class LFF():
                     debias_loss = self.debias_loss(debias_outputs, labels, bias_loss_vector, debias_loss_vector)
                     self.debias_optimizer.zero_grad()
                     debias_loss.backward()
+                    self.debias_optimizer.step()
                     debias_accuracy = Trainer.compute_accuracy(debias_outputs, labels)
+
                     pbar.set_postfix(bias_loss=bias_loss.item(), bias_accuracy=f"{bias_accuracy}%", 
                                     debias_loss=debias_loss.item(), debias_accuracy=f"{debias_accuracy}%")
 
     def bias_loss(self, outputs, labels):
         ce_loss_vector = self.cross_entropy_no_reduction(outputs, labels)
-        outputs = self.softmax(outputs)
-        weights = torch.tensor([torch.pow(outputs[i][label].item(), self.q) for i, label in enumerate(labels)]).to(self.device)
+        outputs = torch.softmax(outputs, dim=-1)
+        weights = torch.tensor([np.float_power(outputs[i][label].item(), self.q) for i, label in enumerate(labels)]).to(self.device)
         return torch.mean(ce_loss_vector * weights)
     
     def debias_loss(self, outputs, labels, bias_loss_vector, debias_loss_vector):
