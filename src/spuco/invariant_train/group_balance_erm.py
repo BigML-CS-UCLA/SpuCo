@@ -1,12 +1,16 @@
-import torch 
-from torch import nn, optim
-from spuco.utils import Trainer, GroupLabeledDataset, CustomIndicesSampler
-import random  # TODO: Do we want to control the randomness here?
-from torch.utils.data import Dataset
+import random
 from typing import Dict
+
+import torch
+from torch import nn, optim
+from torch.utils.data import Dataset
+
+from spuco.utils import CustomIndicesSampler, Trainer
+
 
 class GroupBalanceERM():
     """
+    GroupBalanceERM class for training a model using group balanced sampling.
     """
     def __init__(
         self,
@@ -20,9 +24,25 @@ class GroupBalanceERM():
         verbose=False
     ):
         """
-        Initializes GroupBalanceERM
-        """
+        Initializes GroupBalanceERM.
 
+        :param model: The PyTorch model to be trained.
+        :type model: nn.Module
+        :param trainset: The training dataset.
+        :type trainset: Dataset
+        :param group_partition: A dictionary mapping group labels to the indices of examples belonging to each group.
+        :type group_partition: Dict
+        :param batch_size: The batch size for training.
+        :type batch_size: int
+        :param optimizer: The optimizer used for training.
+        :type optimizer: optim.Optimizer
+        :param num_epochs: The number of training epochs.
+        :type num_epochs: int
+        :param device: The device to be used for training (default: CPU).
+        :type device: torch.device
+        :param verbose: Whether to print training progress (default: False).
+        :type verbose: bool
+        """
         assert batch_size >= len(trainset.group_partition), "batch_size must be >= number of groups (Group DRO requires at least 1 example from each group)"
         
         self.num_epochs = num_epochs

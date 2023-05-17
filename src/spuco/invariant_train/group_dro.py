@@ -2,9 +2,12 @@ from typing import Callable
 import torch 
 from torch import nn, optim
 from spuco.utils import Trainer, GroupLabeledDataset, CustomIndicesSampler
-import random  # TODO: Do we want to control the randomness here?
+import random
 
 class GroupWeightedLoss(nn.Module):
+    """
+    A module for computing group-weighted loss.
+    """
     def __init__(
         self, 
         criterion: Callable[[torch.tensor, torch.tensor], torch.tensor],
@@ -14,10 +17,14 @@ class GroupWeightedLoss(nn.Module):
 
     ):
         """
-        A module for computing group-weighted loss.
-        
+        Initializes GroupWeightedLoss.
+
+        :param criterion: The loss criterion function.
+        :type criterion: Callable[[torch.tensor, torch.tensor], torch.tensor]
         :param num_groups: The number of groups to consider.
         :type num_groups: int
+        :param group_weight_lr: The learning rate for updating group weights (default: 0.01).
+        :type group_weight_lr: float
         :param device: The device on which to perform computations. Defaults to CPU.
         :type device: torch.device
         """
@@ -68,9 +75,24 @@ class GroupDRO():
         verbose=False
     ):
         """
-        Initializes GroupDRO
-        """
+        Initializes GroupDRO.
 
+        :param model: The PyTorch model to be trained.
+        :type model: nn.Module
+        :param trainset: The training dataset containing group-labeled samples.
+        :type trainset: GroupLabeledDataset
+        :param batch_size: The batch size for training.
+        :type batch_size: int
+        :param optimizer: The optimizer used for training.
+        :type optimizer: optim.Optimizer
+        :param num_epochs: The number of training epochs.
+        :type num_epochs: int
+        :param device: The device to be used for training (default: CPU).
+        :type device: torch.device
+        :param verbose: Whether to print training progress (default: False).
+        :type verbose: bool
+        """
+        
         assert batch_size >= len(trainset.group_partition), "batch_size must be >= number of groups (Group DRO requires at least 1 example from each group)"
 
         def forward_pass(self, batch):

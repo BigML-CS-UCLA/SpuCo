@@ -1,11 +1,16 @@
-import torch 
+import random
+
+import torch
 from torch import nn, optim
-from spuco.utils import Trainer, CustomIndicesSampler, convert_labels_to_partition, get_class_labels
-import random  # TODO: Do we want to control the randomness here?
 from torch.utils.data import Dataset
+
+from spuco.utils import (CustomIndicesSampler, Trainer,
+                         convert_labels_to_partition, get_class_labels)
+
 
 class ClassBalanceERM():
     """
+    ClassBalanceERM class for training a model using class-balanced sampling.
     """
     def __init__(
         self,
@@ -18,9 +23,23 @@ class ClassBalanceERM():
         verbose=False
     ):
         """
-        Initializes ClassBalanceERM
-        """
+        Initializes ClassBalanceERM.
 
+        :param model: The PyTorch model to be trained.
+        :type model: nn.Module
+        :param trainset: The training dataset.
+        :type trainset: Dataset
+        :param batch_size: The batch size for training.
+        :type batch_size: int
+        :param optimizer: The optimizer used for training.
+        :type optimizer: optim.Optimizer
+        :param num_epochs: The number of training epochs.
+        :type num_epochs: int
+        :param device: The device to be used for training (default: CPU).
+        :type device: torch.device
+        :param verbose: Whether to print training progress (default: False).
+        :type verbose: bool
+        """
         self.class_partition = convert_labels_to_partition(get_class_labels(trainset))
         assert batch_size >= len(self.class_partition), "batch_size must be >= number of groups (Group DRO requires at least 1 example from each group)"
         

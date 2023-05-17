@@ -1,12 +1,15 @@
 from typing import List
-import torch 
+
+import torch
 from torch import nn, optim
 from torch.utils.data import Dataset
-from spuco.utils import Trainer, CustomIndicesSampler
+
+from spuco.utils import CustomIndicesSampler, Trainer
+
 
 class CustomSampleERM():
     """
-    CustomSampleTrain - specify sampling the dataset in any way by passing in indices: List[int]
+    CustomSampleERM class for training a model using custom sampling of the dataset
     """
     def __init__(
         self,
@@ -20,6 +23,29 @@ class CustomSampleERM():
         device: torch.device = torch.device("cpu"),
         verbose=False
     ):  
+        """
+        Initializes CustomSampleERM.
+
+        :param model: The PyTorch model to be trained.
+        :type model: nn.Module
+        :param trainset: The training dataset.
+        :type trainset: Dataset
+        :param batch_size: The batch size for training.
+        :type batch_size: int
+        :param optimizer: The optimizer used for training.
+        :type optimizer: optim.Optimizer
+        :param num_epochs: The number of training epochs.
+        :type num_epochs: int
+        :param indices: A list of indices specifying the samples to be shown to the model in 1 epoch.
+        :type indices: List[int]
+        :param criterion: The loss criterion used for training (default: CrossEntropyLoss).
+        :type criterion: nn.Module
+        :param device: The device to be used for training (default: CPU).
+        :type device: torch.device
+        :param verbose: Whether to print training progress (default: False).
+        :type verbose: bool
+        """
+
         self.num_epochs = num_epochs
         self.indices = indices
         self.trainer = Trainer(
