@@ -108,7 +108,7 @@ class SpuCoMNIST(BaseSpuCoDataset):
         # Train / Val: Add spurious correlation iteratively for each class
         self.spurious = [-1] * len(self.data.X)
         if self.split == TRAIN_SPLIT or (self.split == VAL_SPLIT and self.spurious_correlation_strength > 0):
-            assert self.spurious_correlation_strength > 0, "spurious correlation strength must be specified for split="train""
+            assert self.spurious_correlation_strength > 0, f"spurious correlation strength must be specified and > 0 for split={TRAIN_SPLIT}"
             for label in self.partition.keys():
                 # Randomly permute and choose which points will have spurious feature (avoids issue of sampling leading to 
                 # too many examples having spurious ---> no examples for some groups)
