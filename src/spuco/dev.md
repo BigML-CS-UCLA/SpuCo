@@ -73,7 +73,7 @@ Can I overcome keyword search
 - [x] clustering 
 - [x] sampling
 - [x] ssa
-- [ ] cnc 
+- [x] cnc 
 - [ ] lff
 - [x] dfr
 
@@ -85,6 +85,7 @@ General TODO:
 # Tasks for later 
 
 - [ ] tune magnitude and variance patch sizes for LeNet on SpuCoMNIST
+- [ ] investigate cnc training, is it hparam tuning or is implementation missing something?
 - [ ] up/down sampling subclasses of CustomIndicesSampler
 - [ ] add support for existing datasets e.g. waterbirds, mnli, civil comments, celeba - probably just wrappers around wilds?
 
