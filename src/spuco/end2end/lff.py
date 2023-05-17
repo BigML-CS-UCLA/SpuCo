@@ -21,15 +21,16 @@ class LFF():
     ):
         assert q >= 0. and q <= 1., "q must be in [0,1]"
 
-        self.debias_model = debias_model
         self.bias_model = bias_model
+        self.debias_model = debias_model
         self.cross_entropy_no_reduction = nn.CrossEntropyLoss(reduction="none")
         self.bias_optimizer = bias_optimizer
         self.debias_optimizer = debias_optimizer
         self.num_epochs = num_epochs
+        self.q = q
         self.device = device
         self.verbose = verbose 
-        self.sigmoid = nn.Sigmoid()
+        self.softmax = nn.Softmax()
         self.trainloader = DataLoader(
             trainset, 
             batch_size=batch_size, 
@@ -68,8 +69,8 @@ class LFF():
 
     def bias_loss(self, outputs, labels):
         ce_loss_vector = self.cross_entropy_no_reduction(outputs, labels)
-        outputs = self.sigmoid(outputs)
-        weights = torch.tensor([outputs[i][label].item() for i, label in enumerate(labels)]).to(self.device)
+        outputs = self.softmax(outputs)
+        weights = torch.tensor([torch.pow(outputs[i][label].item(), self.q) for i, label in enumerate(labels)]).to(self.device)
         return torch.mean(ce_loss_vector * weights)
     
     def debias_loss(self, outputs, labels, bias_loss_vector, debias_loss_vector):
