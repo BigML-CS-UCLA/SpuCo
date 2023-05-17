@@ -74,8 +74,12 @@ Can I overcome keyword search
 - [x] sampling
 - [x] ssa
 - [x] cnc 
-- [ ] lff
+- [x] lff
 - [x] dfr
+
+Debugging Methods (run but don't give expected improvement):
+- [ ] CNC
+- [ ] LFF
 
 General TODO:
 - [x] model factory
@@ -85,7 +89,6 @@ General TODO:
 # Tasks for later 
 
 - [ ] tune magnitude and variance patch sizes for LeNet on SpuCoMNIST
-- [ ] investigate cnc training, is it hparam tuning or is implementation missing something?
 - [ ] up/down sampling subclasses of CustomIndicesSampler
 - [ ] add support for existing datasets e.g. waterbirds, mnli, civil comments, celeba - probably just wrappers around wilds?
 
