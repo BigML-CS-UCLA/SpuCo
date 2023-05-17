@@ -63,6 +63,7 @@ class GroupWeightedLoss(nn.Module):
 class GroupDRO():
     """
     Group DRO (https://arxiv.org/abs/1911.08731)
+    Is this 
     """
     def __init__(
         self,
@@ -92,7 +93,7 @@ class GroupDRO():
         :param verbose: Whether to print training progress (default: False).
         :type verbose: bool
         """
-        
+
         assert batch_size >= len(trainset.group_partition), "batch_size must be >= number of groups (Group DRO requires at least 1 example from each group)"
 
         def forward_pass(self, batch):

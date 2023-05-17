@@ -55,3 +55,12 @@ html_theme_options = {"collapse_navigation": False}
 
 # -- Options for EPUB output
 epub_show_urls = "footnote"
+
+# Make sure __init__ is added to docstrings
+autodoc_default_options = {
+    'members': True,
+    'member-order': 'bysource',
+    'special-members': '__init__',
+    'undoc-members': True,
+    'exclude-members': '__weakref__'
+}
