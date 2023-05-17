@@ -1,9 +1,11 @@
 from typing import Dict, List, Tuple
+
+import torch
 from torch import nn, optim
 from torch.utils.data import Dataset
+
 from spuco.group_inference import BaseGroupInference
 from spuco.utils import Trainer
-import torch 
 
 class CorrectNContrastInference(BaseGroupInference):
     def __init__(
@@ -28,14 +30,15 @@ class CorrectNContrastInference(BaseGroupInference):
         self.num_epochs = num_epochs
 
     def infer_groups(self) -> Dict[Tuple[int, int], List[int]]:
-        for epoch in range(self.num_epochs):
-            self.trainer.train_epoch(epoch)
+        self.trainer.train(self.num_epochs)
+        
+        spurious = torch.argmax(self.trainer.get_trainset_outputs(), dim=-1).cpu().tolist()
 
-        spurious = torch.argmax(self.trainer.get_trainset_outputs(), dim=-1)
-
+        # CNC only wants to group based on spurious attribute, but for consistency in API
+        # we need a tuple as key, hence group_label set to (0, spurious) 
         group_partition = {}
-        for i, (_, y) in enumerate(self.trainer.trainset):
-            group_label = (y, spurious[i])
+        for i in range(len(self.trainer.trainset)):
+            group_label = (0, spurious[i])
             if group_label not in group_partition:
                 group_partition[group_label] = []
             group_partition[group_label].append(i)
