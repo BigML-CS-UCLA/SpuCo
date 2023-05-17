@@ -9,6 +9,7 @@ from torch.utils.data import DataLoader, Dataset, Subset
 from tqdm import tqdm
 
 from spuco.group_inference import BaseGroupInference
+from spuco.models import model_factory
 from spuco.utils import SpuriousTargetDataset, Trainer, get_class_labels
 
 
@@ -21,7 +22,7 @@ class SSA(BaseGroupInference):
         labeled_valset_size: float,
         num_iters: int,
         tau_g_min: float,
-        lr: float = 1e-3,
+        lr: float = 1e-2,
         weight_decay: float = 5e-4,
         batch_size: int = 64,
         num_splits: int = 3, 
@@ -118,7 +119,7 @@ class SSATrainer:
         self.device = self.ssa.device
         self.best_model = None
         self.model = deepcopy(self.ssa.model).to(self.device)
-        self.optimizer = optim.SGD(self.model.parameters(), lr=self.ssa.lr, weight_decay=self.ssa.weight_decay)
+        self.optimizer = optim.SGD(self.model.parameters(), lr=1e-3)
         self.split_num = split_num
         self.num_iters = self.ssa.num_iters
         self.verbose = ssa.verbose
@@ -126,15 +127,6 @@ class SSATrainer:
         # Create member variable for best model, accuracy
         self.best_model = None
         self.best_acc = -1.
-
-        self.unlabeled_trainloader = DataLoader(
-            dataset=Subset(
-                dataset=self.ssa.spurious_unlabeled_dataset,
-                indices=[i for split_num in range(self.ssa.num_splits) if split_num != self.split_num for i in self.ssa.unlabeled_data_splits[split_num]]
-            ),
-            batch_size=self.ssa.batch_size, 
-            shuffle=True
-        )
 
         self.labeled_trainloader = DataLoader(
             dataset=Subset(
@@ -161,16 +153,9 @@ class SSATrainer:
         """
         with tqdm(range(self.num_iters), total=self.num_iters, disable=not self.verbose) as pbar:
             pbar.set_description(f"Training SSA Model {self.split_num}")
-            unlabeled_train_iter = iter(self.unlabeled_trainloader)
             labeled_train_iter = iter(self.labeled_trainloader)
             for _ in pbar:
                 self.model.train()
-                try:            
-                    unlabeled_train_batch = next(unlabeled_train_iter)
-                except StopIteration:
-                    unlabeled_train_iter = iter(self.unlabeled_trainloader)
-                    unlabeled_train_batch = next(unlabeled_train_iter)
-
                 try:
                     labeled_train_batch = next(labeled_train_iter)
                 except StopIteration:
@@ -179,7 +164,6 @@ class SSATrainer:
 
                 # Compute loss
                 loss = self.train_step(
-                    unlabeled_train_batch=unlabeled_train_batch,
                     labeled_train_batch=labeled_train_batch
                 )   
                 loss.backward()
@@ -187,10 +171,10 @@ class SSATrainer:
 
                 # Validation
                 val_acc = self.validate()
-
+                
                 pbar.set_postfix(loss=loss.item(), val_acc=val_acc)
     
-    def train_step(self, unlabeled_train_batch, labeled_train_batch):
+    def train_step(self, labeled_train_batch):
         """
         Trains a single step of SSA for given batch of unlabeled and labeled data
         """
@@ -201,22 +185,25 @@ class SSATrainer:
         group_counter = Counter(labels.long().tolist())
         g_min_label, g_min_count = group_counter.most_common()[-1]
         X, labels = X.to(self.device), labels.to(self.device)
-        supervised_loss = self.cross_entropy(self.model(X), labels)
-
+        outputs = self.model(X)
+        #print("sup_outputs", torch.argmax(outputs, dim=-1))
+        supervised_loss = self.cross_entropy(outputs, labels)
+        """
         #############################
         # Compute unsupervised loss #
         #############################
         # Load data
-        X, _ = unlabeled_train_batch
+        X, y = unlabeled_train_batch
         X = X.to(self.device)
 
         # Get pseudo-labels
         outputs = self.model(X)
         pseudo_labels = torch.argmax(outputs, dim=-1)
-        print(outputs, pseudo_labels)
+        print(pseudo_labels, y)
         # Get indices of g_min outputs that are >= tau_g_min (threshold: hyperparameter)
-        g_min_indices = torch.nonzero(pseudo_labels == g_min_label)
-        g_min_indices = g_min_indices[torch.nonzero(outputs[g_min_indices] >= self.tau_g_min)]
+        g_min_indices = torch.nonzero(pseudo_labels == g_min_label, as_tuple=True)[0]
+        print("g_min_indices", g_min_indices)
+        g_min_indices = g_min_indices[torch.nonzero(torch.max(outputs[g_min_indices], dim=-1).values >= self.tau_g_min, as_tuple=True)[0]]
 
         # Get all unsupervised indices for loss 
         unsup_indices = g_min_indices.cpu().tolist()
@@ -224,15 +211,15 @@ class SSATrainer:
             group_indices = torch.nonzero(pseudo_labels == label, as_tuple=True)[0]
             group_outputs = torch.max(outputs[group_indices], dim=-1).values
             k = min(max(g_min_count + len(g_min_indices) - count, 0), len(group_indices))
-            print(group_indices)
+            print("group_indices", group_indices)
             group_indices = group_indices[torch.topk(group_outputs, k=k).indices].cpu().tolist()
             unsup_indices.extend(group_indices)
 
         print(unsup_indices)
         # Compute cross entropy with respect to pseudo-labels 
         unsupervised_loss = self.cross_entropy(outputs[unsup_indices], pseudo_labels[unsup_indices])
-
-        return supervised_loss + unsupervised_loss 
+        """
+        return supervised_loss #+ unsupervised_loss 
     
     def validate(self):
         self.model.eval()
