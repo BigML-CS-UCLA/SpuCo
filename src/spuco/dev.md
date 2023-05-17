@@ -81,7 +81,7 @@ General TODO:
 - [x] model factory
 - [ ] lr scheduler support in trainer
 - [ ] control randomness from python random 
-
+- [ ] move erm to end2end?
 # Tasks for later 
 
 - [ ] tune magnitude and variance patch sizes for LeNet on SpuCoMNIST
