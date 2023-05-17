@@ -8,6 +8,9 @@ from spuco.group_inference import BaseGroupInference
 from spuco.utils import Trainer
 
 class CorrectNContrastInference(BaseGroupInference):
+    """
+    Correct-n-Contrast Inference: https://proceedings.mlr.press/v162/zhang22z.html
+    """
     def __init__(
         self,
         trainset: Dataset,
@@ -18,6 +21,24 @@ class CorrectNContrastInference(BaseGroupInference):
         device: torch.device = torch.device("cpu"),
         verbose: bool = False
     ):
+        """
+        Initializes the CorrectNContrastInference object.
+
+        :param trainset: The training dataset.
+        :type trainset: Dataset
+        :param model: The model for training.
+        :type model: nn.Module
+        :param batch_size: The batch size for training.
+        :type batch_size: int
+        :param optimizer: The optimizer for training.
+        :type optimizer: optim.Optimizer
+        :param num_epochs: The number of epochs for training.
+        :type num_epochs: int
+        :param device: The device to use for training. Defaults to CPU.
+        :type device: torch.device, optional
+        :param verbose: Whether to print training progress. Defaults to False.
+        :type verbose: bool, optional
+        """
         super().__init__()
         self.trainer = Trainer(
             trainset=trainset,
@@ -30,6 +51,13 @@ class CorrectNContrastInference(BaseGroupInference):
         self.num_epochs = num_epochs
 
     def infer_groups(self) -> Dict[Tuple[int, int], List[int]]:
+        """
+        Performs Correct-n-Contrast inference to infer group partitions.
+
+        :return: The group partition based on Correct-n-Contrast inference.
+        :rtype: Dict[Tuple[int, int], List[int]]
+        """
+        
         self.trainer.train(self.num_epochs)
         
         spurious = torch.argmax(self.trainer.get_trainset_outputs(), dim=-1).cpu().tolist()

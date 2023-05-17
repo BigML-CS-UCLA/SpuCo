@@ -1,20 +1,25 @@
 from enum import Enum
 from typing import Dict, List, Optional
-from tqdm import tqdm 
+
 import numpy as np
 import torch
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
+from tqdm import tqdm
 
 from spuco.group_inference import BaseGroupInference
 from spuco.utils import (cluster_by_exemplars, convert_labels_to_partition,
-                        convert_partition_to_labels, pairwise_similarity)
+                         convert_partition_to_labels, pairwise_similarity)
+
 
 class ClusterAlg(Enum):
     KMEANS = "kmeans"
     KMEDOIDS = "kmedoids"
 
 class Cluster(BaseGroupInference):
+    """
+    Clustering-based Group Inference
+    """
     def __init__(
         self,
         Z: torch.Tensor,
@@ -27,8 +32,24 @@ class Cluster(BaseGroupInference):
         verbose: bool = False
     ):
         """
-        num_clusters and max_cluster should be mutuallly exclusive
-        passing class_labels will do clustering per class instead of globally
+        Initializes the Cluster object.
+
+        :param Z: The input tensor for clustering.
+        :type Z: torch.Tensor
+        :param class_labels: Optional list of class labels for class-wise clustering. Defaults to None.
+        :type class_labels: Optional[List[int]], optional
+        :param cluster_alg: The clustering algorithm to use. Defaults to ClusterAlg.KMEANS.
+        :type cluster_alg: ClusterAlg, optional
+        :param num_clusters: The number of clusters to create. Defaults to -1.
+        :type num_clusters: int, optional
+        :param max_clusters: The maximum number of clusters to consider. Defaults to -1.
+        :type max_clusters: int, optional
+        :param random_seed: The random seed for reproducibility. Defaults to 0.
+        :type random_seed: int, optional
+        :param device: The device to run the clustering on. Defaults to torch.device("cpu").
+        :type device: torch.device, optional
+        :param verbose: Whether to display progress and logging information. Defaults to False.
+        :type verbose: bool, optional
         """
         super().__init__()
 
@@ -60,6 +81,12 @@ class Cluster(BaseGroupInference):
             self.Z = self.Z.detach().cpu().numpy()
 
     def infer_groups(self) -> Dict[int, List[int]]:
+        """
+        Infers the group partition based on the clustering results.
+
+        :return: The group partition where each key is a cluster label and the value is a list of indices belonging to that cluster.
+        :rtype: Dict[int, List[int]]
+        """ 
         # Get class-wise group partitions
         cluster_partitions = [] 
         for class_label in tqdm(self.class_partition.keys(), disable=not self.verbose, desc="Clustering class-wise"):
@@ -81,8 +108,15 @@ class Cluster(BaseGroupInference):
     
     def silhouette(self, Z):
         """
-        Use silhouette score to pick optimal num_clusters and clustering according to self.cluster_alg
+        Uses the silhouette score to determine the optimal number of clusters and perform clustering based on self.cluster_alg.
+
+        :param Z: The input data for clustering.
+        :type Z: torch.Tensor
+
+        :return: The cluster partition based on the optimal number of clusters.
+        :rtype: List[int]
         """
+
         silhouette_scores = []
         partitions = []
 
@@ -111,7 +145,15 @@ class Cluster(BaseGroupInference):
     
     def kmeans(self, Z, num_clusters: int =-1):
         """
-        K-means clustering 
+        Performs K-means clustering on the input data.
+
+        :param Z: The input data for clustering.
+        :type Z: torch.Tensor
+        :param num_clusters: The number of clusters to create. If not specified, the value from the object will be used.
+        :type num_clusters: int, optional
+
+        :return: The cluster labels and partition based on the K-means clustering.
+        :rtype: Tuple[np.ndarray, List[List[int]]]
         """
         # if num_clusters not passed, use value from object
         if num_clusters < 0:
@@ -126,7 +168,17 @@ class Cluster(BaseGroupInference):
 
     def kmedoids(self, Z, similiarity_matrix: torch.Tensor, num_clusters=-1):
         """
-        K-medoids clustering 
+        Performs K-medoids clustering on the input data.
+
+        :param Z: The input data for clustering.
+        :type Z: torch.Tensor
+        :param similiarity_matrix: The similarity matrix for pairwise similarities between data points.
+        :type similiarity_matrix: torch.Tensor
+        :param num_clusters: The number of clusters to create. If not specified, the value from the object will be used.
+        :type num_clusters: int, optional
+
+        :return: The cluster labels and partition based on the K-medoids clustering.
+        :rtype: Tuple[np.ndarray, List[List[int]]]
         """
         # if num_clusters not passed, use value from object
         if num_clusters < 0:

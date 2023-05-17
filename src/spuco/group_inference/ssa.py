@@ -9,11 +9,13 @@ from torch.utils.data import DataLoader, Dataset, Subset
 from tqdm import tqdm
 
 from spuco.group_inference import BaseGroupInference
-from spuco.models import model_factory
 from spuco.utils import SpuriousTargetDataset, Trainer, get_class_labels
 
 
 class SSA(BaseGroupInference):
+    """
+    Spread Spurious Attribute: https://arxiv.org/abs/2204.02070
+    """
     def __init__(
         self, 
         spurious_unlabeled_dataset: Dataset, 
@@ -29,6 +31,35 @@ class SSA(BaseGroupInference):
         device: torch.device = torch.device("cpu"),
         verbose: bool = False
     ):
+        """
+        Initializes SSA.
+
+        :param spurious_unlabeled_dataset: The dataset containing spurious-labeled unlabeled samples.
+        :type spurious_unlabeled_dataset: Dataset
+        :param spurious_labeled_dataset: The dataset containing spurious-labeled labeled samples.
+        :type spurious_labeled_dataset: SpuriousTargetDataset
+        :param model: The PyTorch model to be used.
+        :type model: nn.Module
+        :param labeled_valset_size: The size of the labeled validation set as a fraction of the total labeled dataset size.
+        :type labeled_valset_size: float
+        :param num_iters: The number of iterations for SSA.
+        :type num_iters: int
+        :param tau_g_min: The minimum value of the spurious correlation threshold tau_g.
+        :type tau_g_min: float
+        :param lr: The learning rate for optimization (default: 1e-2).
+        :type lr: float
+        :param weight_decay: The weight decay for optimization (default: 5e-4).
+        :type weight_decay: float
+        :param batch_size: The batch size for training (default: 64).
+        :type batch_size: int
+        :param num_splits: The number of splits for cross-validation (default: 3).
+        :type num_splits: int
+        :param device: The device to be used for training (default: CPU).
+        :type device: torch.device
+        :param verbose: Whether to print training progress (default: False).
+        :type verbose: bool
+        """
+
         super().__init__()
         self.spurious_unlabeled_dataset = spurious_unlabeled_dataset
         self.spurious_labeled_dataset = spurious_labeled_dataset
@@ -58,6 +89,12 @@ class SSA(BaseGroupInference):
         self.class_labels = get_class_labels(spurious_unlabeled_dataset)
 
     def infer_groups(self) -> Dict[Tuple[int, int], List[int]]:
+        """
+        Infer groups based on spurious attribute predictions.
+
+        :return: A dictionary mapping group labels to the indices of examples belonging to each group.
+        :rtype: Dict[Tuple[int, int], List[int]]
+        """
         # Train SSA models to get spurious target predictions
         spurious_labels = np.zeros(len(self.spurious_unlabeled_dataset))
         for split_num in range(self.num_splits):
@@ -77,7 +114,12 @@ class SSA(BaseGroupInference):
     
     def train_ssa(self, split_num: int) -> nn.Module:
         """
-        Learn model to predict spurious attribute for splt_num
+        Train an SSA model for the specified split.
+
+        :param split_num: The index of the split to train the SSA model for.
+        :type split_num: int
+        :return: The trained SSA model.
+        :rtype: nn.Module
         """
         trainer = SSATrainer(self, split_num)
         trainer.train()
@@ -86,7 +128,14 @@ class SSA(BaseGroupInference):
     
     def label_split(self, split_num: int, best_ssa_model: nn.Module) -> np.array:
         """
-        Label [split_num] split
+        Label the specified split using the best SSA model.
+
+        :param split_num: The index of the split to label.
+        :type split_num: int
+        :param best_ssa_model: The best SSA model obtained during training.
+        :type best_ssa_model: nn.Module
+        :return: An array of spurious labels for the split.
+        :rtype: np.array
         """
         split_dataloader = DataLoader(
             dataset=Subset(
@@ -112,7 +161,11 @@ class SSATrainer:
             split_num: int,
     ):
         """
-        Constructor for the SSATrainer class.
+        Initializes SSATrainer.
+        :param ssa: The SSA object containing the data, model etc. for training.
+        :type ssa: SSA
+        :param split_num: The index of the split to train the SSA model for.
+        :type split_num: int
         """
         self.ssa = ssa
         self.tau_g_min = self.ssa.tau_g_min
@@ -158,7 +211,7 @@ class SSATrainer:
 
     def train(self) -> None:
         """
-        Trains model targetting spurious attribute for given split
+        Trains model targetting spurious attribute for given split.
         """
         with tqdm(range(self.num_iters), total=self.num_iters, disable=not self.verbose) as pbar:
             pbar.set_description(f"Training SSA Model {self.split_num}")
@@ -194,7 +247,12 @@ class SSATrainer:
     
     def train_step(self, unlabeled_train_batch, labeled_train_batch):
         """
-        Trains a single step of SSA for given batch of unlabeled and labeled data
+        Trains a single step of SSA for a given batch of unlabeled and labeled data.
+
+        :param unlabeled_train_batch: The batch of unlabeled training data.
+        :type unlabeled_train_batch: torch.Tensor
+        :param labeled_train_batch: The batch of labeled training data.
+        :type labeled_train_batch: torch.Tensor
         """
         ###########################
         # Compute supervised loss #
@@ -235,6 +293,9 @@ class SSATrainer:
         return supervised_loss + unsupervised_loss 
     
     def validate(self):
+        """
+        Validates the SSA Model on the spurious attribute labeled validation set.
+        """
         self.model.eval()
         with torch.no_grad():
             # Compute accuracy on validation

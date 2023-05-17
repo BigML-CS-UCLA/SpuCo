@@ -2,11 +2,22 @@ from abc import ABC, abstractmethod
 from typing import Dict, List, Tuple
 
 class BaseGroupInference(ABC):
+    """
+    BaseGroupInference abstract class for inferring group partitions.
+    """
     def __init__(self):
+        """
+        Initializes BaseGroupInference.
+        """
         pass 
 
     @abstractmethod
     def infer_groups(self) -> Dict[Tuple[int, int], List[int]]:
+        """
+        Abstract method for inferring group partitions.
+
+        :return: Dictionary mapping group tuples to indices of examples belonging to each group.
+        """
         pass 
 
     def process_cluster_partition(self, cluster_partition: Dict, class_index: int):
@@ -14,6 +25,10 @@ class BaseGroupInference(ABC):
         Processes cluster partition:
         - Converts keys from clusters into (class, spurious) format
         - Converts class indices from class-wise clustering into global (actual trainset) indices
+
+        :param cluster_partition: Dictionary mapping cluster labels to indices of examples.
+        :param class_index: Index of the class being processed.
+        :return: Processed group partition mapping group tuples to indices of examples belonging to each group.
         """
         assert self.class_partition is not None, "self.class_partition must be defined for processing"
         group_partition = {}

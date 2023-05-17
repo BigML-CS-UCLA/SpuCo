@@ -5,6 +5,9 @@ from tqdm import tqdm
 from spuco.group_inference import BaseGroupInference
 
 class EIIL(BaseGroupInference):
+    """
+    Environment Inference for Invariant Learning: https://arxiv.org/abs/2010.07249
+    """
     def __init__(
         self, 
         logits: torch.Tensor, 
@@ -15,6 +18,22 @@ class EIIL(BaseGroupInference):
         verbose: bool = False
 
     ):
+        """
+        Initializes the EIILInference object.
+
+        :param logits: The logits output of the model.
+        :type logits: torch.Tensor
+        :param class_labels: The class labels for each sample.
+        :type class_labels: List[int]
+        :param num_steps: The number of steps for training the soft environment assignment.
+        :type num_steps: int
+        :param lr: The learning rate for training.
+        :type lr: float
+        :param device: The device to use for training. Defaults to CPU.
+        :type device: torch.device, optional
+        :param verbose: Whether to print training progress. Defaults to False.
+        :type verbose: bool, optional
+        """
         super().__init__()
         self.logits = logits 
         self.class_labels = class_labels
@@ -24,7 +43,12 @@ class EIIL(BaseGroupInference):
         self.verbose = verbose
 
     def infer_groups(self):
-        """Learn soft environment assignment."""
+        """
+        Performs EIIL inference to infer group partitions.
+
+        :return: The group partition based on EIIL inference.
+        :rtype: Dict[Tuple[int, int], List[int]]
+        """
 
         # Initialize
         scale = torch.tensor(1.).to(self.device).requires_grad_()
