@@ -1,10 +1,9 @@
 spuco.invariant\_train
 ==============================
 
-Submodules
-----------
+Submodule for invariant training methods. 
 
-spuco.invariant\_train.erm
+ERM
 ---------------------------------
 
 .. automodule:: spuco.invariant_train.erm
@@ -12,7 +11,7 @@ spuco.invariant\_train.erm
    :undoc-members:
    :show-inheritance:
 
-spuco.invariant\_train.group\_dro
+Group DRO
 ----------------------------------------
 
 .. automodule:: spuco.invariant_train.group_dro
@@ -20,10 +19,43 @@ spuco.invariant\_train.group\_dro
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+Group Balance ERM
+----------------------------------------
 
-.. automodule:: spuco.invariant_train
+.. automodule:: spuco.invariant_train.class_balance_erm
    :members:
    :undoc-members:
    :show-inheritance:
+
+Class Balance ERM
+----------------------------------------
+
+.. automodule:: spuco.invariant_train.class_balance_erm
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Custom Sample ERM
+----------------------------------------
+
+.. automodule:: spuco.invariant_train.custom_sample_erm
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Correct-N-Contrast Train
+----------------------------------------
+
+.. automodule:: spuco.invariant_train.cnc_train
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Base Invariant Train 
+---------------------------------
+
+.. automodule:: spuco.invariant_train.base_invariant_train
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
