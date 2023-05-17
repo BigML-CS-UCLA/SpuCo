@@ -1,9 +1,8 @@
-from torch import nn, optim 
+import torch
+from torch.utils.data import DataLoader, Dataset
+from tqdm import tqdm
+
 from spuco.models import SpuCoModel
-from spuco.utils import Trainer 
-from torch.utils.data import Dataset, DataLoader
-import torch 
-from tqdm import tqdm 
 
 class DFR():
     def __init__(
@@ -17,6 +16,26 @@ class DFR():
         device: torch.device = torch.device("cpu"),
         verbose: bool = False
     ):
+        """
+        Initializes the DFR object.
+
+        :param group_balanced_dataset: The group-balanced dataset.
+        :type group_balanced_dataset: Dataset
+        :param model: The SpuCoModel used for training.
+        :type model: SpuCoModel
+        :param num_epochs: The number of training epochs.
+        :type num_epochs: int
+        :param batch_size: The batch size for training. Defaults to 64.
+        :type batch_size: int, optional
+        :param lr: The learning rate for training. Defaults to 1e-3.
+        :type lr: float, optional
+        :param weight_decay: The weight decay for training. Defaults to 5e-4.
+        :type weight_decay: float, optional
+        :param device: The device to use for training. Defaults to CPU.
+        :type device: torch.device, optional
+        :param verbose: Whether to print training progress. Defaults to False.
+        :type verbose: bool, optional
+        """
         self.trainset = group_balanced_dataset
         self.model = model 
         self.num_epochs = num_epochs
@@ -27,6 +46,9 @@ class DFR():
         self.verbose = verbose
 
     def train(self):
+        """
+        Trains the DFR model.
+        """
         X_train, y_train = self.encode_trainset()
         in_features = X_train.shape[1]
         classifer = torch.nn.Linear(in_features, self.model.classifier.out_features).to(self.device)
@@ -57,6 +79,13 @@ class DFR():
 
     
     def encode_trainset(self):
+        """
+        Encodes the training set using the DFR model.
+
+        :return: The encoded features and labels of the training set.
+        :rtype: Tuple[torch.Tensor, torch.Tensor]
+        """
+
         X_train = []
         y_train = []
 

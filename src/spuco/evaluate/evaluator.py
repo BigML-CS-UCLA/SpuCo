@@ -35,6 +35,7 @@ class Evaluator:
         :param verbose: Whether to print evaluation results. Default is False.
         :type verbose: bool, optional
         """
+        
         self.testloaders = {}
         self.group_partition = group_partition
         self.group_weights = group_weights
