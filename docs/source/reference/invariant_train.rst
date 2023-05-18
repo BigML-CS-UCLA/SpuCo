@@ -19,18 +19,18 @@ Group DRO
    :undoc-members:
    :show-inheritance:
 
-Group Balance ERM
+Group Balance Batch ERM
 ----------------------------------------
 
-.. automodule:: spuco.invariant_train.group_balance_erm
+.. automodule:: spuco.invariant_train.group_balance_batch_erm
    :members:
    :undoc-members:
    :show-inheritance:
 
-Class Balance ERM
+Class Balance Batch ERM
 ----------------------------------------
 
-.. automodule:: spuco.invariant_train.class_balance_erm
+.. automodule:: spuco.invariant_train.class_balance_batch_erm
    :members:
    :undoc-members:
    :show-inheritance:
