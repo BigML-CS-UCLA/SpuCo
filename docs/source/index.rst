@@ -19,9 +19,7 @@ Link to GitHub: https://github.com/sjoshi804/SpuCo/
 
 About Us
 --------
-This package is maintained by `Siddharth Joshi <https://sjoshi804.github.io/>`_ and `Yu Yang <https://sites.google.com/g.ucla.edu/yuyang/home>`_
-
-from `Professor Baharan Mirzasoleiman <http://web.cs.ucla.edu/~baharan/group.htm>`_'s lab at **UCLA**.
+This package is maintained by `Siddharth Joshi <https://sjoshi804.github.io/>`_ and `Yu Yang <https://sites.google.com/g.ucla.edu/yuyang/home>`_ from `Professor Baharan Mirzasoleiman <http://web.cs.ucla.edu/~baharan/group.htm>`_'s lab at **UCLA**.
 
 Getting Started
 ---------------
