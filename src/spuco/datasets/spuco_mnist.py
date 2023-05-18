@@ -32,8 +32,22 @@ class SpuCoMNIST(BaseSpuCoDataset):
         transform: Optional[Callable] = None
     ):
         """
-        Initializes SpuCoMNIST dataset
-        
+        Initializes the SpuCoMNIST dataset.
+
+        :param root: The root directory of the dataset.
+        :type root: str
+        :param spurious_feature_difficulty: The difficulty level of the spurious feature.
+        :type spurious_feature_difficulty: SpuriousFeatureDifficulty
+        :param classes: The list of class labels for each digit.
+        :type classes: List[List[int]]
+        :param spurious_correlation_strength: The strength of the spurious feature correlation. Default is 0.
+        :type spurious_correlation_strength: float
+        :param color_map: The color map to use. Default is ColourMap.HSV.
+        :type color_map: ColourMap
+        :param split: The dataset split to load. Default is "train".
+        :type split: str
+        :param transform: The data transformation function. Default is None.
+        :type transform: Optional[Callable]
         """
         super().__init__(
             root=root, 
@@ -227,6 +241,14 @@ class SpuCoMNIST(BaseSpuCoDataset):
     
     @staticmethod
     def compute_mask(unmask_points: torch.Tensor) -> torch.Tensor:
+        """
+        Computes a binary mask based on the unmasked points.
+
+        :param unmask_points: The coordinates of the unmasked points.
+        :type unmask_points: torch.Tensor
+        :return: The binary mask with 1s at the unmasked points and 0s elsewhere.
+        :rtype: torch.Tensor
+        """
         rows = torch.tensor([point[0] for point in unmask_points])
         cols = torch.tensor([point[1] for point in unmask_points])
         mask = torch.zeros((3,28,28))
@@ -235,4 +257,12 @@ class SpuCoMNIST(BaseSpuCoDataset):
     
     @staticmethod
     def rgb_to_mnist_background(rgb: List[float]) -> torch.Tensor:
+        """
+        Converts an RGB color to a MNIST background tensor.
+
+        :param rgb: The RGB color values.
+        :type rgb: List[float]
+        :return: The MNIST background tensor with the specified RGB color.
+        :rtype: torch.Tensor
+        """
         return torch.tensor(rgb).unsqueeze(1).unsqueeze(2).repeat(1, 28, 28)  
