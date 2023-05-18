@@ -7,9 +7,9 @@ from torch.utils.data import Dataset
 from spuco.utils import CustomIndicesSampler, Trainer
 
 
-class UpSampleERM():
+class DownSampleERM():
     """
-    UpSampleERM class for training a model by upsampling all groups to size of largest group. 
+    DownSampleERM class for training a model by downsampling all groups to size of smallest group.
     """
     def __init__(
         self,
@@ -24,7 +24,7 @@ class UpSampleERM():
         verbose=False
     ):  
         """
-        Initializes UpSampleERM.
+        Initializes DownSampleERM.
 
         :param model: The PyTorch model to be trained.
         :type model: nn.Module
@@ -48,14 +48,11 @@ class UpSampleERM():
 
         self.num_epochs = num_epochs
 
-        len_max_group = max([len(group_partition[key]) for key in group_partition.keys()])
+        len_min_group = min([len(group_partition[key]) for key in group_partition.keys()])
         self.indices = []
         for key in group_partition.keys():
-            group_reordered_indices = [group_partition[key][i] for i in torch.randperm(len(group_partition[key])).tolist()]
-            group_indices = []
-            while len(group_indices) < len_max_group:
-                group_indices.extend(group_reordered_indices)
-            self.indices.extend(group_indices[:len_max_group])
+            group_indices = torch.randperm(len(group_partition[key]))[:len_min_group].tolist()
+            self.indices.extend([group_partition[key][i] for i in group_indices])
 
         self.trainer = Trainer(
             trainset=trainset,
