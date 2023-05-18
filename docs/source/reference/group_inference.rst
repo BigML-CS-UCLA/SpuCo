@@ -39,7 +39,7 @@ Spread Spurious Attribute (SSA)
 Correct-N-Contrast Inference (CNC)
 -------------------------------------------
 
-.. automodule:: spuco.invariant_train.group_balance_erm
+.. automodule:: spuco.group_inference.cnc_inference
    :members:
    :undoc-members:
    :show-inheritance:

@@ -35,6 +35,7 @@ dependencies = [
     "torch>=2.0.0",
     "torchvision>=0.15.1",
     "tqdm>=4.65.0",
+    "sklearn">="0.0.post4"
 ]
 
 [project.optional-dependencies]
