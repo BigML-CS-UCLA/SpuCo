@@ -36,7 +36,8 @@ class GroupLabeledDataset(Dataset):
         :type index: int
         :return: The item at the given index.
         """
-        return self.dataset.__getitem__(index) + (self.group[index],)
+        source_tuple = self.dataset.__getitem__(index)
+        return (source_tuple[0], source_tuple[1], self.group[index])
     
     def __len__(self):
         """

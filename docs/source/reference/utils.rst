@@ -19,6 +19,14 @@ Spurious Target Dataset
    :undoc-members:
    :show-inheritance:
 
+WILDDatasetWrapper
+-------------------------
+
+.. automodule:: spuco.utils.wilds_dataset_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Trainer
 -------------------------
 
