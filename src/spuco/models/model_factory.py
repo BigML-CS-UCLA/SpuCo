@@ -3,16 +3,27 @@ from typing import Tuple
 from spuco.models import MLP, LeNet, SpuCoModel
 
 class SupportedModels(Enum):
+    """
+    Enum listing all supported models.
+    """
     MLP = "mlp"
-    #ConvNet = "convnet"
-    #ResNet18 = "resnet18"
-    #ResNet50 = "resnet50" 
     LeNet = "lenet"
-    #AlexNet = "alexnet"
-    #VGG11 = "vgg11"
 
 def model_factory(arch: str, input_shape: Tuple[int, int, int], num_classes: int):
+    """
+    Factory function to create a SpuCoModel based on the specified architecture.
 
+    :param arch: The architecture name.
+    :type arch: str
+    :param input_shape: The shape of the input data in the format (channels, height, width).
+    :type input_shape: Tuple[int, int, int]
+    :param num_classes: The number of output classes.
+    :type num_classes: int
+    :return: A SpuCoModel instance.
+    :rtype: SpuCoModel
+    :raises NotImplementedError: If the specified architecture is not supported.
+    """
+    
     arch = SupportedModels(arch)
     channel = input_shape[0]
     image_size = (input_shape[1], input_shape[2])
