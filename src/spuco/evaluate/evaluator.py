@@ -3,6 +3,7 @@ from typing import Dict, List, Tuple
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, SubsetRandomSampler
+from tqdm import tqdm 
 
 from spuco.utils import SpuriousTargetDataset
 
@@ -49,7 +50,7 @@ class Evaluator:
         # Group-Wise DataLoader
         for key in group_partition.keys():
             sampler = SubsetRandomSampler(group_partition[key])
-            self.testloaders[key] = DataLoader(testset, batch_size=batch_size, sampler=sampler)
+            self.testloaders[key] = DataLoader(testset, batch_size=batch_size, sampler=sampler, num_workers=4, pin_memory=True)
         
         # SpuriousTarget Dataloader
         spurious = torch.zeros(len(testset))
@@ -57,7 +58,7 @@ class Evaluator:
             for i in self.group_partition[key]:
                 spurious[i] = key[1]
         spurious_dataset = SpuriousTargetDataset(dataset=testset, spurious_labels=spurious)
-        self.spurious_dataloader = DataLoader(spurious_dataset, batch_size=batch_size)
+        self.spurious_dataloader = DataLoader(spurious_dataset, batch_size=batch_size, num_workers=4, pin_memory=True)
 
     def evaluate(self):
         """
@@ -65,7 +66,7 @@ class Evaluator:
         """
         self.model.eval()
         self.accuracies = {}
-        for key in sorted(self.group_partition.keys()):
+        for key in tqdm(sorted(self.group_partition.keys()), "Evaluating group-wise accuracy", ):
             self.accuracies[key] = self._evaluate_accuracy(self.testloaders[key])
             if self.verbose:
                 print(f"Group {key} Test Accuracy: {self.accuracies[key]}")

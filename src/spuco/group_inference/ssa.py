@@ -143,7 +143,9 @@ class SSA(BaseGroupInference):
                 indices=self.unlabeled_data_splits[split_num]
             ),
             batch_size=self.batch_size, 
-            shuffle=False
+            shuffle=False,
+            num_workers=4, 
+            pin_memory=True
         )
 
         with torch.no_grad():
@@ -187,7 +189,9 @@ class SSATrainer:
                 indices=[i for split_num in range(self.ssa.num_splits) if split_num != self.split_num for i in self.ssa.unlabeled_data_splits[split_num]]
             ),
             batch_size=self.ssa.batch_size, 
-            shuffle=True
+            shuffle=True,
+            num_workers=4, 
+            pin_memory=True
         )
 
         self.labeled_trainloader = DataLoader(
@@ -196,7 +200,9 @@ class SSATrainer:
                 indices=self.ssa.labeled_train_indices
             ),
             batch_size=self.ssa.batch_size, 
-            shuffle=True
+            shuffle=True,
+            num_workers=4, 
+            pin_memory=True
         )
         self.valloader = DataLoader(
             dataset=Subset(
@@ -204,7 +210,9 @@ class SSATrainer:
                 indices=self.ssa.labeled_val_indices
             ),
             batch_size=self.ssa.batch_size, 
-            shuffle=False
+            shuffle=False,
+            num_workers=4, 
+            pin_memory=True
         )
 
         self.cross_entropy = nn.CrossEntropyLoss()

@@ -57,7 +57,9 @@ class LFF():
         self.trainloader = DataLoader(
             trainset, 
             batch_size=batch_size, 
-            shuffle=True
+            shuffle=True,
+            num_workers=4, 
+            pin_memory=True
         )
 
     def train(self):

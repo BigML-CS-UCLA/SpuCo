@@ -66,7 +66,9 @@ class Trainer:
             self.trainset, 
             batch_size=self.batch_size, 
             shuffle=(self.sampler is None), 
-            sampler=self.sampler
+            sampler=self.sampler,
+            num_workers=4, 
+            pin_memory=True
         )
 
     def train(self, num_epochs: int):
@@ -129,7 +131,9 @@ class Trainer:
             eval_trainloader = DataLoader(
                 dataset=self.trainset,
                 batch_size=self.batch_size,
-                shuffle=False
+                shuffle=False,
+                num_workers=4, 
+                pin_memory=True
             )
             with tqdm(eval_trainloader, unit="batch", total=len(self.trainloader), disable=not self.verbose) as pbar:
                 outputs = []

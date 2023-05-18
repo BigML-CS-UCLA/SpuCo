@@ -77,7 +77,35 @@ Can I overcome keyword search
 - [x] lff
 - [x] dfr
 
-# Quickstart / Sample Notebooks 
+# Reproducing Baselines 
+
+## CMNIST 
+
+- [ ] erm
+- [ ] groupdro 
+- [ ] jtt
+- [ ] eiil
+- [ ] clustering 
+- [ ] sampling
+- [ ] ssa
+- [ ] cnc 
+- [ ] lff
+- [ ] dfr
+
+## WaterBirds
+
+- [ ] erm
+- [ ] groupdro 
+- [ ] jtt
+- [ ] eiil
+- [ ] clustering 
+- [ ] sampling
+- [ ] ssa
+- [ ] cnc 
+- [ ] lff
+- [ ] dfr
+
+## CivilComments 
 
 - [ ] erm
 - [ ] groupdro 
@@ -91,6 +119,33 @@ Can I overcome keyword search
 - [ ] dfr
 
 
+## CelebA
+
+- [ ] erm
+- [ ] groupdro 
+- [ ] jtt
+- [ ] eiil
+- [ ] clustering 
+- [ ] sampling
+- [ ] ssa
+- [ ] cnc 
+- [ ] lff
+- [ ] dfr
+
+
+## MNLI
+
+- [ ] erm
+- [ ] groupdro 
+- [ ] jtt
+- [ ] eiil
+- [ ] clustering 
+- [ ] sampling
+- [ ] ssa
+- [ ] cnc 
+- [ ] lff
+- [ ] dfr
+
 # Debugging
 
 @Yu
@@ -100,10 +155,10 @@ Debugging Methods (run but don't give expected improvement):
 
 # New Features 
 
-- [ ] up/down sampling subclasses of CustomIndicesSampler @Sid
-- [ ] add support for existing datasets e.g. waterbirds @Yu (if this works, we extend to CelebA and civilcomments)
-- [ ] lr scheduler support in trainer @Sid
-- [ ] control randomness from python random @Sid
+- [ ] @Sid: up/down sampling subclasses of CustomIndicesSampler 
+- [x] add support for WILDS Dataset
+- [ ] @Sid: lr scheduler support in trainer 
+- [ ] @Sid: control randomness from python random
 
 General TODO:
 

@@ -92,7 +92,9 @@ class DFR():
         trainloader = DataLoader(
             dataset=self.trainset, 
             batch_size=self.batch_size,
-            shuffle=False
+            shuffle=False,
+            num_workers=4, 
+            pin_memory=True
         )
 
         with torch.no_grad():
