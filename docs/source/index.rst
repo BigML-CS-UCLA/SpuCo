@@ -2,7 +2,7 @@ SpuCo
 ============
 
 **SpuCo** is a Python package that provides complex Vision and NLP datasets
-with the spurious correlations problem. 
+with the *spurious correlations* problem. 
 
 The SpuCo package is designed to help researchers and practitioners evaluate
 the robustness of their machine learning algorithms against spurious
