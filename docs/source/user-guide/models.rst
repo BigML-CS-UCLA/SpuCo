@@ -1,5 +1,0 @@
-Models
-===============
-
-Provided models:
-- MLP

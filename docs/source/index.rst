@@ -1,7 +1,6 @@
 SpuCo
 ============
 
-
 **SpuCo** is a Python package that provides complex Vision and NLP datasets
 with the spurious correlations problem. 
 
@@ -18,9 +17,7 @@ can identify and handle these spurious correlations.
 
 About Us
 --------
-This package is maintained by:
-* `Siddharth Joshi <https://sjoshi804.github.io/>`_
-* `Yu Yang <https://sites.google.com/g.ucla.edu/yuyang/home>`_
+This package is maintained by `Siddharth Joshi <https://sjoshi804.github.io/>`_ and `Yu Yang <https://sites.google.com/g.ucla.edu/yuyang/home>`_
 
 from `Professor Baharan Mirzasoleiman <http://web.cs.ucla.edu/~baharan/group.htm>`_'s lab at **UCLA**.
 
@@ -33,10 +30,7 @@ Getting Started
 
    user-guide/quickstart
    user-guide/datasets
-   user-guide/models
-   user-guide/group_inference
-   user-guide/invariant_train
-
+   
 .. toctree::
    :caption: API Reference
    :maxdepth: 1
