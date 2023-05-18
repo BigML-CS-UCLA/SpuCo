@@ -155,9 +155,9 @@ Debugging Methods (run but don't give expected improvement):
 
 # New Features 
 
-- [ ] @Sid: up/down sampling subclasses of CustomIndicesSampler 
-- [x] add support for WILDS Dataset
-- [ ] @Sid: lr scheduler support in trainer 
+- [x] @Sid: up/down sampling subclasses of CustomIndicesSampler 
+- [x] @Sid: add support for WILDS Dataset
+- [x] @Sid: lr scheduler support in trainer 
 - [ ] @Sid: control randomness from python random
 
 General TODO:

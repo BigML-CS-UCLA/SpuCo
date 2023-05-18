@@ -13,6 +13,7 @@ class Trainer:
             model: nn.Module,
             batch_size: int,
             optimizer: optim.Optimizer,
+            lr_scheduler: Optional[optim.lr_scheduler._LRScheduler] = None,
             criterion: nn.Module = nn.CrossEntropyLoss(),
             forward_pass: Optional[Callable[[Any], Tuple[torch.Tensor, torch.Tensor, torch.Tensor]]] = None,
             sampler: Sampler = None,
@@ -45,6 +46,7 @@ class Trainer:
         self.model = model
         self.batch_size = batch_size
         self.optimizer = optimizer
+        self.lr_scheduler = lr_scheduler
         self.criterion = criterion
         self.batch_size = batch_size
         self.sampler = sampler
@@ -100,6 +102,8 @@ class Trainer:
                 self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()
+                if self.lr_scheduler is not None:
+                    self.lr_scheduler.step()
 
                 pbar.set_postfix(loss=loss.item(), accuracy=f"{accuracy}%")
                 average_accuracy += accuracy
