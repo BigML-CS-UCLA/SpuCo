@@ -170,5 +170,5 @@ General TODO:
 
 - Waterbirds problems:
     - size
-    - not complex enough
+    - not complex enough - different spurious correlation per class, label flips, image corruptions
     - resolution
