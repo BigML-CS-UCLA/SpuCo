@@ -11,6 +11,8 @@ that have been artificially modified to introduce spurious correlations
 between features, making it possible to evaluate how well different algorithms
 can identify and handle these spurious correlations.
 
+Link to GitHub: https://github.com/sjoshi804/SpuCo/
+
 .. note::
 
    This project is under active development.
@@ -30,7 +32,7 @@ Getting Started
 
    user-guide/quickstart
    user-guide/datasets
-   
+
 .. toctree::
    :caption: API Reference
    :maxdepth: 1
