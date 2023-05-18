@@ -11,12 +11,34 @@ class SpuriousTargetDataset(Dataset):
         dataset: Dataset,
         spurious_labels: List[int]
     ):
+        """
+        Initialize an instance of SpuriousTargetDataset.
+
+        :param dataset: The original dataset.
+        :type dataset: Dataset
+        :param spurious_labels: The spurious labels corresponding to the data.
+        :type spurious_labels: List[int]
+        """
         self.dataset = dataset
         self.spurious_labels = spurious_labels
 
     def __getitem__(self, index):
+        """
+        Get an item from the dataset.
+
+        :param index: The index of the item to retrieve.
+        :type index: int
+        :return: A tuple containing the input data and the spurious label.
+        :rtype: Tuple[Any, int]
+        """
         return (self.dataset.__getitem__(index)[0], self.spurious_labels[index])
     
     def __len__(self):
+        """
+        Get the length of the dataset.
+
+        :return: The length of the dataset.
+        :rtype: int
+        """
         return len(self.dataset)
         

@@ -1,21 +1,19 @@
 spuco.models
 ====================
 
-Submodules
-----------
+Built-in Models and ModelFactory.
 
-spuco.models.mlp
+ModelFactory
 -----------------------
-
-.. automodule:: spuco.models.mlp
+.. automodule:: spuco.models.model_factory
    :members:
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+SpuCoModel
+-----------------------
 
-.. automodule:: spuco.models
+.. automodule:: spuco.models.spuco_model
    :members:
    :undoc-members:
    :show-inheritance:

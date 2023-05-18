@@ -1,10 +1,12 @@
 spuco.end2end
 =====================
 
-Module contents
----------------
+End-to-end methods (group inference and invariant training simultaneously).
 
-.. automodule:: spuco.end2end
+Learning from Failure (LfF)
+----------------------------
+
+.. automodule:: spuco.end2end.lff
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,7 +1,9 @@
 import heapq
 import math
+
 import numpy as np
 from tqdm import tqdm
+
 
 class FacilityLocation:
     def __init__(self, D, V, alpha=1.):

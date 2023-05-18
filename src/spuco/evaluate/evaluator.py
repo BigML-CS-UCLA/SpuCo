@@ -35,7 +35,7 @@ class Evaluator:
         :param verbose: Whether to print evaluation results. Default is False.
         :type verbose: bool, optional
         """
-        
+
         self.testloaders = {}
         self.group_partition = group_partition
         self.group_weights = group_weights
@@ -84,6 +84,9 @@ class Evaluator:
             return 100 * correct / total
         
     def evaluate_spurious_task(self):
+        """
+        Evaluates accuracy if the task was predicting the spurious attribute.
+        """
         return self._evaluate_accuracy(self.spurious_dataloader)
 
     @property

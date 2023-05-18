@@ -1,8 +1,8 @@
 from typing import Any, Callable, Optional, Tuple
+
 import torch
-from torch.utils.data import Sampler
 from torch import nn, optim
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader, Dataset, Sampler
 from tqdm import tqdm
 
 
@@ -20,7 +20,7 @@ class Trainer:
             verbose: bool = False
     ) -> None:
         """
-        Constructor for the Trainer class.
+        Initializes an instance of the Trainer class.
 
         :param trainset: The training set.
         :type trainset: torch.utils.data.Dataset
@@ -30,13 +30,15 @@ class Trainer:
         :type batch_size: int
         :param optimizer: The optimizer to use for training.
         :type optimizer: torch.optim.Optimizer
-        :param criterion: The loss function to use during training.
+        :param criterion: The loss function to use during training. Default is nn.CrossEntropyLoss().
         :type criterion: torch.nn.Module, optional
-        :param forward_pass: The forward pass function to use during training.
+        :param forward_pass: The forward pass function to use during training. Default is None.
         :type forward_pass: Callable[[Any], Tuple[torch.Tensor, torch.Tensor, torch.Tensor]], optional
-        :param device: The device to use for computations.
+        :param sampler: The sampler to use for creating batches. Default is None.
+        :type sampler: torch.utils.data.Sampler, optional
+        :param device: The device to use for computations. Default is torch.device("cpu").
         :type device: torch.device, optional
-        :param verbose: Whether to print training progress.
+        :param verbose: Whether to print training progress. Default is False.
         :type verbose: bool, optional
         """
         self.trainset = trainset
@@ -68,12 +70,21 @@ class Trainer:
         )
 
     def train(self, num_epochs: int):
+        """
+        Trains for given number of epochs 
+
+        :param num_epochs: Number of epochs to train for
+        :type num_epochs: int
+        """
         for epoch in range(num_epochs):
             self.train_epoch(epoch) 
             
     def train_epoch(self, epoch: int) -> None:
         """
         Trains the PyTorch model for 1 epoch
+
+        :param epoch: epoch number that is being trained (only used by logging)
+        :type epoch: int
         """
         self.model.train()
         with tqdm(self.trainloader, unit="batch", total=len(self.trainloader), disable=not self.verbose) as pbar:
@@ -110,6 +121,9 @@ class Trainer:
         return 100. * correct / total
     
     def get_trainset_outputs(self):
+        """
+        Gets output of model on trainset
+        """
         with torch.no_grad():
             self.model.eval()
             eval_trainloader = DataLoader(

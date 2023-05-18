@@ -1,4 +1,5 @@
-from typing import Dict, List, Tuple
+from typing import Dict, Tuple
+
 import torch
 from torch.utils.data import Dataset
 
@@ -8,6 +9,14 @@ class GroupLabeledDataset(Dataset):
         dataset: Dataset,
         group_partition: Dict[Tuple[int, int], int],
     ):
+        """
+        Initializes a GroupLabeledDataset.
+
+        :param dataset: The underlying dataset.
+        :type dataset: torch.utils.data.Dataset
+        :param group_partition: The group partition dictionary mapping indices to group labels.
+        :type group_partition: Dict[Tuple[int, int], int]
+        """
         self.dataset = dataset
         self.group = torch.zeros(len(self.dataset))
         self.group_partition = group_partition
@@ -20,7 +29,20 @@ class GroupLabeledDataset(Dataset):
         self.group = self.group.long().tolist()
         
     def __getitem__(self, index):
+        """
+        Retrieves an item from the dataset.
+
+        :param index: The index of the item.
+        :type index: int
+        :return: The item at the given index.
+        """
         return self.dataset.__getitem__(index) + (self.group[index],)
     
     def __len__(self):
+        """
+        Returns the length of the dataset.
+
+        :return: The length of the dataset.
+        :rtype: int
+        """
         return len(self.dataset)

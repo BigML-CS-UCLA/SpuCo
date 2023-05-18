@@ -1,7 +1,7 @@
 spuco.invariant\_train
 ==============================
 
-Submodule for invariant training methods. 
+Invariant Training Methods.
 
 ERM
 ---------------------------------
