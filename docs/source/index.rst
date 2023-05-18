@@ -18,7 +18,11 @@ can identify and handle these spurious correlations.
 
 About Us
 --------
-This package is maintained by `**Siddharth Joshi** <https://sjoshi804.github.io/>` and `**Yu Yang** <https://sites.google.com/g.ucla.edu/yuyang/home>` from the BigML lab headed by `**Professor Baharan Mirzasoleiman** <http://web.cs.ucla.edu/~baharan/group.htm>` at **UCLA**.
+This package is maintained by:
+* `Siddharth Joshi <https://sjoshi804.github.io/>`_
+* `Yu Yang <https://sites.google.com/g.ucla.edu/yuyang/home>`_
+
+from `Professor Baharan Mirzasoleiman <http://web.cs.ucla.edu/~baharan/group.htm>`_'s lab at **UCLA**.
 
 Getting Started
 ---------------
