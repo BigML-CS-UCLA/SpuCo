@@ -77,22 +77,43 @@ Can I overcome keyword search
 - [x] lff
 - [x] dfr
 
+# Quickstart / Sample Notebooks 
+
+- [ ] erm
+- [ ] groupdro 
+- [ ] jtt
+- [ ] eiil
+- [ ] clustering 
+- [ ] sampling
+- [ ] ssa
+- [ ] cnc 
+- [ ] lff
+- [ ] dfr
+
+
+# Debugging
+
+@Yu
 Debugging Methods (run but don't give expected improvement):
 - [ ] CNC
 - [ ] LFF
 
+# New Features 
+
+- [ ] up/down sampling subclasses of CustomIndicesSampler @Sid
+- [ ] add support for existing datasets e.g. waterbirds @Yu (if this works, we extend to CelebA and civilcomments)
+- [ ] lr scheduler support in trainer @Sid
+- [ ] control randomness from python random @Sid
+
 General TODO:
-- [x] model factory
-- [ ] lr scheduler support in trainer
-- [ ] control randomness from python random 
-- [ ] move erm to end2end?
-# Tasks for later 
+
+# Later 
 
 - [ ] tune magnitude and variance patch sizes for LeNet on SpuCoMNIST
-- [ ] up/down sampling subclasses of CustomIndicesSampler
-- [ ] add support for existing datasets e.g. waterbirds, mnli, civil comments, celeba - probably just wrappers around wilds?
 
-# Engineering Goals 
+# Dataset
 
-- Can we get some namespace / dictionary to group the methods that are similar
-- Can we get some hyperparameters function or object to basically easily see what hyperparameters each method has
+- Waterbirds problems:
+    - size
+    - not complex enough
+    - resolution

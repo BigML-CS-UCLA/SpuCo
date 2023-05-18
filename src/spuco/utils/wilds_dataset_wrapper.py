@@ -25,7 +25,7 @@ class WILDSDatasetWrapper(Dataset):
         """
         
         self.dataset = dataset
-        self.num_classes = dataset.n_classes 
+        self._num_classes = dataset.n_classes 
 
         # Get index in meta data array corresponding to spurious target 
         spurious_target_idx = list(dataset.metadata_map.keys()).index(metadata_spurious_label)
@@ -70,6 +70,13 @@ class WILDSDatasetWrapper(Dataset):
         List containing spurious labels for each example
         """
         return self._group_partition 
+
+    @property
+    def num_classes(self) -> int:
+        """
+        Number of classes
+        """
+        return self._num_classes
 
     def __getitem__(self, index):
         """
