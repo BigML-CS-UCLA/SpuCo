@@ -38,7 +38,7 @@ Class Balance Batch ERM
 DownSample ERM
 ----------------------------------------
 
-.. automodule:: spuco.invariant_train.upsample_erm
+.. automodule:: spuco.invariant_train.downsample_erm
    :members:
    :undoc-members:
    :show-inheritance:
@@ -46,7 +46,7 @@ DownSample ERM
 UpSample ERM
 ----------------------------------------
 
-.. automodule:: spuco.invariant_train.downsample_erm
+.. automodule:: spuco.invariant_train.upsample_erm
    :members:
    :undoc-members:
    :show-inheritance:
