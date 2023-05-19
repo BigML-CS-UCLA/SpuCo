@@ -1,6 +1,12 @@
+import random
 from enum import Enum
 from typing import Tuple
+
+import numpy as np
+import torch
+
 from spuco.models import MLP, LeNet, SpuCoModel
+from spuco.utils.random_seed import seed_randomness
 
 class SupportedModels(Enum):
     """
@@ -23,7 +29,7 @@ def model_factory(arch: str, input_shape: Tuple[int, int, int], num_classes: int
     :rtype: SpuCoModel
     :raises NotImplementedError: If the specified architecture is not supported.
     """
-    
+    seed_randomness(random_module=random, torch_module=torch, numpy_module=np)
     arch = SupportedModels(arch)
     channel = input_shape[0]
     image_size = (input_shape[1], input_shape[2])

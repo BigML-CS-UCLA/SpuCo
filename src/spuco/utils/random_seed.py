@@ -21,7 +21,7 @@ def get_seed():
         return seed_class.seed
     
 def seed_randomness(random_module=None, torch_module=None, numpy_module=None):
-    seed = 0 #get_seed()
+    seed = get_seed()
     if torch_module is not None:
         torch_module.backends.cudnn.deterministic = True 
         torch_module.backends.cudnn.benchmark = False 

@@ -1,10 +1,18 @@
+import random
+
+import numpy as np
+import torch
 import torch.nn as nn
- 
+
+from spuco.utils.random_seed import seed_randomness
+
+
 class MLP(nn.Module):
     def __init__(
         self,
         input_dim: int,
     ):
+        seed_randomness(random_module=random, torch_module=torch, numpy_module=np)
         super(MLP, self).__init__()
         self.input_dim = input_dim
         self.representation_dim = 256
