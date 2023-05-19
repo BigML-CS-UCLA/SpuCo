@@ -142,10 +142,6 @@ Debugging Methods (run but don't give expected improvement):
 
 General TODO:
 
-# Later 
-
-- [ ] tune magnitude and variance patch sizes for LeNet on SpuCoMNIST
-
 # Dataset
 
 - Waterbirds problems:
