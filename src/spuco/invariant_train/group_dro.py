@@ -1,8 +1,13 @@
-from typing import Callable
-import torch 
-from torch import nn, optim
-from spuco.utils import Trainer, GroupLabeledDataset, CustomIndicesSampler
 import random
+from typing import Callable
+
+import numpy as np
+import torch
+from torch import nn, optim
+
+from spuco.utils import CustomIndicesSampler, GroupLabeledDataset, Trainer
+from spuco.utils.random_seed import seed_randomness
+
 
 class GroupWeightedLoss(nn.Module):
     """
@@ -93,6 +98,9 @@ class GroupDRO():
         :param verbose: Whether to print training progress (default: False).
         :type verbose: bool
         """
+
+         
+        seed_randomness(torch_module=torch, random_module=random, numpy_module=np)
 
         assert batch_size >= len(trainset.group_partition), "batch_size must be >= number of groups (Group DRO requires at least 1 example from each group)"
 

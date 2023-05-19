@@ -4,7 +4,10 @@ from torch import optim
 from spuco.invariant_train import BaseInvariantTrain
 from spuco.models import SpuCoModel
 from spuco.utils import GroupLabeledDataset, Trainer
+from spuco.utils.random_seed import seed_randomness
 
+import random
+import numpy as np
 
 class CorrectNContrastTrain(BaseInvariantTrain):
     """
@@ -49,6 +52,9 @@ class CorrectNContrastTrain(BaseInvariantTrain):
         :type verbose: bool
         """
         super().__init__()
+
+        seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
+
         self.num_epochs = num_epochs 
 
         def forward_pass(self, batch):

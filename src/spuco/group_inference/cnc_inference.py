@@ -1,11 +1,15 @@
+import random
 from typing import Dict, List, Tuple
 
+import numpy as np
 import torch
 from torch import nn, optim
 from torch.utils.data import Dataset
 
 from spuco.group_inference import BaseGroupInference
 from spuco.utils import Trainer
+from spuco.utils.random_seed import seed_randomness
+
 
 class CorrectNContrastInference(BaseGroupInference):
     """
@@ -39,7 +43,11 @@ class CorrectNContrastInference(BaseGroupInference):
         :param verbose: Whether to print training progress. Defaults to False.
         :type verbose: bool, optional
         """
+         
+        seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
+        
         super().__init__()
+        
         self.trainer = Trainer(
             trainset=trainset,
             model=model, 

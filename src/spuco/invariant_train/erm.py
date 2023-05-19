@@ -1,8 +1,14 @@
+import random
+
+import numpy as np
 import torch
-from torch import nn, optim 
+from torch import nn, optim
 from torch.utils.data import Dataset
-from spuco.utils import Trainer
+
 from spuco.invariant_train import BaseInvariantTrain
+from spuco.utils import Trainer
+from spuco.utils.random_seed import seed_randomness
+
 
 class ERM(BaseInvariantTrain):
     """
@@ -39,8 +45,10 @@ class ERM(BaseInvariantTrain):
         :param verbose: If True, prints verbose training information. Default is False.
         :type verbose: bool, optional
         """
+        seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
 
         super().__init__()
+
         self.num_epochs = num_epochs
         self.trainer = Trainer(
             trainset=trainset,

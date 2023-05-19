@@ -1,11 +1,13 @@
 import random
 from typing import Dict
 
+import numpy as np
 import torch
 from torch import nn, optim
 from torch.utils.data import Dataset
 
 from spuco.utils import CustomIndicesSampler, Trainer
+from spuco.utils.random_seed import seed_randomness
 
 
 class GroupBalanceBatchERM():
@@ -43,6 +45,10 @@ class GroupBalanceBatchERM():
         :param verbose: Whether to print training progress (default: False).
         :type verbose: bool
         """
+
+         
+        seed_randomness(random_module=random, torch_module=torch, numpy_module=np)
+
         assert batch_size >= len(trainset.group_partition), "batch_size must be >= number of groups (Group DRO requires at least 1 example from each group)"
         
         self.num_epochs = num_epochs

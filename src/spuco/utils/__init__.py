@@ -6,3 +6,4 @@ from .group_labeled_dataset import GroupLabeledDataset
 from .spurious_target_dataset import SpuriousTargetDataset
 from .trainer import Trainer 
 from .wilds_dataset_wrapper import WILDSDatasetWrapper
+from .random_seed import set_seed

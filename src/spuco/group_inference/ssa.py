@@ -1,3 +1,4 @@
+import random
 from collections import Counter
 from copy import deepcopy
 from typing import Dict, List, Tuple
@@ -10,6 +11,7 @@ from tqdm import tqdm
 
 from spuco.group_inference import BaseGroupInference
 from spuco.utils import SpuriousTargetDataset, Trainer, get_class_labels
+from spuco.utils.random_seed import seed_randomness
 
 
 class SSA(BaseGroupInference):
@@ -60,7 +62,9 @@ class SSA(BaseGroupInference):
         :type verbose: bool
         """
 
+        seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
         super().__init__()
+
         self.spurious_unlabeled_dataset = spurious_unlabeled_dataset
         self.spurious_labeled_dataset = spurious_labeled_dataset
         self.model = model 
@@ -295,10 +299,12 @@ class SSATrainer:
             group_indices = group_indices[torch.topk(group_outputs, k=k).indices].cpu().tolist()
             unsup_indices.extend(group_indices)
 
-        # Compute cross entropy with respect to pseudo-labels 
-        unsupervised_loss = self.cross_entropy(outputs[unsup_indices], pseudo_labels[unsup_indices])
-        
-        return supervised_loss + unsupervised_loss 
+        if len(unsup_indices) > 0:
+            # Compute cross entropy with respect to pseudo-labels 
+            unsupervised_loss = self.cross_entropy(outputs[unsup_indices], pseudo_labels[unsup_indices])
+            return supervised_loss + unsupervised_loss
+        else:
+            return supervised_loss
     
     def validate(self):
         """

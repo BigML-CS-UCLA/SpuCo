@@ -5,7 +5,9 @@ from torch import nn, optim
 from torch.utils.data import Dataset
 
 from spuco.utils import CustomIndicesSampler, Trainer
-
+from spuco.utils.random_seed import seed_randomness
+import random 
+import numpy as np 
 
 class UpSampleERM():
     """
@@ -45,6 +47,9 @@ class UpSampleERM():
         :param verbose: Whether to print training progress (default: False).
         :type verbose: bool
         """
+
+         
+        seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
 
         self.num_epochs = num_epochs
 

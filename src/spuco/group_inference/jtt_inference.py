@@ -1,6 +1,11 @@
+import random
 from typing import Dict, List, Tuple
 
+import numpy as np
+import torch
+
 from spuco.group_inference import BaseGroupInference
+from spuco.utils.random_seed import seed_randomness
 
 
 class JTTInference(BaseGroupInference):
@@ -18,6 +23,9 @@ class JTTInference(BaseGroupInference):
         :param predictions: List of predicted labels.
         :param class_labels: List of true class labels.
         """
+
+        seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
+
         super().__init__()
         self.predictions = predictions
         self.class_labels = class_labels

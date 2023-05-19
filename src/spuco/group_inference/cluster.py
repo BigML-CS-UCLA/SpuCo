@@ -1,3 +1,4 @@
+import random
 from enum import Enum
 from typing import Dict, List, Optional
 
@@ -10,6 +11,7 @@ from tqdm import tqdm
 from spuco.group_inference import BaseGroupInference
 from spuco.utils import (cluster_by_exemplars, convert_labels_to_partition,
                          convert_partition_to_labels, pairwise_similarity)
+from spuco.utils.random_seed import seed_randomness
 
 
 class ClusterAlg(Enum):
@@ -51,6 +53,9 @@ class Cluster(BaseGroupInference):
         :param verbose: Whether to display progress and logging information. Defaults to False.
         :type verbose: bool, optional
         """
+         
+        seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
+
         super().__init__()
 
         # Argument Validation 

@@ -1,8 +1,14 @@
-import torch 
-from torch import nn, optim
+import random
 from typing import List
+
+import numpy as np
+import torch
+from torch import nn, optim
 from tqdm import tqdm
+
 from spuco.group_inference import BaseGroupInference
+from spuco.utils.random_seed import seed_randomness
+
 
 class EIIL(BaseGroupInference):
     """
@@ -34,7 +40,11 @@ class EIIL(BaseGroupInference):
         :param verbose: Whether to print training progress. Defaults to False.
         :type verbose: bool, optional
         """
+         
+        seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
+        
         super().__init__()
+
         self.logits = logits 
         self.class_labels = class_labels
         self.num_steps = num_steps

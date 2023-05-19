@@ -6,7 +6,8 @@ from torch.utils.data import Dataset
 
 from spuco.utils import (CustomIndicesSampler, Trainer,
                          convert_labels_to_partition, get_class_labels)
-
+from spuco.utils.random_seed import seed_randomness
+import numpy as np
 
 class ClassBalanceBatchERM():
     """
@@ -40,6 +41,10 @@ class ClassBalanceBatchERM():
         :param verbose: Whether to print training progress (default: False).
         :type verbose: bool
         """
+
+         
+        seed_randomness(random_module=random, torch_module=torch, numpy_module=np)
+
         self.class_partition = convert_labels_to_partition(get_class_labels(trainset))
         assert batch_size >= len(self.class_partition), "batch_size must be >= number of groups (Group DRO requires at least 1 example from each group)"
         

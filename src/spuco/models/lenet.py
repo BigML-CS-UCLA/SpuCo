@@ -1,5 +1,11 @@
-from torch import nn 
+import random as random
+
+import numpy as np
+import torch as torch
 import torch.nn.functional as F
+from torch import nn
+
+from spuco.utils.random_seed import seed_randomness
 
 # Acknowledgement to
 # https://github.com/kuangliu/pytorch-cifar,
@@ -13,9 +19,8 @@ class LeNet(nn.Module):
     def __init__(self, channel: int):
         """
         Initializes LeNet
-
-        :param: 
         """
+        seed_randomness(random_module=random, torch_module=torch, numpy_module=np)
         super(LeNet, self).__init__()
         self.features = nn.Sequential(
             nn.Conv2d(channel, 6, kernel_size=5, padding=2),

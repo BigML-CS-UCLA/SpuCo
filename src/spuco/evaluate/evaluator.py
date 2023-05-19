@@ -1,11 +1,15 @@
-from torch.utils.data import Dataset
+import random
 from typing import Dict, List, Tuple
+
+import numpy as np
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader, SubsetRandomSampler
-from tqdm import tqdm 
+from torch.utils.data import DataLoader, Dataset, SubsetRandomSampler
+from tqdm import tqdm
 
 from spuco.utils import SpuriousTargetDataset
+from spuco.utils.random_seed import seed_randomness
+
 
 class Evaluator:
     def __init__(
@@ -36,6 +40,8 @@ class Evaluator:
         :param verbose: Whether to print evaluation results. Default is False.
         :type verbose: bool, optional
         """
+          
+        seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
 
         self.testloaders = {}
         self.group_partition = group_partition

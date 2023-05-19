@@ -1,9 +1,12 @@
-from spuco.utils import Trainer
+import numpy as np
+import torch
 from torch import nn, optim
-from torch.utils.data import Dataset, DataLoader
-import torch 
-import numpy as np 
+from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
+
+from spuco.utils import Trainer
+from spuco.utils.random_seed import seed_randomness
+import random
 
 class LFF():
     def __init__(
@@ -43,6 +46,9 @@ class LFF():
         :param verbose: Whether to print training progress. Default is False.
         :type verbose: bool, optional
         """
+         
+        seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
+
         assert q >= 0. and q <= 1., "q must be in [0,1]"
 
         self.bias_model = bias_model

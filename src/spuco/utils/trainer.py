@@ -1,9 +1,13 @@
+import random
 from typing import Any, Callable, Optional, Tuple
 
+import numpy as np
 import torch
 from torch import nn, optim
 from torch.utils.data import DataLoader, Dataset, Sampler
 from tqdm import tqdm
+
+from spuco.utils.random_seed import seed_randomness
 
 
 class Trainer:
@@ -42,6 +46,8 @@ class Trainer:
         :param verbose: Whether to print training progress. Default is False.
         :type verbose: bool, optional
         """
+        seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
+
         self.trainset = trainset
         self.model = model
         self.batch_size = batch_size

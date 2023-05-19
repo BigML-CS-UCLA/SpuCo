@@ -1,8 +1,13 @@
+import random
+
+import numpy as np
 import torch
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 
 from spuco.models import SpuCoModel
+from spuco.utils.random_seed import seed_randomness
+
 
 class DFR():
     def __init__(
@@ -36,6 +41,9 @@ class DFR():
         :param verbose: Whether to print training progress. Defaults to False.
         :type verbose: bool, optional
         """
+          
+        seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
+
         self.trainset = group_balanced_dataset
         self.model = model 
         self.num_epochs = num_epochs

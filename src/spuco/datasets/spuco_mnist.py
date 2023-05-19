@@ -1,16 +1,21 @@
-from enum import Enum
 import itertools
-from typing import List, Optional, Callable
+import random
+from enum import Enum
+from typing import Callable, List, Optional
+
 import matplotlib.cm as cm
 import numpy as np
-
-from torch.utils.data import Subset
-import torch 
+import torch
 import torchvision
 import torchvision.transforms as T
+from torch.utils.data import Subset
 
-from spuco.datasets import BaseSpuCoDataset, SourceData, SpuriousFeatureDifficulty, TRAIN_SPLIT, VAL_SPLIT, TEST_SPLIT 
+from spuco.datasets import (TEST_SPLIT, TRAIN_SPLIT, VAL_SPLIT,
+                            BaseSpuCoDataset, SourceData,
+                            SpuriousFeatureDifficulty)
 from spuco.datasets.spuco_mnist_config import config
+from spuco.utils.random_seed import seed_randomness
+
 
 class ColourMap(Enum):
     HSV = "hsv"
@@ -49,6 +54,9 @@ class SpuCoMNIST(BaseSpuCoDataset):
         :param transform: The data transformation function. Default is None.
         :type transform: Optional[Callable]
         """
+
+        seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
+
         super().__init__(
             root=root, 
             spurious_correlation_strength=spurious_correlation_strength,

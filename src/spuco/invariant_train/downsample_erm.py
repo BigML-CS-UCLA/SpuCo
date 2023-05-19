@@ -1,10 +1,13 @@
-from typing import List, Dict, Tuple
+import random
+from typing import Dict, List, Tuple
 
+import numpy as np
 import torch
 from torch import nn, optim
 from torch.utils.data import Dataset
 
 from spuco.utils import CustomIndicesSampler, Trainer
+from spuco.utils.random_seed import seed_randomness
 
 
 class DownSampleERM():
@@ -45,6 +48,9 @@ class DownSampleERM():
         :param verbose: Whether to print training progress (default: False).
         :type verbose: bool
         """
+
+        
+        seed_randomness(torch_module=torch, random_module=random, numpy_module=np)
 
         self.num_epochs = num_epochs
 
