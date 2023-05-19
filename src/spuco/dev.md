@@ -79,7 +79,7 @@ Can I overcome keyword search
 
 # Reproducing Baselines 
 
-## CMNIST 
+## WaterBirds - WILDS
 
 - [ ] erm
 - [ ] groupdro 
@@ -92,20 +92,7 @@ Can I overcome keyword search
 - [ ] lff
 - [ ] dfr
 
-## WaterBirds
-
-- [ ] erm
-- [ ] groupdro 
-- [ ] jtt
-- [ ] eiil
-- [ ] clustering 
-- [ ] sampling
-- [ ] ssa
-- [ ] cnc 
-- [ ] lff
-- [ ] dfr
-
-## CivilComments 
+## CivilComments - WILDS
 
 - [ ] erm
 - [ ] groupdro 
@@ -133,7 +120,7 @@ Can I overcome keyword search
 - [ ] dfr
 
 
-## MNLI
+## MultiNLI
 
 - [ ] erm
 - [ ] groupdro 
@@ -152,13 +139,6 @@ Can I overcome keyword search
 Debugging Methods (run but don't give expected improvement):
 - [ ] CNC
 - [ ] LFF
-
-# New Features 
-
-- [x] @Sid: up/down sampling subclasses of CustomIndicesSampler 
-- [x] @Sid: add support for WILDS Dataset
-- [x] @Sid: lr scheduler support in trainer 
-- [ ] @Sid: control randomness from python random
 
 General TODO:
 
