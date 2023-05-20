@@ -45,10 +45,10 @@ def model_factory(arch: str, input_shape: Tuple[int, int, int], num_classes: int
         backbone = LeNet(channel=channel)
         representation_dim = backbone.representation_dim
     elif arch == SupportedModels.LeNet.BERT:
-        backbone = Bert()
+        backbone = Bert.from_pretrained('bert-base-uncased')
         representation_dim = backbone.d_out
     elif arch == SupportedModels.LeNet.DistilBERT:
-        backbone = DistilBert()
+        backbone = DistilBert.from_pretrained('distilbert-base-uncased')
         representation_dim = backbone.d_out
     else:
         raise NotImplemented(f"Model {arch} not supported currently")
