@@ -5,7 +5,7 @@ from typing import Tuple
 import numpy as np
 import torch
 
-from spuco.models import MLP, LeNet, SpuCoModel
+from spuco.models import MLP, LeNet, Bert, DistilBert, SpuCoModel
 from spuco.utils.random_seed import seed_randomness
 
 class SupportedModels(Enum):
@@ -14,6 +14,8 @@ class SupportedModels(Enum):
     """
     MLP = "mlp"
     LeNet = "lenet"
+    BERT = "bert"
+    DistilBERT = "distilbert"
 
 def model_factory(arch: str, input_shape: Tuple[int, int, int], num_classes: int):
     """
@@ -42,6 +44,12 @@ def model_factory(arch: str, input_shape: Tuple[int, int, int], num_classes: int
     elif arch == SupportedModels.LeNet: 
         backbone = LeNet(channel=channel)
         representation_dim = backbone.representation_dim
+    elif arch == SupportedModels.LeNet.BERT:
+        backbone = Bert()
+        representation_dim = backbone.d_out
+    elif arch == SupportedModels.LeNet.DistilBERT:
+        backbone = DistilBert()
+        representation_dim = backbone.d_out
     else:
         raise NotImplemented(f"Model {arch} not supported currently")
     return SpuCoModel(
