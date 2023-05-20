@@ -28,7 +28,7 @@ class WILDSDatasetWrapper(Dataset):
         self._num_classes = dataset.n_classes 
 
         # Get index in meta data array corresponding to spurious target 
-        spurious_target_idx = list(dataset.metadata_map.keys()).index(metadata_spurious_label)
+        spurious_target_idx = dataset.metadata_fields.index(metadata_spurious_label)
 
         # Get spurious labels
         self._spurious = dataset.metadata_array[:, spurious_target_idx].long().tolist()
