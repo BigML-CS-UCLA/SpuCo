@@ -23,6 +23,8 @@ class ERM(BaseInvariantTrain):
         num_epochs: int,
         criterion=nn.CrossEntropyLoss(), 
         device: torch.device = torch.device("cpu"),
+        lr_scheduler=None,
+        max_grad_norm=None,
         verbose=False
     ):
         """
@@ -55,6 +57,8 @@ class ERM(BaseInvariantTrain):
             model=model,
             batch_size=batch_size,
             optimizer=optimizer,
+            lr_scheduler=lr_scheduler,
+            max_grad_norm=max_grad_norm,
             criterion=criterion,
             verbose=verbose,
             device=device

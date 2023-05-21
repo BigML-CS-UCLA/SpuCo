@@ -7,3 +7,4 @@ from .spurious_target_dataset import SpuriousTargetDataset
 from .trainer import Trainer 
 from .wilds_dataset_wrapper import WILDSDatasetWrapper
 from .random_seed import set_seed
+from .bert_transform import initialize_bert_transform

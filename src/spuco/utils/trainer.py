@@ -18,6 +18,7 @@ class Trainer:
             batch_size: int,
             optimizer: optim.Optimizer,
             lr_scheduler: Optional[optim.lr_scheduler._LRScheduler] = None,
+            max_grad_norm: Optional[float] = None,
             criterion: nn.Module = nn.CrossEntropyLoss(),
             forward_pass: Optional[Callable[[Any], Tuple[torch.Tensor, torch.Tensor, torch.Tensor]]] = None,
             sampler: Sampler = None,
@@ -53,6 +54,7 @@ class Trainer:
         self.batch_size = batch_size
         self.optimizer = optimizer
         self.lr_scheduler = lr_scheduler
+        self.max_grad_norm = max_grad_norm
         self.criterion = criterion
         self.batch_size = batch_size
         self.sampler = sampler
@@ -107,8 +109,14 @@ class Trainer:
                 # backward pass and optimization
                 self.optimizer.zero_grad()
                 loss.backward()
+                if self.max_grad_norm is not None:
+                    nn.utils.clip_grad_norm_(self.model.parameters(), self.max_grad_norm)
+                if self.lr_scheduler is not None and isinstance(self.optimizer, optim.AdamW):
+                    self.lr_scheduler.step()
                 self.optimizer.step()
-                if self.lr_scheduler is not None:
+
+                # TODO: check if step should be called every batch or every epoch
+                if self.lr_scheduler is not None and not isinstance(self.optimizer, optim.AdamW):
                     self.lr_scheduler.step()
 
                 pbar.set_postfix(loss=loss.item(), accuracy=f"{accuracy}%")
