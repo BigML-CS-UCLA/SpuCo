@@ -69,7 +69,7 @@ class WILDSDatasetWrapper(Dataset):
         """
         List containing spurious labels for each example
         """
-        return self._group_partition 
+        return self._spurious
 
     @property
     def num_classes(self) -> int:
