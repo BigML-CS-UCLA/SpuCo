@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List, Tuple
+import pickle 
 
 class BaseGroupInference(ABC):
     """
@@ -35,3 +36,8 @@ class BaseGroupInference(ABC):
         for new_cluster_label, cluster_label in enumerate(sorted(cluster_partition.keys())):
             group_partition[(class_index, new_cluster_label)] = [self.class_partition[class_index][i] for i in cluster_partition[cluster_label]]
         return group_partition
+    
+    @staticmethod
+    def save_group_partition(group_partition: Dict[Tuple[int, int], List[int]], prefix: str):
+        with open(f"{prefix}_group_partition.pkl", "wb") as f:
+            pickle.dump(group_partition, f)
