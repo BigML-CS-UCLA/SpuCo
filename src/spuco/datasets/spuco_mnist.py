@@ -128,7 +128,7 @@ class SpuCoMNIST(BaseSpuCoDataset):
             self.partition[label].append(i)
         
         # Train / Val: Add spurious correlation iteratively for each class
-        self.spurious = [-1] * len(self.data.X)
+        self._spurious = [-1] * len(self.data.X)
         if self.split == TRAIN_SPLIT or (self.split == VAL_SPLIT and self.spurious_correlation_strength > 0):
             assert self.spurious_correlation_strength > 0, f"spurious correlation strength must be specified and > 0 for split={TRAIN_SPLIT}"
             for label in self.partition.keys():
@@ -146,8 +146,8 @@ class SpuCoMNIST(BaseSpuCoDataset):
 
                 # Create and apply background for all examples
                 for i, idx in enumerate(self.partition[label]):
-                    self.spurious[idx] = background_label[i].item()
-                    background = SpuCoMNIST.create_background(self.spurious_feature_difficulty, self.colors[self.spurious[idx]])
+                    self._spurious[idx] = background_label[i].item()
+                    background = SpuCoMNIST.create_background(self.spurious_feature_difficulty, self.colors[self._spurious[idx]])
                     self.data.X[idx] = (background * (self.data.X[idx] == 0)) + self.data.X[idx]
 
         # Test / Val: Create spurious balanced test set
@@ -159,8 +159,8 @@ class SpuCoMNIST(BaseSpuCoDataset):
 
                 # Create and apply background for all examples
                 for i, idx in enumerate(self.partition[label]):
-                    self.spurious[idx] = background_label[i].item()
-                    background = SpuCoMNIST.create_background(self.spurious_feature_difficulty, self.colors[self.spurious[idx]])
+                    self._spurious[idx] = background_label[i].item()
+                    background = SpuCoMNIST.create_background(self.spurious_feature_difficulty, self.colors[self._spurious[idx]])
                     self.data.X[idx] = (background * (self.data.X[idx] == 0)) + self.data.X[idx]   
 
         # Return data, list containing all class labels, list containing all spurious labels

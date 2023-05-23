@@ -1,9 +1,12 @@
-from torch.utils.data import Dataset 
-from wilds.datasets.wilds_dataset import WILDSDataset 
-from tqdm import tqdm 
 from typing import Dict, List, Tuple
 
-class WILDSDatasetWrapper(Dataset):
+from tqdm import tqdm
+from wilds.datasets.wilds_dataset import WILDSDataset
+
+from spuco.datasets import BaseSpuCoCompatibleDataset
+
+
+class WILDSDatasetWrapper(BaseSpuCoCompatibleDataset):
     """
     Wrapper class that wraps WILDSDataset into a Dataset to be compatible with SpuCo.
     """
@@ -23,12 +26,16 @@ class WILDSDatasetWrapper(Dataset):
         :param verbose: Show logs
         :type verbose: bool
         """
-        
+        super().__init__()
+
         self.dataset = dataset
         self._num_classes = dataset.n_classes 
 
         # Get index in meta data array corresponding to spurious target 
         spurious_target_idx = dataset.metadata_fields.index(metadata_spurious_label)
+
+        # Get labels 
+        self._labels = dataset.y_array.long().tolist()
 
         # Get spurious labels
         self._spurious = dataset.metadata_array[:, spurious_target_idx].long().tolist()
@@ -36,7 +43,7 @@ class WILDSDatasetWrapper(Dataset):
         # Create group partition using labels and spurious labels
         self._group_partition = {}
         for i, group_label in tqdm(
-            enumerate(zip(dataset.y_array.long().tolist(), self._spurious)),
+            enumerate(zip(self._labels, self._spurious)),
             desc="Partitioning data indices into groups",
             disable=not verbose,
             total=len(self.dataset)
@@ -71,6 +78,13 @@ class WILDSDatasetWrapper(Dataset):
         """
         return self._spurious
 
+    @property
+    def labels(self) -> List[int]:
+        """
+        List containing class labels for each example
+        """
+        return self._labels
+    
     @property
     def num_classes(self) -> int:
         """

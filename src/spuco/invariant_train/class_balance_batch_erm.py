@@ -2,10 +2,10 @@ import random
 
 import torch
 from torch import nn, optim
-from torch.utils.data import Dataset
 
+from spuco.datasets import BaseSpuCoCompatibleDataset
 from spuco.utils import (CustomIndicesSampler, Trainer,
-                         convert_labels_to_partition, get_class_labels)
+                         convert_labels_to_partition)
 from spuco.utils.random_seed import seed_randomness
 import numpy as np
 
@@ -16,7 +16,7 @@ class ClassBalanceBatchERM():
     def __init__(
         self,
         model: nn.Module,
-        trainset: Dataset,
+        trainset: BaseSpuCoCompatibleDataset,
         batch_size: int,
         optimizer: optim.Optimizer,
         num_epochs: int,
@@ -45,7 +45,7 @@ class ClassBalanceBatchERM():
          
         seed_randomness(random_module=random, torch_module=torch, numpy_module=np)
 
-        self.class_partition = convert_labels_to_partition(get_class_labels(trainset))
+        self.class_partition = convert_labels_to_partition(trainset.labels)
         assert batch_size >= len(self.class_partition), "batch_size must be >= number of groups (Group DRO requires at least 1 example from each group)"
         
         self.num_epochs = num_epochs

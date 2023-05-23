@@ -3,7 +3,7 @@ from typing import Dict, Tuple
 import torch
 from torch.utils.data import Dataset
 
-class GroupLabeledDataset(Dataset):
+class GroupLabeledDatasetWrapper(Dataset):
     def __init__(
         self, 
         dataset: Dataset,

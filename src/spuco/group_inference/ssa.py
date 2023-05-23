@@ -9,8 +9,9 @@ from torch import nn, optim
 from torch.utils.data import DataLoader, Dataset, Subset
 from tqdm import tqdm
 
+from spuco.datasets import BaseSpuCoCompatibleDataset, SpuriousTargetDatasetWrapper
 from spuco.group_inference import BaseGroupInference
-from spuco.utils import SpuriousTargetDataset, Trainer, get_class_labels
+from spuco.utils import Trainer
 from spuco.utils.random_seed import seed_randomness
 
 
@@ -20,8 +21,8 @@ class SSA(BaseGroupInference):
     """
     def __init__(
         self, 
-        spurious_unlabeled_dataset: Dataset, 
-        spurious_labeled_dataset: SpuriousTargetDataset,
+        spurious_unlabeled_dataset: BaseSpuCoCompatibleDataset, 
+        spurious_labeled_dataset: SpuriousTargetDatasetWrapper,
         model: nn.Module, 
         num_iters: int,
         labeled_valset_size: float = 0.5,
@@ -39,7 +40,7 @@ class SSA(BaseGroupInference):
         :param spurious_unlabeled_dataset: The dataset containing spurious-labeled unlabeled samples.
         :type spurious_unlabeled_dataset: Dataset
         :param spurious_labeled_dataset: The dataset containing spurious-labeled labeled samples.
-        :type spurious_labeled_dataset: SpuriousTargetDataset
+        :type spurious_labeled_dataset: SpuriousTargetDatasetWrapper
         :param model: The PyTorch model to be used.
         :type model: nn.Module
         :param labeled_valset_size: The size of the labeled validation set as a fraction of the total labeled dataset size.
@@ -89,8 +90,8 @@ class SSA(BaseGroupInference):
         self.labeled_val_indices = indices[:int(len(indices) * labeled_valset_size)]
         self.labeled_train_indices = indices[int(len(indices) * labeled_valset_size):]
 
-        # Get class labels for unlabeld set
-        self.class_labels = get_class_labels(spurious_unlabeled_dataset)
+        # Get class labels for unlabeled set
+        self.class_labels = spurious_unlabeled_dataset.labels
 
         # Determine g_min 
         group_counter = Counter(np.array(spurious_labeled_dataset.spurious_labels)[self.labeled_val_indices])
