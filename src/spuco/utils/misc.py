@@ -95,5 +95,5 @@ def get_class_labels(dataset: Dataset) -> List[int]:
     """
     labels = []
     for _, y in dataset:
-        labels.append(y)
+        labels.append(int(y))
     return labels
