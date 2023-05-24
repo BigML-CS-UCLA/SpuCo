@@ -4,13 +4,13 @@ from copy import deepcopy
 from enum import Enum
 from typing import Callable, List, Optional
 
+import matplotlib.cm as cm
 import numpy as np
 import torch
 import torchvision
 import torchvision.transforms as T
 from torch.utils.data import Subset
 from tqdm import tqdm
-
 
 from spuco.datasets import (TEST_SPLIT, TRAIN_SPLIT, VAL_SPLIT,
                             BaseSpuCoDataset, SourceData,
@@ -35,7 +35,7 @@ class SpuCoMNIST(BaseSpuCoDataset):
         classes: List[List[int]],
         spurious_correlation_strength = 0.0,
         label_noise: float = 0.0,
-        feature_noise: float = 0.0,
+        core_feature_noise: float = 0.0,
         color_map: ColourMap = ColourMap.HSV,
         split: str = TRAIN_SPLIT,
         transform: Optional[Callable] = None,
@@ -67,7 +67,7 @@ class SpuCoMNIST(BaseSpuCoDataset):
             spurious_feature_difficulty=spurious_feature_difficulty,
             split=split,
             label_noise=label_noise,
-            feature_noise=feature_noise,
+            core_feature_noise=core_feature_noise,
             transform=transform,
             num_classes=len(classes),
             verbose=verbose
@@ -138,6 +138,18 @@ class SpuCoMNIST(BaseSpuCoDataset):
         self.data.spurious = [-1] * len(self.data.X)
         if self.split == TRAIN_SPLIT or (self.split == VAL_SPLIT and self.spurious_correlation_strength != 0):
             assert self.spurious_correlation_strength != 0, f"spurious correlation strength must be specified and > 0 for split={TRAIN_SPLIT}"
+
+            # Determine label noise idx
+            if self.label_noise > 0:
+                self.data.clean_labels = deepcopy(self.data.labels)
+                self.is_noisy_label = torch.zeros(len(self.data.X))
+                self.is_noisy_label[torch.randperm(len(self.data.X))[:int(self.label_noise * len(self.data.X))]] = 1
+
+            # Determine feature noise idx
+            if self.core_feature_noise > 0:
+                self.data.core_feature_noise = torch.zeros(len(self.data.X))
+                self.data.core_feature_noise[torch.randperm(len(self.data.X))[:int(self.core_feature_noise * len(self.data.X))]] = 1
+
             for label in tqdm(self.partition.keys(), desc="Adding spurious feature", disable=not self.verbose):
 
                 # Get spurious correlation strength for this class
@@ -147,37 +159,32 @@ class SpuCoMNIST(BaseSpuCoDataset):
 
                 # Randomly permute and choose which points will have spurious feature (avoids issue of sampling leading to 
                 # too many examples having spurious ---> no examples for some groups)
-                spurious_or_not = torch.zeros(len(self.partition[label]))
-                spurious_or_not[torch.randperm(len(self.partition[label]))[:int(spurious_correlation_strength * len(self.partition[label]))]] = 1
+                is_spurious = torch.zeros(len(self.partition[label]))
+                is_spurious[torch.randperm(len(self.partition[label]))[:int(spurious_correlation_strength * len(self.partition[label]))]] = 1
 
                 # Get what the other labels could be for this class (all but spurious)
                 other_labels = [x for x in range(len(self.classes)) if x != label]
 
                 # Determine background of every example 
-                background_label = torch.tensor([label if spurious_or_not[i] else other_labels[i % len(other_labels)] for i in range(len(self.partition[label]))])
+                background_label = torch.tensor([label if is_spurious[i] else other_labels[i % len(other_labels)] for i in range(len(self.partition[label]))])
                 background_label = background_label[torch.randperm(len(background_label))]
 
                 # Create and apply background for all examples
                 for i, idx in enumerate(self.partition[label]):
                     self.data.spurious[idx] = background_label[i].item()
                     background = SpuCoMNIST.create_background(self.spurious_feature_difficulty, self.colors[self.data.spurious[idx]])
+
+                    # Feature noise is a random mask applied to core feature
+                    core_feature_noise = torch.ones_like(self.data.X[idx]) >= 1.0 # default noise is no noise
+                    if self.data.core_feature_noise[idx]:
+                        core_feature_noise = (torch.randn_like(self.data.X[idx][0, :, :]) > 0.25).unsqueeze(dim=0).repeat(3, 1, 1)
+                    self.data.X[idx] = self.data.X[idx] * core_feature_noise
                     self.data.X[idx] = (background * (self.data.X[idx] == 0)) + self.data.X[idx]
-            
-            # Add label noise
-            if self.label_noise > 0:
-                self.data.clean_labels = deepcopy(self.data.labels)
-                label_noise_idx = random.choices(len(self.data.X), k=int(self.label_noise * len(self.data.X)))
-                for i in tqdm(label_noise_idx, desc="Adding noisy labels", disable=not self.verbose):
-                    new_class_idx = random.choice([other_class_label for other_class_label in range(self.num_classes) if other_class_label != self.data.labels[i]])
-                    self.data.labels[i] = new_class_idx
-            
-            # Add feature noise 
-            if self.feature_noise > 0:
-                self.data.feature_noise = [0] * len(self.data.X)
-                feature_noise_idx = random.choices(len(self.data.X), k=int(self.feature_noise * len(self.data.X)))
-                for i in tqdm(feature_noise_idx, desc="Adding feature noise (gaussian noise to input image)", disable=not self.verbose):
-                    self.data.X[i] = SpuCoMNIST.add_gaussian_noise(self.data.X[i])
-                    self.data.feature_noise[i] = 1
+                    
+                    # If noisy label
+                    if self.is_noisy_label[idx]:
+                        self.data.labels[idx] = random.choice(other_labels)
+
 
         # Test / Val: Create spurious balanced test set
         else:
@@ -303,7 +310,3 @@ class SpuCoMNIST(BaseSpuCoDataset):
         :rtype: torch.Tensor
         """
         return torch.tensor(rgb).unsqueeze(1).unsqueeze(2).repeat(1, 28, 28)  
-    
-    @staticmethod
-    def add_gauassian_noise(tensor_image: torch.Tensor):
-        return tensor_image + torch.randn_like(tensor_image)

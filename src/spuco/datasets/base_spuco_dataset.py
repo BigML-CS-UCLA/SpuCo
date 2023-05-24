@@ -71,7 +71,7 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
         num_classes: int,
         split: str = "train",
         label_noise: float = 0.0,
-        feature_noise: float = 0.0,
+        core_feature_noise: float = 0.0,
         transform: Optional[Callable] = None,
         download: bool = False,
         verbose: bool = False,
@@ -93,7 +93,7 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
         assert split == TRAIN_SPLIT or split == VAL_SPLIT or split == TEST_SPLIT, f"split must be one of {TRAIN_SPLIT}, {VAL_SPLIT}, {TEST_SPLIT}"
         self.split = split
         self.label_noise = label_noise
-        self.feature_noise = feature_noise
+        self.core_feature_noise = core_feature_noise
         self.transform = transform
         self.download = download
         self.verbose = verbose
@@ -119,7 +119,7 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
         
         # Group Partition
         self._group_partition = {}
-        for i, group_label in enumerate(zip(self.data.labels, self._spurious)):
+        for i, group_label in enumerate(zip(self.data.labels, self.spurious)):
             if group_label not in self._group_partition:
                 self._group_partition[group_label] = []
             self._group_partition[group_label].append(i)
