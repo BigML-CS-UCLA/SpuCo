@@ -138,7 +138,7 @@ class SpuCoMNIST(BaseSpuCoDataset):
         self.data.spurious = [-1] * len(self.data.X)
         if self.split == TRAIN_SPLIT or (self.split == VAL_SPLIT and self.spurious_correlation_strength != 0):
             assert self.spurious_correlation_strength != 0, f"spurious correlation strength must be specified and > 0 for split={TRAIN_SPLIT}"
-            for label in self.partition.keys():
+            for label in tqdm(self.partition.keys(), desc="Adding spurious feature", disable=not self.verbose):
 
                 # Get spurious correlation strength for this class
                 spurious_correlation_strength = self.spurious_correlation_strength
@@ -181,7 +181,7 @@ class SpuCoMNIST(BaseSpuCoDataset):
 
         # Test / Val: Create spurious balanced test set
         else:
-            for label in self.partition.keys():
+            for label in tqdm(self.partition.keys(), desc="Adding spurious feature", disable=not self.verbose):
                 # Generate balanced background labels
                 background_label = torch.tensor([i % len(self.classes) for i in range(len(self.partition[label]))])
                 background_label = background_label[torch.randperm(len(background_label))]
