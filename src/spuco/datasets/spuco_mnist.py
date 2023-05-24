@@ -11,6 +11,7 @@ import torchvision.transforms as T
 from torch.utils.data import Subset
 from tqdm import tqdm
 
+
 from spuco.datasets import (TEST_SPLIT, TRAIN_SPLIT, VAL_SPLIT,
                             BaseSpuCoDataset, SourceData,
                             SpuriousFeatureDifficulty)
@@ -161,7 +162,8 @@ class SpuCoMNIST(BaseSpuCoDataset):
                     self.data.spurious[idx] = background_label[i].item()
                     background = SpuCoMNIST.create_background(self.spurious_feature_difficulty, self.colors[self.data.spurious[idx]])
                     self.data.X[idx] = (background * (self.data.X[idx] == 0)) + self.data.X[idx]
-
+            
+            # Add label noise
             if self.label_noise > 0:
                 self.data.clean_labels = deepcopy(self.data.labels)
                 label_noise_idx = random.choices(len(self.data.X), k=int(self.label_noise * len(self.data.X)))
@@ -169,11 +171,13 @@ class SpuCoMNIST(BaseSpuCoDataset):
                     new_class_idx = random.choice([other_class_label for other_class_label in range(self.num_classes) if other_class_label != self.data.labels[i]])
                     self.data.labels[i] = new_class_idx
             
+            # Add feature noise 
             if self.feature_noise > 0:
                 self.data.feature_noise = [0] * len(self.data.X)
                 feature_noise_idx = random.choices(len(self.data.X), k=int(self.feature_noise * len(self.data.X)))
                 for i in tqdm(feature_noise_idx, desc="Adding feature noise (gaussian noise to input image)", disable=not self.verbose):
                     self.data.X[i] = SpuCoMNIST.add_gaussian_noise(self.data.X[i])
+                    self.data.feature_noise[i] = 1
 
         # Test / Val: Create spurious balanced test set
         else:
