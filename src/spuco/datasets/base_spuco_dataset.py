@@ -73,7 +73,8 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
         label_noise: float = 0.0,
         feature_noise: float = 0.0,
         transform: Optional[Callable] = None,
-        download: bool = False
+        download: bool = False,
+        verbose: bool = False,
     ):
         """
         Initializes the dataset.
@@ -95,6 +96,7 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
         self.feature_noise = feature_noise
         self.transform = transform
         self.download = download
+        self.verbose = verbose
 
     @abstractmethod
     def validate_data(self):
