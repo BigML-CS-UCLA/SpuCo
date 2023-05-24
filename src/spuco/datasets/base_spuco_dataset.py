@@ -55,8 +55,8 @@ class SourceData():
             data (list of tuple, optional): The input data and labels.
         """
         self.X = []
-        self.labels =[]
-
+        self.labels = []
+        self.spurious = None 
         if data is not None:
             for x, label in data:
                 self.X.append(x)
@@ -66,11 +66,12 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
     def __init__(
         self,
         root: str,
-        spurious_correlation_strength: float,
+        spurious_correlation_strength,
         spurious_feature_difficulty: SpuriousFeatureDifficulty,
         num_classes: int,
         split: str = "train",
-        val_size: float = 0.1,
+        label_noise: float = 0.0,
+        feature_noise: float = 0.0,
         transform: Optional[Callable] = None,
         download: bool = False
     ):
@@ -80,15 +81,8 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
         :param root: Root directory of the dataset.
         :type root: str
         :param spurious_correlation_strength: Strength of spurious correlation.
-        :type spurious_correlation_strength: float
         :param spurious_feature_difficulty: Difficulty of spurious features.
         :type spurious_feature_difficulty: SpuriousFeatureDifficulty
-        :param train: If True, returns the training dataset. Otherwise, returns the test dataset. Default is True.
-        :type train: bool, optional
-        :param transform: A function/transform that takes in a sample and returns a transformed version. Default is None.
-        :type transform: callable, optional
-        :param download: If True, downloads the dataset from the internet and puts it in the root directory. If the dataset is already downloaded, it is not downloaded again. Default is False.
-        :type download: bool, optional
         """
         super().__init__()
         self.root = root 
@@ -97,7 +91,8 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
         self._num_classes = num_classes
         assert split == TRAIN_SPLIT or split == VAL_SPLIT or split == TEST_SPLIT, f"split must be one of {TRAIN_SPLIT}, {VAL_SPLIT}, {TEST_SPLIT}"
         self.split = split
-        self.val_size = val_size
+        self.label_noise = label_noise
+        self.feature_noise = feature_noise
         self.transform = transform
         self.download = download
 
@@ -158,7 +153,7 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
         """
         List containing spurious labels for each example
         """
-        return self._spurious
+        return self.data.spurious
 
     @property
     def labels(self) -> List[int]:
