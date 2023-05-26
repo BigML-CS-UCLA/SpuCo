@@ -81,8 +81,8 @@ Can I overcome keyword search
 
 ## WaterBirds - WILDS
 
-- [ ] erm
-- [ ] groupdro 
+- [x] erm
+- [x] groupdro 
 - [ ] jtt
 - [ ] eiil
 - [ ] clustering 
@@ -93,34 +93,6 @@ Can I overcome keyword search
 - [ ] dfr
 
 ## CivilComments - WILDS
-
-- [ ] erm
-- [ ] groupdro 
-- [ ] jtt
-- [ ] eiil
-- [ ] clustering 
-- [ ] sampling
-- [ ] ssa
-- [ ] cnc 
-- [ ] lff
-- [ ] dfr
-
-
-## CelebA
-
-- [ ] erm
-- [ ] groupdro 
-- [ ] jtt
-- [ ] eiil
-- [ ] clustering 
-- [ ] sampling
-- [ ] ssa
-- [ ] cnc 
-- [ ] lff
-- [ ] dfr
-
-
-## MultiNLI
 
 - [ ] erm
 - [ ] groupdro 
@@ -159,4 +131,4 @@ ToDo:
 - [x] modify spuco mnist to allow fully customizabloe spuco tregnth
 - [x] label noise for psucomnist
 - [x] feature noise for psucomnist
-- [ ] SpuCoCT
+- [x] SpuCoCT
