@@ -1,6 +1,10 @@
 spuco.datasets
 ======================
 
+++++++++++
+Datasets
+++++++++++
+
 SpuCo MNIST
 ----------------------------------
 
@@ -16,3 +20,34 @@ Base Spuco Dataset
    :members:
    :undoc-members:
    :show-inheritance:
+
+++++++++++
+Wrappers
+++++++++++
+
+Group Labeled Dataset Wrapper
+-------------------------
+
+.. automodule:: spuco.datasets.group_labeled_dataset_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Spurious Target Dataset
+-------------------------
+
+.. automodule:: spuco.datasets.spurious_target_dataset_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+WILDSDatasetWrapper
+-------------------------
+
+.. automodule:: spuco.datasets.wilds_dataset_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+

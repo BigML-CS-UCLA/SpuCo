@@ -1,9 +1,10 @@
 import torch
 from torch import optim
 
+from spuco.datasets import GroupLabeledDatasetWrapper
 from spuco.invariant_train import BaseInvariantTrain
 from spuco.models import SpuCoModel
-from spuco.utils import GroupLabeledDataset, Trainer
+from spuco.utils import Trainer
 from spuco.utils.random_seed import seed_randomness
 
 import random
@@ -16,7 +17,7 @@ class CorrectNContrastTrain(BaseInvariantTrain):
     """
     def __init__(
         self,
-        trainset: GroupLabeledDataset,
+        trainset: GroupLabeledDatasetWrapper,
         model: SpuCoModel,
         batch_size: int,
         optimizer: optim.Optimizer,
@@ -31,7 +32,7 @@ class CorrectNContrastTrain(BaseInvariantTrain):
         Initializes CorrectNContrastTrain.
 
         :param trainset: The training dataset containing group-labeled samples.
-        :type trainset: GroupLabeledDataset
+        :type trainset: GroupLabeledDatasetWrapper
         :param model: The SpuCoModel to be trained.
         :type model: SpuCoModel
         :param batch_size: The batch size for training.

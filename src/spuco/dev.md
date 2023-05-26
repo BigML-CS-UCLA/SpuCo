@@ -144,7 +144,19 @@ General TODO:
 
 # Dataset
 
-- Waterbirds problems:
-    - size
-    - not complex enough - different spurious correlation per class, label flips, image corruptions
-    - resolution
+- Spurious Correlation Strength:
+    - fully customizable in SpuCoMNIST
+    - linear and uniform settings in SpuCoCT and MedNLI 
+- Spurious Feature Strength
+    - magnitude and variance for SpuCoMNIST and SpuCoCT
+    - MedNLI - still deciding
+- Label Noise 
+- Feature Noise - just randomly corrupt some words for MedNLI?
+
+ToDo:
+
+- modify base class
+- modify spuco mnist to allow fully customizabloe spuco tregnth
+- label noise for psucomnist
+- feature noise for psucomnist
+- 

@@ -1,2 +1,6 @@
+from .base_spuco_compatible_dataset import BaseSpuCoCompatibleDataset
 from .base_spuco_dataset import SpuriousFeatureDifficulty, BaseSpuCoDataset, SourceData, TRAIN_SPLIT, VAL_SPLIT, TEST_SPLIT
+from .spurious_target_dataset_wrapper import SpuriousTargetDatasetWrapper
+from .group_labeled_dataset_wrapper import GroupLabeledDatasetWrapper
+from .wilds_dataset_wrapper import WILDSDatasetWrapper
 from .spuco_mnist import SpuCoMNIST

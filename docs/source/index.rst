@@ -28,6 +28,7 @@ Getting Started
    :caption: User Guide
    :maxdepth: 2
 
+   user-guide/overview
    user-guide/quickstart
    user-guide/datasets
 

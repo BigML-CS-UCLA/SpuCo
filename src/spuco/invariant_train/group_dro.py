@@ -5,7 +5,8 @@ import numpy as np
 import torch
 from torch import nn, optim
 
-from spuco.utils import CustomIndicesSampler, GroupLabeledDataset, Trainer
+from spuco.datasets import GroupLabeledDatasetWrapper
+from spuco.utils import CustomIndicesSampler, Trainer
 from spuco.utils.random_seed import seed_randomness
 
 
@@ -73,7 +74,7 @@ class GroupDRO():
     def __init__(
         self,
         model: nn.Module,
-        trainset: GroupLabeledDataset,
+        trainset: GroupLabeledDatasetWrapper,
         batch_size: int,
         optimizer: optim.Optimizer,
         num_epochs: int,
@@ -86,7 +87,7 @@ class GroupDRO():
         :param model: The PyTorch model to be trained.
         :type model: nn.Module
         :param trainset: The training dataset containing group-labeled samples.
-        :type trainset: GroupLabeledDataset
+        :type trainset: GroupLabeledDatasetWrapper
         :param batch_size: The batch size for training.
         :type batch_size: int
         :param optimizer: The optimizer used for training.

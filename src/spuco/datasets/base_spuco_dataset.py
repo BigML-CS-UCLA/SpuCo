@@ -1,7 +1,8 @@
-from typing import Callable, Optional
-from torch.utils.data import Dataset
-from enum import Enum
 from abc import ABC, abstractmethod
+from enum import Enum
+from typing import Callable, Dict, List, Optional, Tuple
+
+from spuco.datasets import BaseSpuCoCompatibleDataset
 
 TRAIN_SPLIT = "train"
 VAL_SPLIT= "val"
@@ -54,24 +55,26 @@ class SourceData():
             data (list of tuple, optional): The input data and labels.
         """
         self.X = []
-        self.labels =[]
-
+        self.labels = []
+        self.spurious = None 
         if data is not None:
             for x, label in data:
                 self.X.append(x)
                 self.labels.append(label)
 
-class BaseSpuCoDataset(Dataset, ABC):
+class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
     def __init__(
         self,
         root: str,
-        spurious_correlation_strength: float,
+        spurious_correlation_strength,
         spurious_feature_difficulty: SpuriousFeatureDifficulty,
         num_classes: int,
         split: str = "train",
-        val_size: float = 0.1,
+        label_noise: float = 0.0,
+        core_feature_noise: float = 0.0,
         transform: Optional[Callable] = None,
-        download: bool = False
+        download: bool = False,
+        verbose: bool = False,
     ):
         """
         Initializes the dataset.
@@ -79,25 +82,21 @@ class BaseSpuCoDataset(Dataset, ABC):
         :param root: Root directory of the dataset.
         :type root: str
         :param spurious_correlation_strength: Strength of spurious correlation.
-        :type spurious_correlation_strength: float
         :param spurious_feature_difficulty: Difficulty of spurious features.
         :type spurious_feature_difficulty: SpuriousFeatureDifficulty
-        :param train: If True, returns the training dataset. Otherwise, returns the test dataset. Default is True.
-        :type train: bool, optional
-        :param transform: A function/transform that takes in a sample and returns a transformed version. Default is None.
-        :type transform: callable, optional
-        :param download: If True, downloads the dataset from the internet and puts it in the root directory. If the dataset is already downloaded, it is not downloaded again. Default is False.
-        :type download: bool, optional
         """
+        super().__init__()
         self.root = root 
         self.spurious_correlation_strength = spurious_correlation_strength
         self.spurious_feature_difficulty = spurious_feature_difficulty
-        self.num_classes = num_classes
+        self._num_classes = num_classes
         assert split == TRAIN_SPLIT or split == VAL_SPLIT or split == TEST_SPLIT, f"split must be one of {TRAIN_SPLIT}, {VAL_SPLIT}, {TEST_SPLIT}"
         self.split = split
-        self.val_size = val_size
+        self.label_noise = label_noise
+        self.core_feature_noise = core_feature_noise
         self.transform = transform
         self.download = download
+        self.verbose = verbose
 
     @abstractmethod
     def validate_data(self):
@@ -119,25 +118,59 @@ class BaseSpuCoDataset(Dataset, ABC):
         self.num_spurious = len(spurious_classes)
         
         # Group Partition
-        self.group_partition = {}
+        self._group_partition = {}
         for i, group_label in enumerate(zip(self.data.labels, self.spurious)):
-            if group_label not in self.group_partition:
-                self.group_partition[group_label] = []
-            self.group_partition[group_label].append(i)
+            if group_label not in self._group_partition:
+                self._group_partition[group_label] = []
+            self._group_partition[group_label].append(i)
 
         # Validate partition sizes
         for class_label in classes:
             for spurious_label in spurious_classes:
                 group_label = (class_label, spurious_label)
-                assert group_label in self.group_partition and len(self.group_partition[group_label]) > 0, f"No examples in {group_label}, considering reducing spurious correlation strength"
+                assert group_label in self._group_partition and len(self._group_partition[group_label]) > 0, f"No examples in {group_label}, considering reducing spurious correlation strength"
 
         # Group Weights
-        self.group_weights = None
+        self._group_weights = None
         if self.split == TRAIN_SPLIT:
-            self.group_weights = {}
-            for key in self.group_partition.keys():
-                self.group_weights[key] = len(self.group_partition[key]) / len(self.data.X)
+            self._group_weights = {}
+            for key in self._group_partition.keys():
+                self._group_weights[key] = len(self._group_partition[key]) / len(self.data.X)
+    @property
+    def group_partition(self) -> Dict[Tuple[int, int], List[int]]:
+        """
+        Dictionary partitioning indices into groups
+        """
+        return self._group_partition 
+    
+    @property
+    def group_weights(self) -> Dict[Tuple[int, int], float]:
+        """
+        Dictionary containing the fractional weights of each group
+        """
+        return self._group_weights
+    
+    @property
+    def spurious(self) -> List[int]:
+        """
+        List containing spurious labels for each example
+        """
+        return self.data.spurious
 
+    @property
+    def labels(self) -> List[int]:
+        """
+        List containing class labels for each example
+        """
+        return self.data.labels
+    
+    @property
+    def num_classes(self) -> int:
+        """
+        Number of classes
+        """
+        return self._num_classes
+    
     def __getitem__(self, index):
         """
         Gets an item from the dataset.

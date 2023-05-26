@@ -7,7 +7,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset, SubsetRandomSampler
 from tqdm import tqdm
 
-from spuco.utils import SpuriousTargetDataset
+from spuco.datasets import SpuriousTargetDatasetWrapper
 from spuco.utils.random_seed import seed_randomness
 
 
@@ -63,7 +63,7 @@ class Evaluator:
         for key in self.group_partition.keys():
             for i in self.group_partition[key]:
                 spurious[i] = key[1]
-        spurious_dataset = SpuriousTargetDataset(dataset=testset, spurious_labels=spurious)
+        spurious_dataset = SpuriousTargetDatasetWrapper(dataset=testset, spurious_labels=spurious)
         self.spurious_dataloader = DataLoader(spurious_dataset, batch_size=batch_size, num_workers=4, pin_memory=True)
 
     def evaluate(self):

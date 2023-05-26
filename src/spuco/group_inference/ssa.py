@@ -9,8 +9,9 @@ from torch import nn, optim
 from torch.utils.data import DataLoader, Dataset, Subset
 from tqdm import tqdm
 
+from spuco.datasets import BaseSpuCoCompatibleDataset, SpuriousTargetDatasetWrapper
 from spuco.group_inference import BaseGroupInference
-from spuco.utils import SpuriousTargetDataset, Trainer, get_class_labels
+from spuco.utils import Trainer
 from spuco.utils.random_seed import seed_randomness
 
 
@@ -20,12 +21,12 @@ class SSA(BaseGroupInference):
     """
     def __init__(
         self, 
-        spurious_unlabeled_dataset: Dataset, 
-        spurious_labeled_dataset: SpuriousTargetDataset,
+        spurious_unlabeled_dataset: BaseSpuCoCompatibleDataset, 
+        spurious_labeled_dataset: SpuriousTargetDatasetWrapper,
         model: nn.Module, 
-        labeled_valset_size: float,
         num_iters: int,
-        tau_g_min: float,
+        labeled_valset_size: float = 0.5,
+        tau_g_min: float = 0.95,
         lr: float = 1e-2,
         weight_decay: float = 5e-4,
         batch_size: int = 64,
@@ -39,7 +40,7 @@ class SSA(BaseGroupInference):
         :param spurious_unlabeled_dataset: The dataset containing spurious-labeled unlabeled samples.
         :type spurious_unlabeled_dataset: Dataset
         :param spurious_labeled_dataset: The dataset containing spurious-labeled labeled samples.
-        :type spurious_labeled_dataset: SpuriousTargetDataset
+        :type spurious_labeled_dataset: SpuriousTargetDatasetWrapper
         :param model: The PyTorch model to be used.
         :type model: nn.Module
         :param labeled_valset_size: The size of the labeled validation set as a fraction of the total labeled dataset size.
@@ -89,8 +90,12 @@ class SSA(BaseGroupInference):
         self.labeled_val_indices = indices[:int(len(indices) * labeled_valset_size)]
         self.labeled_train_indices = indices[int(len(indices) * labeled_valset_size):]
 
-        # Create class_partition
-        self.class_labels = get_class_labels(spurious_unlabeled_dataset)
+        # Get class labels for unlabeled set
+        self.class_labels = spurious_unlabeled_dataset.labels
+
+        # Determine g_min 
+        group_counter = Counter(np.array(spurious_labeled_dataset.spurious_labels)[self.labeled_val_indices])
+        self.g_min = group_counter.most_common()[-1][0]
 
     def infer_groups(self) -> Dict[Tuple[int, int], List[int]]:
         """
@@ -270,12 +275,12 @@ class SSATrainer:
         # Compute supervised loss #
         ###########################
         X, labels = labeled_train_batch
-        group_counter = Counter(labels.long().tolist())
-        g_min_label, g_min_count = group_counter.most_common()[-1]
         X, labels = X.to(self.device), labels.to(self.device)
         outputs = self.model(X)
         supervised_loss = self.cross_entropy(outputs, labels)
-        
+        group_counter = Counter(labels.tolist())
+        g_min_count = group_counter[self.ssa.g_min]
+
         #############################
         # Compute unsupervised loss #
         #############################
@@ -286,16 +291,23 @@ class SSATrainer:
         # Get pseudo-labels
         outputs = self.model(X)
         pseudo_labels = torch.argmax(outputs, dim=-1)
+
         # Get indices of g_min outputs that are >= tau_g_min (threshold: hyperparameter)
-        g_min_indices = torch.nonzero(pseudo_labels == g_min_label, as_tuple=True)[0]
+        g_min_indices = torch.nonzero(pseudo_labels == self.ssa.g_min, as_tuple=True)[0]
         g_min_indices = g_min_indices[torch.nonzero(torch.max(outputs[g_min_indices], dim=-1).values >= self.tau_g_min, as_tuple=True)[0]]
 
         # Get all unsupervised indices for loss 
         unsup_indices = g_min_indices.cpu().tolist()
-        for label, count in group_counter.most_common()[:-1]:
+        for label, count in group_counter.most_common():
+            if label == self.ssa.g_min:
+                continue 
+            # Determine which indices in current batch belong to this group 
             group_indices = torch.nonzero(pseudo_labels == label, as_tuple=True)[0]
-            group_outputs = torch.max(outputs[group_indices], dim=-1).values
+            # Get prob of current label being the spurious attribute according to model
+            group_outputs = outputs[group_indices, label]
+            # Calculate the number of examples we should choose from this group
             k = min(max(g_min_count + len(g_min_indices) - count, 0), len(group_indices))
+            # Get k indices with largest prob of group label being current label
             group_indices = group_indices[torch.topk(group_outputs, k=k).indices].cpu().tolist()
             unsup_indices.extend(group_indices)
 

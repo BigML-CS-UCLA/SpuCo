@@ -3,7 +3,7 @@ from typing import Dict, List
 import numpy as np
 import torch
 from torch import nn
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader
 
 
 def convert_labels_to_partition(labels: List[int]) -> Dict[int, List[int]]:
@@ -83,17 +83,3 @@ def pairwise_similarity(Z1: torch.tensor, Z2: torch.tensor, block_size: int = 10
     similarity_matrix = np.block(similarity_matrices)
 
     return similarity_matrix
-
-def get_class_labels(dataset: Dataset) -> List[int]:
-    """
-    Retrieves the class labels from a dataset.
-
-    :param dataset: Dataset containing examples.
-    :type dataset: torch.utils.data.Dataset
-    :return: List of class labels.
-    :rtype: List[int]
-    """
-    labels = []
-    for _, y in dataset:
-        labels.append(y)
-    return labels

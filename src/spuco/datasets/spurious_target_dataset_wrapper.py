@@ -1,7 +1,7 @@
 from torch.utils.data import Dataset 
 from typing import List
 
-class SpuriousTargetDataset(Dataset):
+class SpuriousTargetDatasetWrapper(Dataset):
     """
     Wrapper class that takes a Dataset and the spurious labels of the data
     and returns a dataset where the labels are the spurious labels. 
@@ -12,7 +12,7 @@ class SpuriousTargetDataset(Dataset):
         spurious_labels: List[int]
     ):
         """
-        Initialize an instance of SpuriousTargetDataset.
+        Initialize an instance of SpuriousTargetDatasetWrapper.
 
         :param dataset: The original dataset.
         :type dataset: Dataset
