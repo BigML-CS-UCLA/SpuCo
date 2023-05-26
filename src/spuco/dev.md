@@ -155,8 +155,8 @@ General TODO:
 
 ToDo:
 
-- modify base class
-- modify spuco mnist to allow fully customizabloe spuco tregnth
-- label noise for psucomnist
-- feature noise for psucomnist
-- 
+- [x] modify base class
+- [x] modify spuco mnist to allow fully customizabloe spuco tregnth
+- [x] label noise for psucomnist
+- [x] feature noise for psucomnist
+- [ ] SpuCoCT
