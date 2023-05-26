@@ -25,7 +25,7 @@ class Shape(Enum):
     RECTANGLE = 2
     NONE = 3
 
-SPURIOUS_UNIFORM = [0.5, 0.5, 0.5, 0.5]
+SPURIOUS_UNIFORM = [0.9, 0.9, 0.9, 0.9]
 SPURIOUS_LINEAR = [0.99, 0.95, 0.9, 0.85]
 
 class SpuCoCT(BaseSpuCoDataset):
