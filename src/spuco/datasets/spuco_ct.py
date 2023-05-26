@@ -83,6 +83,8 @@ class SpuCoCT(BaseSpuCoDataset):
         :return: The spurious correlation dataset.
         :rtype: Tuple[SourceData, int, int]
         """
+
+        # TODO: Data Downloading and Loading from saved copies
         
         if self.verbose:
             print("Assembling SpuCoCT")
