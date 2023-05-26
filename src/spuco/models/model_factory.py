@@ -62,6 +62,7 @@ def model_factory(arch: str, input_shape: Tuple[int, int, int], num_classes: int
         representation_dim = backbone.d_out
     elif arch == SupportedModels.ResNet50:
         backbone = resnet50(weights=ResNet50_Weights.IMAGENET1K_V2)
+        backbone = resnet50(pretrained=True)
         representation_dim = backbone.fc.in_features
         backbone.fc = Identity()
     else:

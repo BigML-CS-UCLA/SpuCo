@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Callable, Dict, List, Optional, Tuple
-
+from tqdm import tqdm 
 from spuco.datasets import BaseSpuCoCompatibleDataset
 
 TRAIN_SPLIT = "train"
@@ -14,32 +14,33 @@ class SpuriousFeatureDifficulty(Enum):
 
     Each level corresponds to a combination of the magnitude and variance
     of the spurious feature.
-    """
-    MAGNITUDE_EASY = (
-        "magnitude_easy",
-        "Magnitude definition of difficulty. Easy <-> Large Magnitude"
-    )
-    MAGNITUDE_MEDIUM = (
-        "magnitude_medium",
-        "Magnitude definition of difficulty. Medium <-> Medium Magnitude"
-    )
-    MAGNITUDE_HARD = (
-        "magnitude_hard",
-        "Magnitude definition of difficulty. Hard <-> Small Magnitude"
-    )
-    VARIANCE_EASY = (
-        "variance_easy",
-        "Variance definition of difficulty. Easy <-> Small Variance"
-    )
-    VARIANCE_MEDIUM = (
-        "variance_medium",
-        "Variance definition of difficulty. Medium <-> Medium Variance"
-    )
-    VARIANCE_HARD = (
-        "variance_hard",
-        "Variance definition of difficulty. Hard <-> Large Variance"
-    )
 
+    Magnitude definition of difficulty:
+        Easy <-> Large Magnitude
+
+        Medium <-> Medium Magnitude
+
+        Hard <-> Small Magnitude
+
+    Variance definition of difficulty:
+        Easy <-> Small Variance
+
+        Medium <-> Medium Variance
+
+        Hard <-> Large Variance
+    """
+
+    MAGNITUDE_EASY = "magnitude_easy"
+    MAGNITUDE_MEDIUM = "magnitude_medium"
+    MAGNITUDE_HARD = "magnitude_hard"
+    VARIANCE_EASY = "variance_easy"
+    VARIANCE_MEDIUM = "variance_medium"
+    VARIANCE_HARD = "variance_hard"
+
+class SpuriousCorrelationStrength(Enum):
+    UNIFORM = "unform"
+    LINEAR = "linear"
+    
 class SourceData():
     """
     Class representing the source data.
@@ -58,7 +59,7 @@ class SourceData():
         self.labels = []
         self.spurious = None 
         if data is not None:
-            for x, label in data:
+            for x, label in tqdm(data):
                 self.X.append(x)
                 self.labels.append(label)
 
@@ -97,13 +98,6 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
         self.transform = transform
         self.download = download
         self.verbose = verbose
-
-    @abstractmethod
-    def validate_data(self):
-        """
-        Validates the dataset.
-        """
-        pass
 
     def initialize(self):
         """

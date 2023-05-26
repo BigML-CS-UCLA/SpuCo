@@ -76,12 +76,6 @@ class SpuCoMNIST(BaseSpuCoDataset):
         self.classes = classes
         self.colors = self.init_colors(color_map)
 
-    def validate_data(self):
-        """
-        Validates that the generated dataset has been loaded correctly.
-        """
-        pass 
-
     def load_data(self) -> SourceData:
         """
         Loads the MNIST dataset and generates the spurious correlation dataset.
