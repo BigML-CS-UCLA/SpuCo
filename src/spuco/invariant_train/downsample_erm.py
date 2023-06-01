@@ -5,12 +5,13 @@ import numpy as np
 import torch
 from torch import nn, optim
 from torch.utils.data import Dataset
+from spuco.invariant_train import BaseInvariantTrain
 
 from spuco.utils import CustomIndicesSampler, Trainer
 from spuco.utils.random_seed import seed_randomness
 
 
-class DownSampleERM():
+class DownSampleERM(BaseInvariantTrain):
     """
     DownSampleERM class for training a model by downsampling all groups to size of smallest group.
     """
@@ -71,9 +72,3 @@ class DownSampleERM():
             device=device
         )
         
-    def train(self):
-        """
-        Trains the model using the given hyperparameters.
-        """
-        for epoch in range(self.num_epochs):
-            self.trainer.train_epoch(epoch)

@@ -63,10 +63,3 @@ class ERM(BaseInvariantTrain):
             verbose=verbose,
             device=device
         )
-
-    def train(self):
-        """
-        Trains the model using the given hyperparameters.
-        """
-        for epoch in range(self.num_epochs):
-            self.trainer.train_epoch(epoch)

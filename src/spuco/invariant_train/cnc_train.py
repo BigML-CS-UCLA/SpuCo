@@ -109,9 +109,3 @@ class CorrectNContrastTrain(BaseInvariantTrain):
             verbose=verbose,
             device=device
         )
-
-    def train(self):
-        """
-        Trains the model using the given hyperparameters and the Correct & Contrast training approach.
-        """
-        self.trainer.train(self.num_epochs)

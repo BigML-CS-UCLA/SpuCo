@@ -4,12 +4,13 @@ import torch
 from torch import nn, optim
 
 from spuco.datasets import BaseSpuCoCompatibleDataset
+from spuco.invariant_train import BaseInvariantTrain
 from spuco.utils import (CustomIndicesSampler, Trainer,
                          convert_labels_to_partition)
 from spuco.utils.random_seed import seed_randomness
 import numpy as np
 
-class ClassBalanceBatchERM():
+class ClassBalanceBatchERM(BaseInvariantTrain):
     """
     ClassBalanceBatchERM class for training a model using class-balanced sampling.
     """
@@ -67,14 +68,10 @@ class ClassBalanceBatchERM():
             self.base_indices.extend(self.class_partition[key])
             self.sampling_weights.extend([max_class_len / len(self.class_partition[key])] * len(self.class_partition[key]))
         
-    def train(self):
-        """
-        Trains the model using the given hyperparameters.
-        """
-        for epoch in range(self.num_epochs):
-            self.trainer.sampler.indices = random.choices(
-                population=self.base_indices,
-                weights=self.sampling_weights, 
-                k=len(self.trainer.trainset)
-            )
-            self.trainer.train_epoch(epoch)
+    def train_epoch(self, epoch: int):
+        self.trainer.sampler.indices = random.choices(
+            population=self.base_indices,
+            weights=self.sampling_weights, 
+            k=len(self.trainer.trainset)
+        )
+        self.trainer.train_epoch(epoch)

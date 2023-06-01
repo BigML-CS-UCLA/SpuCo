@@ -6,11 +6,12 @@ import torch
 from torch import nn, optim
 from torch.utils.data import Dataset
 
+from spuco.invariant_train import BaseInvariantTrain
 from spuco.utils import CustomIndicesSampler, Trainer
 from spuco.utils.random_seed import seed_randomness
 
 
-class GroupBalanceBatchERM():
+class GroupBalanceBatchERM(BaseInvariantTrain):
     """
     GroupBalanceBatchERM class for training a model using group balanced sampling.
     """
@@ -70,14 +71,10 @@ class GroupBalanceBatchERM():
             self.base_indices.extend(self.group_partition[key])
             self.sampling_weights.extend([max_group_len / len(self.group_partition[key])] * len(self.group_partition[key]))
         
-    def train(self):
-        """
-        Trains the model using the given hyperparameters.
-        """
-        for epoch in range(self.num_epochs):
-            self.trainer.sampler.indices = random.choices(
-                population=self.base_indices,
-                weights=self.sampling_weights, 
-                k=len(self.trainer.trainset)
-            )
-            self.trainer.train_epoch(epoch)
+    def train_epoch(self, epoch: int):
+        self.trainer.sampler.indices = random.choices(
+            population=self.base_indices,
+            weights=self.sampling_weights, 
+            k=len(self.trainer.trainset)
+        )
+        self.trainer.train_epoch(epoch)
