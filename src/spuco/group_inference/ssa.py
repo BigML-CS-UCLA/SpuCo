@@ -77,13 +77,13 @@ class SSA(BaseGroupInference):
         self.tau_g_min = tau_g_min
         self.device = device 
         self.verbose = verbose 
-
+        
         # Create unlabeled data splits
         self.unlabeled_data_splits = []
         indices = np.array(range(len(self.spurious_unlabeled_dataset)))
         indices = indices[torch.randperm(len(indices)).numpy()]
         self.unlabeled_data_splits = np.array_split(indices, self.num_splits)
-
+        
         # Create labeled data splits
         indices = np.array(range(len(self.spurious_labeled_dataset)))
         indices = indices[torch.randperm(len(indices)).numpy()]
