@@ -26,7 +26,7 @@ class ERM(BaseInvariantTrain):
         device: torch.device = torch.device("cpu"),
         lr_scheduler=None,
         max_grad_norm=None,
-        valid_evaluator: Evaluator = None,
+        val_evaluator: Evaluator = None,
         verbose=False
     ):
         """
@@ -51,7 +51,7 @@ class ERM(BaseInvariantTrain):
         """
         seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
 
-        super().__init__(valid_evaluator=valid_evaluator, verbose=verbose)
+        super().__init__(val_evaluator=val_evaluator, verbose=verbose)
 
         self.num_epochs = num_epochs
         self.trainer = Trainer(

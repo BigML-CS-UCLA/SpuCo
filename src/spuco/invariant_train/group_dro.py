@@ -82,7 +82,7 @@ class GroupDRO(BaseInvariantTrain):
         optimizer: optim.Optimizer,
         num_epochs: int,
         device: torch.device = torch.device("cpu"),
-        valid_evaluator: Evaluator = None,
+        val_evaluator: Evaluator = None,
         verbose=False,
     ):
         """
@@ -106,7 +106,7 @@ class GroupDRO(BaseInvariantTrain):
 
         seed_randomness(torch_module=torch, random_module=random, numpy_module=np)
     
-        super().__init__(valid_evaluator=valid_evaluator, verbose=verbose)
+        super().__init__(val_evaluator=val_evaluator, verbose=verbose)
     
         assert batch_size >= len(trainset.group_partition), "batch_size must be >= number of groups (Group DRO requires at least 1 example from each group)"
         

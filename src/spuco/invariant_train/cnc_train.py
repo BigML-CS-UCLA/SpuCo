@@ -27,7 +27,7 @@ class CorrectNContrastTrain(BaseInvariantTrain):
         num_epochs: int,
         lambda_ce: float,
         device: torch.device = torch.device("cpu"),
-        valid_evaluator: Evaluator = None,
+        val_evaluator: Evaluator = None,
         verbose: bool = False  
     ):
         """
@@ -57,7 +57,7 @@ class CorrectNContrastTrain(BaseInvariantTrain):
         
         seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
 
-        super().__init__(valid_evaluator=valid_evaluator, verbose=verbose)
+        super().__init__(val_evaluator=val_evaluator, verbose=verbose)
     
         self.num_epochs = num_epochs 
 
