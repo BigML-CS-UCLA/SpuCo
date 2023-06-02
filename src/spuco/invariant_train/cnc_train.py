@@ -2,6 +2,7 @@ import torch
 from torch import optim
 
 from spuco.datasets import GroupLabeledDatasetWrapper
+from spuco.evaluate import Evaluator
 from spuco.invariant_train import BaseInvariantTrain
 from spuco.models import SpuCoModel
 from spuco.utils import Trainer
@@ -26,6 +27,7 @@ class CorrectNContrastTrain(BaseInvariantTrain):
         num_epochs: int,
         lambda_ce: float,
         device: torch.device = torch.device("cpu"),
+        valid_evaluator: Evaluator = None,
         verbose: bool = False  
     ):
         """
@@ -52,10 +54,11 @@ class CorrectNContrastTrain(BaseInvariantTrain):
         :param verbose: Whether to print training progress (default: False).
         :type verbose: bool
         """
-        super().__init__()
-
+        
         seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
 
+        super().__init__(valid_evaluator=valid_evaluator, verbose=verbose)
+    
         self.num_epochs = num_epochs 
 
         def forward_pass(self, batch):

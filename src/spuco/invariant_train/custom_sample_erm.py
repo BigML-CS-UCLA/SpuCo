@@ -5,6 +5,8 @@ import numpy as np
 import torch
 from torch import nn, optim
 from torch.utils.data import Dataset
+
+from spuco.evaluate import Evaluator
 from spuco.invariant_train import BaseInvariantTrain
 from spuco.utils import CustomIndicesSampler, Trainer
 from spuco.utils.random_seed import seed_randomness
@@ -24,6 +26,7 @@ class CustomSampleERM(BaseInvariantTrain):
         indices: List[int],
         criterion=nn.CrossEntropyLoss(), 
         device: torch.device = torch.device("cpu"),
+        valid_evaluator: Evaluator = None,
         verbose=False
     ):  
         """
@@ -50,6 +53,8 @@ class CustomSampleERM(BaseInvariantTrain):
         """
          
         seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
+        
+        super().__init__(valid_evaluator=valid_evaluator, verbose=verbose)
         
         self.num_epochs = num_epochs
         self.indices = indices

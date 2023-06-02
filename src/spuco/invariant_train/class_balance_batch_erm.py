@@ -4,6 +4,7 @@ import torch
 from torch import nn, optim
 
 from spuco.datasets import BaseSpuCoCompatibleDataset
+from spuco.evaluate import Evaluator
 from spuco.invariant_train import BaseInvariantTrain
 from spuco.utils import (CustomIndicesSampler, Trainer,
                          convert_labels_to_partition)
@@ -22,6 +23,7 @@ class ClassBalanceBatchERM(BaseInvariantTrain):
         optimizer: optim.Optimizer,
         num_epochs: int,
         device: torch.device = torch.device("cpu"),
+        valid_evaluator: Evaluator = None,
         verbose=False
     ):
         """
@@ -42,10 +44,11 @@ class ClassBalanceBatchERM(BaseInvariantTrain):
         :param verbose: Whether to print training progress (default: False).
         :type verbose: bool
         """
-
          
         seed_randomness(random_module=random, torch_module=torch, numpy_module=np)
 
+        super().__init__(valid_evaluator=valid_evaluator, verbose=verbose)
+        
         self.class_partition = convert_labels_to_partition(trainset.labels)
         assert batch_size >= len(self.class_partition), "batch_size must be >= number of groups (Group DRO requires at least 1 example from each group)"
         

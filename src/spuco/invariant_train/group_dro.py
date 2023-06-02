@@ -6,6 +6,7 @@ import torch
 from torch import nn, optim
 
 from spuco.datasets import GroupLabeledDatasetWrapper
+from spuco.evaluate import Evaluator
 from spuco.invariant_train import BaseInvariantTrain
 from spuco.utils import CustomIndicesSampler, Trainer
 from spuco.utils.random_seed import seed_randomness
@@ -81,8 +82,8 @@ class GroupDRO(BaseInvariantTrain):
         optimizer: optim.Optimizer,
         num_epochs: int,
         device: torch.device = torch.device("cpu"),
+        valid_evaluator: Evaluator = None,
         verbose=False,
-        verbose_val=True
     ):
         """
         Initializes GroupDRO.
@@ -104,7 +105,9 @@ class GroupDRO(BaseInvariantTrain):
         """
 
         seed_randomness(torch_module=torch, random_module=random, numpy_module=np)
-        super().__init__()
+    
+        super().__init__(valid_evaluator=valid_evaluator, verbose=verbose)
+    
         assert batch_size >= len(trainset.group_partition), "batch_size must be >= number of groups (Group DRO requires at least 1 example from each group)"
         
         self.evaluator = Evaluator(
