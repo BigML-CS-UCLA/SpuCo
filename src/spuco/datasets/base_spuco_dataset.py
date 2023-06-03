@@ -58,6 +58,8 @@ class SourceData():
         self.X = []
         self.labels = []
         self.spurious = None 
+        self.clean_labels = None
+        self.core_feature_noise = None
         if data is not None:
             for x, label in tqdm(data):
                 self.X.append(x)
@@ -113,7 +115,10 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
         
         # Group Partition
         self._group_partition = {}
-        for i, group_label in enumerate(zip(self.data.labels, self.spurious)):
+        labels_for_grouping = self.data.labels
+        if self.data.clean_labels is not None:
+            labels_for_grouping = self.data.clean_labels
+        for i, group_label in enumerate(zip(labels_for_grouping, self.spurious)):
             if group_label not in self._group_partition:
                 self._group_partition[group_label] = []
             self._group_partition[group_label].append(i)
