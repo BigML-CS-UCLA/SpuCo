@@ -26,7 +26,7 @@ class DownSampleERM(BaseInvariantTrain):
         group_partition: Dict[Tuple[int, int], List[int]],
         criterion=nn.CrossEntropyLoss(), 
         device: torch.device = torch.device("cpu"),
-        valid_evaluator: Evaluator = None,
+        val_evaluator: Evaluator = None,
         verbose=False
     ):  
         """
@@ -54,7 +54,7 @@ class DownSampleERM(BaseInvariantTrain):
         
         seed_randomness(torch_module=torch, random_module=random, numpy_module=np)
         
-        super().__init__(valid_evaluator=valid_evaluator, verbose=verbose)
+        super().__init__(val_evaluator=val_evaluator, verbose=verbose)
 
         self.num_epochs = num_epochs
 
