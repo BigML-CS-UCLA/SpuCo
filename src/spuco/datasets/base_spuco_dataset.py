@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from enum import Enum
 from typing import Callable, Dict, List, Optional, Tuple
 from tqdm import tqdm 
@@ -104,11 +104,13 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
                 self._group_partition[group_label] = []
             self._group_partition[group_label].append(i)
 
-        self._clean_group_partition = {}
-        for i, group_label in enumerate(zip(self.data.clean_labels, self.spurious)):
-            if group_label not in self._clean_group_partition:
-                self._clean_group_partition[group_label] = []
-            self._clean_group_partition[group_label].append(i)
+        self._clean_group_partition = None
+        if self.data.clean_labels is not None:
+            self._clean_group_partition = {}
+            for i, group_label in enumerate(zip(self.data.clean_labels, self.spurious)):
+                if group_label not in self._clean_group_partition:
+                    self._clean_group_partition[group_label] = []
+                self._clean_group_partition[group_label].append(i)
             
         # Validate partition sizes
         for class_label in classes:
@@ -135,7 +137,10 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
         """
         Dictionary partitioning indices into groups based on clean labels
         """
-        return self._clean_group_partition 
+        if self._clean_group_partition is None:
+            return self._group_partition
+        else:
+            return self._clean_group_partition 
      
     @property
     def group_weights(self) -> Dict[Tuple[int, int], float]:

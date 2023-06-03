@@ -15,8 +15,8 @@ from tqdm import tqdm
 from spuco.datasets import (TEST_SPLIT, TRAIN_SPLIT, VAL_SPLIT,
                             BaseSpuCoDataset, SourceData,
                             SpuriousFeatureDifficulty)
+from spuco.datasets.spuco_mnist_config import config
 from spuco.utils.random_seed import seed_randomness
-import pickle
 
 
 class ColourMap(Enum):
@@ -39,7 +39,8 @@ class SpuCoMNIST(BaseSpuCoDataset):
         color_map: ColourMap = ColourMap.HSV,
         split: str = TRAIN_SPLIT,
         transform: Optional[Callable] = None,
-        verbose: bool = False
+        verbose: bool = False,
+        download: bool = True,
     ):
         """
         Initializes the SpuCoMNIST dataset.
@@ -66,7 +67,7 @@ class SpuCoMNIST(BaseSpuCoDataset):
             split=split,
             transform=transform,
             num_classes=len(classes),
-            verbose=verbose
+            verbose=verbose,
         )
         
         self.label_noise = label_noise
@@ -77,6 +78,7 @@ class SpuCoMNIST(BaseSpuCoDataset):
         self.spurious_feature_difficulty = spurious_feature_difficulty
         self.classes = classes
         self.colors = self.init_colors(color_map)
+        self.download = download
 
     def load_data(self) -> SourceData:
         """
@@ -94,10 +96,6 @@ class SpuCoMNIST(BaseSpuCoDataset):
                 T.Lambda(lambda x: torch.cat([x, x, x], dim=0))  # convert grayscale to RGB
             ])
         )
-
-        # Load config from pickle
-        with open(f"spuco_mnist_config.pkl", "rb") as f:
-            config = pickle.load(f)
             
         # Return predetermined train / val split
         if self.split == TRAIN_SPLIT:
@@ -140,14 +138,14 @@ class SpuCoMNIST(BaseSpuCoDataset):
             assert self.spurious_correlation_strength != 0, f"spurious correlation strength must be specified and > 0 for split={TRAIN_SPLIT}"
 
             # Determine label noise idx
+            self.is_noisy_label = torch.zeros(len(self.data.X))
             if self.label_noise > 0:
                 self.data.clean_labels = deepcopy(self.data.labels)
-                self.is_noisy_label = torch.zeros(len(self.data.X))
                 self.is_noisy_label[torch.randperm(len(self.data.X))[:int(self.label_noise * len(self.data.X))]] = 1
 
             # Determine feature noise idx
+            self.data.core_feature_noise = torch.zeros(len(self.data.X))
             if self.core_feature_noise > 0:
-                self.data.core_feature_noise = torch.zeros(len(self.data.X))
                 self.data.core_feature_noise[torch.randperm(len(self.data.X))[:int(self.core_feature_noise * len(self.data.X))]] = 1
 
             for label in tqdm(self.partition.keys(), desc="Adding spurious feature", disable=not self.verbose):
