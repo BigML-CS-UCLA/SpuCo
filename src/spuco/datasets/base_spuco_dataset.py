@@ -72,7 +72,6 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
         num_classes: int,
         split: str = "train",
         transform: Optional[Callable] = None,
-        download: bool = False,
         verbose: bool = False,
     ):
         """
@@ -88,17 +87,12 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
         assert split == TRAIN_SPLIT or split == VAL_SPLIT or split == TEST_SPLIT, f"split must be one of {TRAIN_SPLIT}, {VAL_SPLIT}, {TEST_SPLIT}"
         self.split = split
         self.transform = transform
-        self.download = download
         self.verbose = verbose
 
     def initialize(self):
         """
         Initializes the dataset.
         """
-        # Validate Data
-        if not self.download:
-            self.validate_data()
-
         # Load Data
         self.data, classes, spurious_classes = self.load_data()
         self.num_spurious = len(spurious_classes)
