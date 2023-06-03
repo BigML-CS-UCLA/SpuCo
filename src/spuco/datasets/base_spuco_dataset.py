@@ -57,7 +57,7 @@ class SourceData():
         """
         self.X = []
         self.labels = []
-        self.spurious = None 
+        self.spurious = []
         self.clean_labels = None
         self.core_feature_noise = None
         if data is not None:
@@ -69,12 +69,8 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
     def __init__(
         self,
         root: str,
-        spurious_correlation_strength,
-        spurious_feature_difficulty: SpuriousFeatureDifficulty,
         num_classes: int,
         split: str = "train",
-        label_noise: float = 0.0,
-        core_feature_noise: float = 0.0,
         transform: Optional[Callable] = None,
         download: bool = False,
         verbose: bool = False,
@@ -84,19 +80,13 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
 
         :param root: Root directory of the dataset.
         :type root: str
-        :param spurious_correlation_strength: Strength of spurious correlation.
-        :param spurious_feature_difficulty: Difficulty of spurious features.
         :type spurious_feature_difficulty: SpuriousFeatureDifficulty
         """
         super().__init__()
         self.root = root 
-        self.spurious_correlation_strength = spurious_correlation_strength
-        self.spurious_feature_difficulty = spurious_feature_difficulty
         self._num_classes = num_classes
         assert split == TRAIN_SPLIT or split == VAL_SPLIT or split == TEST_SPLIT, f"split must be one of {TRAIN_SPLIT}, {VAL_SPLIT}, {TEST_SPLIT}"
         self.split = split
-        self.label_noise = label_noise
-        self.core_feature_noise = core_feature_noise
         self.transform = transform
         self.download = download
         self.verbose = verbose
@@ -138,6 +128,7 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
             self._group_weights = {}
             for key in self._group_partition.keys():
                 self._group_weights[key] = len(self._group_partition[key]) / len(self.data.X)
+                
     @property
     def group_partition(self) -> Dict[Tuple[int, int], List[int]]:
         """

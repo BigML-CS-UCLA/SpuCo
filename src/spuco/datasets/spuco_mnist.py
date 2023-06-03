@@ -63,16 +63,18 @@ class SpuCoMNIST(BaseSpuCoDataset):
 
         super().__init__(
             root=root, 
-            spurious_correlation_strength=spurious_correlation_strength,
-            spurious_feature_difficulty=spurious_feature_difficulty,
             split=split,
-            label_noise=label_noise,
-            core_feature_noise=core_feature_noise,
             transform=transform,
             num_classes=len(classes),
             verbose=verbose
         )
-
+        
+        self.label_noise = label_noise
+        assert self.label_noise >= 0.0 and self.label_noise <= 1, "Invalid label_noise value"
+        self.core_feature_noise = core_feature_noise
+        assert self.core_feature_noise >= 0.0 and self.core_feature_noise <= 1, "Invalid core_feature_noise value"
+        self.spurious_correlation_strength = spurious_correlation_strength
+        self.spurious_feature_difficulty = spurious_feature_difficulty
         self.classes = classes
         self.colors = self.init_colors(color_map)
 
