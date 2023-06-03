@@ -15,8 +15,8 @@ from tqdm import tqdm
 from spuco.datasets import (TEST_SPLIT, TRAIN_SPLIT, VAL_SPLIT,
                             BaseSpuCoDataset, SourceData,
                             SpuriousFeatureDifficulty)
-from spuco.datasets.spuco_mnist_config import config
 from spuco.utils.random_seed import seed_randomness
+import pickle
 
 
 class ColourMap(Enum):
@@ -93,6 +93,10 @@ class SpuCoMNIST(BaseSpuCoDataset):
             ])
         )
 
+        # Load config from pickle
+        with open(f"spuco_mnist_config.pkl", "rb") as f:
+            config = pickle.load(f)
+            
         # Return predetermined train / val split
         if self.split == TRAIN_SPLIT:
             self.mnist = Subset(
