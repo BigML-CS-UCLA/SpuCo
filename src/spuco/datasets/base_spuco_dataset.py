@@ -115,14 +115,17 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
         
         # Group Partition
         self._group_partition = {}
-        labels_for_grouping = self.data.labels
-        if self.data.clean_labels is not None:
-            labels_for_grouping = self.data.clean_labels
-        for i, group_label in enumerate(zip(labels_for_grouping, self.spurious)):
+        for i, group_label in enumerate(zip(self.data.labels, self.spurious)):
             if group_label not in self._group_partition:
                 self._group_partition[group_label] = []
             self._group_partition[group_label].append(i)
 
+        self._clean_group_partition = {}
+        for i, group_label in enumerate(zip(self.data.clean_labels, self.spurious)):
+            if group_label not in self._clean_group_partition:
+                self._clean_group_partition[group_label] = []
+            self._clean_group_partition[group_label].append(i)
+            
         # Validate partition sizes
         for class_label in classes:
             for spurious_label in spurious_classes:
@@ -141,7 +144,14 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
         Dictionary partitioning indices into groups
         """
         return self._group_partition 
-    
+
+    @property
+    def clean_group_partition(self) -> Dict[Tuple[int, int], List[int]]:
+        """
+        Dictionary partitioning indices into groups based on clean labels
+        """
+        return self._clean_group_partition 
+     
     @property
     def group_weights(self) -> Dict[Tuple[int, int], float]:
         """
