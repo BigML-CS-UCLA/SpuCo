@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import numpy as np
 import torch
@@ -83,3 +83,9 @@ def pairwise_similarity(Z1: torch.tensor, Z2: torch.tensor, block_size: int = 10
     similarity_matrix = np.block(similarity_matrices)
 
     return similarity_matrix
+
+def get_group_membership(indices: List[int], group_partition: Dict[Tuple[int, int], List[int]]):
+    group_membership = {}
+    for key in group_partition.keys():
+        group_membership[key] = len([i for i in indices if i in group_partition[key]]) / len(group_partition[key])
+    return group_membership
