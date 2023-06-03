@@ -84,8 +84,16 @@ def pairwise_similarity(Z1: torch.tensor, Z2: torch.tensor, block_size: int = 10
 
     return similarity_matrix
 
-def get_group_membership(indices: List[int], group_partition: Dict[Tuple[int, int], List[int]]):
-    group_membership = {}
+def get_group_ratios(indices: List[int], group_partition: Dict[Tuple[int, int], List[int]]):
+    """
+    Returns the ratio of each group found in the given indices
+
+    :param Z1: Tensor containing the first set of embeddings.
+    :type Z1: torch.tensor
+    :param Z2: Tensor containing the second set of embeddings.
+    :type Z2: torch.tensor  
+    """
+    group_ratio = {}
     for key in group_partition.keys():
-        group_membership[key] = len([i for i in indices if i in group_partition[key]]) / len(group_partition[key])
-    return group_membership
+        group_ratio[key] = len([i for i in indices if i in group_partition[key]]) / len(group_partition[key])
+    return group_ratio
