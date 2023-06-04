@@ -4,12 +4,14 @@ import torch
 from torch import nn, optim
 from torch.utils.data import Dataset
 
+from spuco.evaluate import Evaluator
+from spuco.invariant_train import BaseInvariantTrain
 from spuco.utils import CustomIndicesSampler, Trainer
 from spuco.utils.random_seed import seed_randomness
 import random 
 import numpy as np 
 
-class UpSampleERM():
+class UpSampleERM(BaseInvariantTrain):
     """
     UpSampleERM class for training a model by upsampling all groups to size of largest group. 
     """
@@ -23,6 +25,7 @@ class UpSampleERM():
         group_partition: Dict[Tuple[int, int], List[int]],
         criterion=nn.CrossEntropyLoss(), 
         device: torch.device = torch.device("cpu"),
+        val_evaluator: Evaluator = None,
         verbose=False
     ):  
         """
@@ -48,8 +51,9 @@ class UpSampleERM():
         :type verbose: bool
         """
 
-         
         seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
+        
+        super().__init__(val_evaluator=val_evaluator, verbose=verbose)
 
         self.num_epochs = num_epochs
 
@@ -72,10 +76,3 @@ class UpSampleERM():
             verbose=verbose,
             device=device
         )
-        
-    def train(self):
-        """
-        Trains the model using the given hyperparameters.
-        """
-        for epoch in range(self.num_epochs):
-            self.trainer.train_epoch(epoch)

@@ -1,8 +1,9 @@
 import torch
 from torch import optim
 
-from spuco.datasets import GroupLabeledDatasetWrapper, BaseSpuCoCompatibleDataset
-from .early_stopper import BaseEarlyStopper
+from spuco.datasets import GroupLabeledDatasetWrapper
+from spuco.evaluate import Evaluator
+from spuco.invariant_train import BaseInvariantTrain
 from spuco.models import SpuCoModel
 from spuco.utils import TrainerTwoOptimizers
 from spuco.utils.random_seed import seed_randomness
@@ -30,9 +31,9 @@ class CorrectNContrastTrain(BaseEarlyStopper):
         lambda_ce: float,
         temp: float,
         device: torch.device = torch.device("cpu"),
-        accum: int = 32,
-        verbose: bool = False,  
-        verbose_val: bool =True
+        accum: int = 32, 
+        val_evaluator: Evaluator = None,
+        verbose: bool = False  
     ):
         """
         Initializes CorrectNContrastTrain.
@@ -60,23 +61,11 @@ class CorrectNContrastTrain(BaseEarlyStopper):
         :param verbose: Whether to print training progress (default: False).
         :type verbose: bool
         """
-        super().__init__()
-
+        
         seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
-
-        self.verbose_val = verbose_val
-        self.best_wg_acc = -1
-        self.best_model = None
-        self.evaluator = Evaluator(
-            testset=valset,
-            group_partition=valset.group_partition,
-            group_weights=valset.group_weights,
-            batch_size=64,
-            model=model,
-            device=device,
-            verbose=False
-        )
-
+        
+        super().__init__(val_evaluator=val_evaluator, verbose=verbose)
+    
         self.num_epochs = num_epochs 
 
         def forward_pass(self, batch):
@@ -132,10 +121,4 @@ class CorrectNContrastTrain(BaseEarlyStopper):
             forward_pass=forward_pass,
             verbose=verbose,
             device=device
-        )
 
-    def train_epoch(self, epoch):
-        """
-        Trains the model using the given hyperparameters and the Correct & Contrast training approach.
-        """
-        self.trainer.train_epoch(epoch)

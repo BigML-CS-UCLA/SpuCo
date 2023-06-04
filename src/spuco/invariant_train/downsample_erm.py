@@ -6,11 +6,13 @@ import torch
 from torch import nn, optim
 from torch.utils.data import Dataset
 
+from spuco.evaluate import Evaluator
+from spuco.invariant_train import BaseInvariantTrain
 from spuco.utils import CustomIndicesSampler, Trainer
 from spuco.utils.random_seed import seed_randomness
 
 
-class DownSampleERM():
+class DownSampleERM(BaseInvariantTrain):
     """
     DownSampleERM class for training a model by downsampling all groups to size of smallest group.
     """
@@ -24,6 +26,7 @@ class DownSampleERM():
         group_partition: Dict[Tuple[int, int], List[int]],
         criterion=nn.CrossEntropyLoss(), 
         device: torch.device = torch.device("cpu"),
+        val_evaluator: Evaluator = None,
         verbose=False
     ):  
         """
@@ -48,9 +51,10 @@ class DownSampleERM():
         :param verbose: Whether to print training progress (default: False).
         :type verbose: bool
         """
-
         
         seed_randomness(torch_module=torch, random_module=random, numpy_module=np)
+        
+        super().__init__(val_evaluator=val_evaluator, verbose=verbose)
 
         self.num_epochs = num_epochs
 
@@ -71,9 +75,3 @@ class DownSampleERM():
             device=device
         )
         
-    def train(self):
-        """
-        Trains the model using the given hyperparameters.
-        """
-        for epoch in range(self.num_epochs):
-            self.trainer.train_epoch(epoch)

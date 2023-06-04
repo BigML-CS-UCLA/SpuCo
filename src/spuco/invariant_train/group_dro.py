@@ -6,12 +6,11 @@ import torch
 from torch import nn, optim
 
 from spuco.datasets import GroupLabeledDatasetWrapper
+from spuco.evaluate import Evaluator 
+from spuco.invariant_train import BaseInvariantTrain
 from spuco.utils import CustomIndicesSampler, Trainer
 from spuco.utils.random_seed import seed_randomness
-from spuco.datasets import GroupLabeledDatasetWrapper, BaseSpuCoCompatibleDataset
-from spuco.evaluate import Evaluator 
 
-from .early_stopper import BaseEarlyStopper
 
 class GroupWeightedLoss(nn.Module):
     """
@@ -68,22 +67,20 @@ class GroupWeightedLoss(nn.Module):
         group_weights = group_weights / group_weights.sum()
         self.group_weights.data = group_weights.data
 
-class GroupDRO(BaseEarlyStopper):
+class GroupDRO(BaseInvariantTrain):
     """
     Group DRO (https://arxiv.org/abs/1911.08731)
-    Is this 
     """
     def __init__(
         self,
         model: nn.Module,
         trainset: GroupLabeledDatasetWrapper,
-        valset: BaseSpuCoCompatibleDataset,
         batch_size: int,
         optimizer: optim.Optimizer,
         num_epochs: int,
         device: torch.device = torch.device("cpu"),
+        val_evaluator: Evaluator = None,
         verbose=False,
-        verbose_val=True
     ):
         """
         Initializes GroupDRO.
@@ -105,21 +102,10 @@ class GroupDRO(BaseEarlyStopper):
         """
 
         seed_randomness(torch_module=torch, random_module=random, numpy_module=np)
-        super().__init__()
+    
+        super().__init__(val_evaluator=val_evaluator, verbose=verbose)
+    
         assert batch_size >= len(trainset.group_partition), "batch_size must be >= number of groups (Group DRO requires at least 1 example from each group)"
-        
-        self.verbose_val = verbose_val
-        self.best_wg_acc = -1
-        self.best_model = None
-        self.evaluator = Evaluator(
-            testset=valset,
-            group_partition=valset.group_partition,
-            group_weights=valset.group_weights,
-            batch_size=64,
-            model=model,
-            device=device,
-            verbose=False
-        )
 
         def forward_pass(self, batch):
             inputs, labels, groups = batch
