@@ -88,6 +88,7 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
         self.split = split
         self.transform = transform
         self.verbose = verbose
+        self.skip_group_validation = False
 
     def initialize(self):
         """
@@ -113,10 +114,11 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
                 self._clean_group_partition[group_label].append(i)
             
         # Validate partition sizes
-        for class_label in classes:
-            for spurious_label in spurious_classes:
-                group_label = (class_label, spurious_label)
-                assert group_label in self._group_partition and len(self._group_partition[group_label]) > 0, f"No examples in {group_label}, considering reducing spurious correlation strength"
+        if not self.skip_group_validation:
+            for class_label in classes:
+                for spurious_label in spurious_classes:
+                    group_label = (class_label, spurious_label)
+                    assert group_label in self._group_partition and len(self._group_partition[group_label]) > 0, f"No examples in {group_label}, considering reducing spurious correlation strength"
 
         # Group Weights
         self._group_weights = None

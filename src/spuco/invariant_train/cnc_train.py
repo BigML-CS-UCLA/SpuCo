@@ -5,13 +5,14 @@ from spuco.datasets import GroupLabeledDatasetWrapper
 from spuco.evaluate import Evaluator
 from spuco.invariant_train import BaseInvariantTrain
 from spuco.models import SpuCoModel
-from spuco.utils import Trainer
+from spuco.utils import TrainerTwoOptimizers
 from spuco.utils.random_seed import seed_randomness
+from spuco.evaluate import Evaluator 
 
 import random
 import numpy as np
 
-class CorrectNContrastTrain(BaseInvariantTrain):
+class CorrectNContrastTrain(BaseEarlyStopper):
     """
     CorrectNContrastTrain class for training a model using CNC's 
     Cross Entropy + modified Supervised Contrastive Learning loss.
@@ -19,14 +20,18 @@ class CorrectNContrastTrain(BaseInvariantTrain):
     def __init__(
         self,
         trainset: GroupLabeledDatasetWrapper,
+        valset: BaseSpuCoCompatibleDataset,
         model: SpuCoModel,
         batch_size: int,
-        optimizer: optim.Optimizer,
+        optimizer_encoder: optim.Optimizer,
+        optimizer_classifier: optim.Optimizer,
         num_pos: int, 
         num_neg: int,
         num_epochs: int,
         lambda_ce: float,
+        temp: float,
         device: torch.device = torch.device("cpu"),
+        accum: int = 32, 
         val_evaluator: Evaluator = None,
         verbose: bool = False  
     ):
@@ -49,6 +54,8 @@ class CorrectNContrastTrain(BaseInvariantTrain):
         :type num_epochs: int
         :param lambda_ce: The weight of the regular cross-entropy loss.
         :type lambda_ce: float
+        :param temp: The temperature the regular cross-entropy loss.
+        :type temp: float
         :param device: The device to be used for training (default: CPU).
         :type device: torch.device
         :param verbose: Whether to print training progress (default: False).
@@ -56,7 +63,7 @@ class CorrectNContrastTrain(BaseInvariantTrain):
         """
         
         seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
-
+        
         super().__init__(val_evaluator=val_evaluator, verbose=verbose)
     
         self.num_epochs = num_epochs 
@@ -95,20 +102,23 @@ class CorrectNContrastTrain(BaseInvariantTrain):
                     anchor = self.model.backbone(torch.unsqueeze(inputs[anchor_idx], dim=0))
                     pos = self.model.backbone(inputs[pos_idx])
                     neg = self.model.backbone(inputs[neg_idx])
-                    pos_sim = torch.exp(torch.cosine_similarity(anchor, pos))
+                    pos_sim = torch.exp(torch.cosine_similarity(anchor, pos)/temp)
                     pos_sum_sim = torch.sum(pos_sim) 
-                    neg_sum_sim = torch.sum(torch.exp(torch.cosine_similarity(anchor, neg)))
+                    neg_sum_sim = torch.sum(torch.exp(torch.cosine_similarity(anchor, neg)/temp))
                     sup_cl_loss = torch.sum(torch.log(pos_sim / (pos_sum_sim + neg_sum_sim)))
-                    loss += sup_cl_loss / len(pos_idx)
+                    loss += (1-lambda_ce) * sup_cl_loss / len(pos_idx)
 
             return loss, outputs, labels
 
-        self.trainer = Trainer(
+        self.trainer = TrainerTwoOptimizers(
             trainset=trainset,
             model=model,
             batch_size=batch_size,
-            optimizer=optimizer,
+            optimizer_1=optimizer_encoder,
+            optimizer_2=optimizer_classifier,
+            accum_1=1,
+            accum_2=accum,
             forward_pass=forward_pass,
             verbose=verbose,
             device=device
-        )
+

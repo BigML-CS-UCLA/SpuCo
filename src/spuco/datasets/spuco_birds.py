@@ -3,9 +3,7 @@ import random
 import tarfile
 from copy import deepcopy
 from typing import Callable, Optional
-import shutil 
 
-import matplotlib.cm as cm
 import numpy as np
 import requests
 import torch
@@ -18,8 +16,8 @@ from spuco.datasets import (TEST_SPLIT, TRAIN_SPLIT, VAL_SPLIT,
 from spuco.utils.random_seed import seed_randomness
 
 # Constants
-DOWNLOAD_URL = "https://ucla.box.com/shared/static/8ex41vae3hutohce2l6t42e1uw3nmvc4"
-DATASET_NAME = "spuco_waterbirds"
+DOWNLOAD_URL = "https://ucla.box.com/shared/static/zrsx09ik7lqad1e389w06f1c4nbajo9z"
+DATASET_NAME = "spuco_birds"
 LANDBIRDS = "landbirds"
 WATERBIRDS = "waterbirds"
 LAND = "land"
@@ -35,7 +33,7 @@ MINORITY_SIZE = {
     TEST_SPLIT: 500,
 }
 
-class SpuCoWaterbirds(BaseSpuCoDataset):
+class SpuCoBirds(BaseSpuCoDataset):
     """
     """
 
@@ -70,7 +68,7 @@ class SpuCoWaterbirds(BaseSpuCoDataset):
         
     def load_data(self) -> SourceData:
         """
-        Loads SpuCoWaterbirds and sets spurious labels, label noise.
+        Loads SpuCoBirds and sets spurious labels, label noise.
 
         :return: The spurious correlation dataset.
         :rtype: SourceData, List[int], List[int]
@@ -82,7 +80,8 @@ class SpuCoWaterbirds(BaseSpuCoDataset):
                 raise RuntimeError(f"Dataset not found {self.dset_dir}, run again with download=True")
             self.download_data()
             self.untar_data()
-
+            os.remove(self.filename)
+            
         try:
             self.data = SourceData()
             
@@ -91,28 +90,28 @@ class SpuCoWaterbirds(BaseSpuCoDataset):
             self.data.X.extend([str(os.path.join(self.dset_dir, f"{LANDBIRDS}/{LAND}", x)) for x in landbirds_land])
             self.data.labels.extend([0] * len(landbirds_land))
             self.data.spurious.extend([0] * len(landbirds_land))
-            assert len(landbirds_land) == MAJORITY_SIZE[self.split], f"Dataset corrupted or missing files. Expected {MAJORITY_SIZE[self.split]} files got {len(landbirds_land)}"
+            assert len(landbirds_land) == MAJORITY_SIZE[self.split], f"Dataset corrupted or missing files [landbirds_land]. Expected {MAJORITY_SIZE[self.split]} files got {len(landbirds_land)}"
             
             # Landbirds Water 
             landbirds_water = os.listdir(os.path.join(self.dset_dir, f"{LANDBIRDS}/{WATER}"))
             self.data.X.extend([str(os.path.join(self.dset_dir, f"{LANDBIRDS}/{WATER}", x)) for x in landbirds_water])
             self.data.labels.extend([0] * len(landbirds_water))
             self.data.spurious.extend([1] * len(landbirds_water))   
-            assert len(landbirds_water) == MINORITY_SIZE[self.split], f"Dataset corrupted or missing files. Expected {MINORITY_SIZE[self.split]} files got {len(landbirds_water)}"
+            assert len(landbirds_water) == MINORITY_SIZE[self.split], f"Dataset corrupted or missing files [landbirds_water]. Expected {MINORITY_SIZE[self.split]} files got {len(landbirds_water)}"
             
             # Waterbirds Land
             waterbirds_land = os.listdir(os.path.join(self.dset_dir, f"{WATERBIRDS}/{LAND}"))
             self.data.X.extend([str(os.path.join(self.dset_dir, f"{WATERBIRDS}/{LAND}", x)) for x in waterbirds_land])
             self.data.labels.extend([1] * len(waterbirds_land))
             self.data.spurious.extend([0] * len(waterbirds_land))
-            assert len(waterbirds_land) == MINORITY_SIZE[self.split], f"Dataset corrupted or missing files. Expected {MINORITY_SIZE[self.split]} files got {len(waterbirds_land)}"
+            assert len(waterbirds_land) == MINORITY_SIZE[self.split], f"Dataset corrupted or missing files [waterbirds_land]. Expected {MINORITY_SIZE[self.split]} files got {len(waterbirds_land)}"
             
             # Waterbirds Water
             waterbirds_water = os.listdir(os.path.join(self.dset_dir, f"{WATERBIRDS}/{WATER}"))
             self.data.X.extend([str(os.path.join(self.dset_dir, f"{WATERBIRDS}/{WATER}", x)) for x in waterbirds_water])
             self.data.labels.extend([1] * len(waterbirds_water))
             self.data.spurious.extend([1] * len(waterbirds_water)) 
-            assert len(waterbirds_water) == MAJORITY_SIZE[self.split], f"Dataset corrupted or missing files. Expected {MAJORITY_SIZE[self.split]} files got {len(waterbirds_water)}"
+            assert len(waterbirds_water) == MAJORITY_SIZE[self.split], f"Dataset corrupted or missing files [waterbirds_water]. Expected {MAJORITY_SIZE[self.split]} files got {len(waterbirds_water)}"
             
             if self.label_noise > 0.0:
                 self.data.clean_labels = deepcopy(self.data.labels)
@@ -131,7 +130,7 @@ class SpuCoWaterbirds(BaseSpuCoDataset):
         response.raise_for_status()
 
         with open(self.filename, "wb") as file:
-            for chunk in tqdm(response.iter_content(chunk_size=1024), total=3070904, desc="Downloading SpuCoWaterbirds", unit="KB"):
+            for chunk in tqdm(response.iter_content(chunk_size=1024), total=2941766, desc="Downloading SpuCoBirds", unit="KB"):
                 file.write(chunk)
     
     def untar_data(self):
