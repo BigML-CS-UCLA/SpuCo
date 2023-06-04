@@ -24,12 +24,12 @@ INDOOR = "indoor"
 OUTDOOR = "outdoor"
 MAJORITY_SIZE = {
     TRAIN_SPLIT: 10000,
-    VAL_SPLIT: 1000,
+    VAL_SPLIT: 500,
     TEST_SPLIT: 500,
 }
 MINORITY_SIZE = {
     TRAIN_SPLIT: 500,
-    VAL_SPLIT: 50,
+    VAL_SPLIT: 25,
     TEST_SPLIT: 500,
 }
 
