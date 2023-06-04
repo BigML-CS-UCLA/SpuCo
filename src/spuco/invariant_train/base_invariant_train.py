@@ -32,7 +32,6 @@ class BaseInvariantTrain(ABC):
                     print('Epoch {}: Val Worst-Group Accuracy: {}'.format(epoch, self.val_evaluator.worst_group_accuracy[1]))
                     print('Best Val Worst-Group Accuracy: {}'.format(self._best_wg_acc))
                 
-    @abstractmethod
     def train_epoch(self, epoch: int):
         self.trainer.train_epoch(epoch)
         

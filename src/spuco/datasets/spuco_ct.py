@@ -84,7 +84,7 @@ class SpuCoCT(BaseSpuCoDataset):
         :rtype: Tuple[SourceData, int, int]
         """
 
-        # TODO: Data Downloading and Loading from saved copies
+        # TODO: Loading from saved copies
         
         if self.verbose:
             print("Assembling SpuCoCT")
