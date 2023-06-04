@@ -41,7 +41,7 @@ class SpuCoCT(BaseSpuCoDataset):
         core_feature_noise: float = 0.0,
         split: str = TRAIN_SPLIT,
         transform: Optional[Callable] = None,
-        download: bool = True,
+        save: bool = True,
         verbose: bool = False
     ):
         """
@@ -73,7 +73,7 @@ class SpuCoCT(BaseSpuCoDataset):
         if split != TRAIN_SPLIT:
             assert (label_noise > 0 or core_feature_noise > 0), "Label noise and feature noise not allowed if validation or test data"
         
-        self.download = download
+        self.save = save
 
     def load_data(self) -> SourceData:
         """
@@ -147,7 +147,18 @@ class SpuCoCT(BaseSpuCoDataset):
                 spurious_label = spurious_label[torch.randperm(len(spurious_label))]
 
                 self.process_data(label, spurious_label)
-
+        
+        # Save data
+        if self.save:
+            torch.save(self.source_Data, f"\
+                {self.root} \
+                /{self.spurious_feature_difficulty} \
+                {self.spurious_correlation_strength} \
+                {self.label_noise} \
+                {self.feature_noise} \
+                {self.verbose} \
+            .pt")
+        
         # Return data, list containing all class labels, list containing all spurious labels
         return self.data, range(self.num_classes), range(self.num_classes)
 
