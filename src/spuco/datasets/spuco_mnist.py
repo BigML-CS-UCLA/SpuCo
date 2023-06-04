@@ -66,7 +66,6 @@ class SpuCoMNIST(BaseSpuCoDataset):
             root=root, 
             split=split,
             transform=transform,
-            num_classes=len(classes),
             verbose=verbose,
         )
         
