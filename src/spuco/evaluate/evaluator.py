@@ -10,6 +10,10 @@ from tqdm import tqdm
 from spuco.datasets import SpuriousTargetDatasetWrapper
 from spuco.utils.random_seed import seed_randomness
 
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from typing import Tuple, Optional
+
 
 class Evaluator:
     def __init__(
@@ -19,6 +23,7 @@ class Evaluator:
         group_weights: Dict[Tuple[int, int], float],
         batch_size: int,
         model: nn.Module,
+        sklearn_linear_model: Optional[Tuple[float, float, float, Optional[StandardScaler]]] = None,
         device: torch.device = torch.device("cpu"),
         verbose: bool = False
     ):
@@ -50,13 +55,14 @@ class Evaluator:
         self.device = device
         self.verbose = verbose
         self.accuracies = None
+        self.sklearn_linear_model = sklearn_linear_model
 
         # Create DataLoaders 
 
         # Group-Wise DataLoader
         for key in group_partition.keys():
             sampler = SubsetRandomSampler(group_partition[key])
-            self.testloaders[key] = DataLoader(testset, batch_size=batch_size, sampler=sampler, num_workers=4, pin_memory=True)
+            self.testloaders[key] = DataLoader(testset, batch_size=batch_size, sampler=sampler, num_workers=4, pin_memory=True, shuffle=False)
         
         # SpuriousTarget Dataloader
         spurious = torch.zeros(len(testset))
@@ -73,7 +79,10 @@ class Evaluator:
         self.model.eval()
         self.accuracies = {}
         for key in tqdm(sorted(self.group_partition.keys()), "Evaluating group-wise accuracy", ):
-            self.accuracies[key] = self._evaluate_accuracy(self.testloaders[key])
+            if self.sklearn_linear_model:
+                self.accuracies[key] = self._evaluate_accuracy_sklearn_logreg(self.testloaders[key])
+            else:
+                self.accuracies[key] = self._evaluate_accuracy(self.testloaders[key])
             if self.verbose:
                 print(f"Group {key} Test Accuracy: {self.accuracies[key]}")
         return self.accuracies
@@ -89,6 +98,36 @@ class Evaluator:
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
             return 100 * correct / total
+    
+    def _evaluate_accuracy_sklearn_logreg(self, testloader: DataLoader):
+
+        C, coef, intercept, scaler = self.sklearn_linear_model
+
+        X_test, y_test = self.encode_testset(testloader)
+        X_test = X_test.detach().cpu().numpy()
+        y_test = y_test.detach().cpu().numpy()
+        if scaler:
+            X_test = scaler.transform(X_test)
+        logreg = LogisticRegression(penalty='l1', C=C, solver="liblinear", class_weight={0: 1, 1: 1})
+        # the fit is only needed to set up logreg
+        logreg.fit(X_test[:2], np.arange(2))
+        logreg.coef_ = coef
+        logreg.intercept_ = intercept
+        preds_test = logreg.predict(X_test)
+        return (preds_test == y_test).mean()
+    
+    def encode_testset(self, testloader):
+
+        X_test = []
+        y_test = []
+
+        self.model.eval()
+        with torch.no_grad():
+            for inputs, labels in testloader:
+                inputs, labels = inputs.to(self.device), labels.to(self.device)
+                X_test.append(self.model.backbone(inputs))
+                y_test.append(labels)
+            return torch.cat(X_test), torch.cat(y_test)
         
     def evaluate_spurious_task(self):
         """

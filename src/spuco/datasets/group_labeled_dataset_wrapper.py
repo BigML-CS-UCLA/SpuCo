@@ -1,4 +1,4 @@
-from typing import Dict, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import torch
 from torch.utils.data import Dataset
@@ -8,6 +8,7 @@ class GroupLabeledDatasetWrapper(Dataset):
         self, 
         dataset: Dataset,
         group_partition: Dict[Tuple[int, int], int],
+        subset_indices: Optional[List[int]] = None
     ):
         """
         Initializes a GroupLabeledDataset.
@@ -28,6 +29,11 @@ class GroupLabeledDatasetWrapper(Dataset):
         self.num_groups = len(group_partition.keys())
         self.group = self.group.long().tolist()
         
+        # Subset if needed
+        self.indices = range(len(dataset))
+        if subset_indices is not None:
+            self.indices = subset_indices
+        
     def __getitem__(self, index):
         """
         Retrieves an item from the dataset.
@@ -36,6 +42,7 @@ class GroupLabeledDatasetWrapper(Dataset):
         :type index: int
         :return: The item at the given index.
         """
+        index = self.indices[index]
         source_tuple = self.dataset.__getitem__(index)
         return (source_tuple[0], source_tuple[1], self.group[index])
     
@@ -46,4 +53,4 @@ class GroupLabeledDatasetWrapper(Dataset):
         :return: The length of the dataset.
         :rtype: int
         """
-        return len(self.dataset)
+        return len(self.indices)
