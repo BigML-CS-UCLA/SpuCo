@@ -69,7 +69,6 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
     def __init__(
         self,
         root: str,
-        num_classes: int,
         split: str = "train",
         transform: Optional[Callable] = None,
         verbose: bool = False,
@@ -83,7 +82,6 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
         """
         super().__init__()
         self.root = root 
-        self._num_classes = num_classes
         assert split == TRAIN_SPLIT or split == VAL_SPLIT or split == TEST_SPLIT, f"split must be one of {TRAIN_SPLIT}, {VAL_SPLIT}, {TEST_SPLIT}"
         self.split = split
         self.transform = transform
@@ -96,6 +94,7 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
         """
         # Load Data
         self.data, classes, spurious_classes = self.load_data()
+        self._num_classes = len(classes)
         self.num_spurious = len(spurious_classes)
         
         # Group Partition
@@ -121,11 +120,9 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
                     assert group_label in self._group_partition and len(self._group_partition[group_label]) > 0, f"No examples in {group_label}, considering reducing spurious correlation strength"
 
         # Group Weights
-        self._group_weights = None
-        if self.split == TRAIN_SPLIT:
-            self._group_weights = {}
-            for key in self._group_partition.keys():
-                self._group_weights[key] = len(self._group_partition[key]) / len(self.data.X)
+        self._group_weights = {}
+        for key in self._group_partition.keys():
+            self._group_weights[key] = len(self._group_partition[key]) / len(self.data.X)
                 
     @property
     def group_partition(self) -> Dict[Tuple[int, int], List[int]]:

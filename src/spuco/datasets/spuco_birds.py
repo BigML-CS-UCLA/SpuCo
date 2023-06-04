@@ -55,7 +55,6 @@ class SpuCoBirds(BaseSpuCoDataset):
             root=root, 
             split=split,
             transform=transform,
-            num_classes=2,
             verbose=verbose
         )
         self.download = download
@@ -130,7 +129,7 @@ class SpuCoBirds(BaseSpuCoDataset):
         response.raise_for_status()
 
         with open(self.filename, "wb") as file:
-            for chunk in tqdm(response.iter_content(chunk_size=1024), total=2941766, desc="Downloading SpuCoBirds", unit="KB"):
+            for chunk in tqdm(response.iter_content(chunk_size=1024), total=2952065, desc="Downloading SpuCoBirds", unit="KB"):
                 file.write(chunk)
     
     def untar_data(self):
