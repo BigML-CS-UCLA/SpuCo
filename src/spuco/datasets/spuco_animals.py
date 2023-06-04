@@ -5,7 +5,6 @@ import numpy as np
 import torch
 import torchvision.transforms as transforms
 from PIL import Image
-from tqdm import tqdm
 
 from spuco.datasets import (TRAIN_SPLIT, BaseSpuCoDataset, SourceData,
                             SpuCoBirds, SpuCoDogs)
@@ -80,8 +79,9 @@ class SpuCoAnimals(BaseSpuCoDataset):
         self.data.core_feature_noise = None
         self.data.X.extend(self.dogs_data.X)
         self.data.labels.extend([label + 2 for label in self.dogs_data.labels])
-        self.data.spurious.extend([label + 2 for label in self.dogs_data.spurious])   
-        self.data.clean_labels.extend([label + 2 for label in self.dogs_data.clean_labels])   
+        self.data.spurious.extend([label + 2 for label in self.dogs_data.spurious])
+        if self.data.clean_labels is not None:   
+            self.data.clean_labels.extend([label + 2 for label in self.dogs_data.clean_labels])   
         
         return self.data, list(range(4)), list(range(4))
     
