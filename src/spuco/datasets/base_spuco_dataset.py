@@ -121,11 +121,9 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
                     assert group_label in self._group_partition and len(self._group_partition[group_label]) > 0, f"No examples in {group_label}, considering reducing spurious correlation strength"
 
         # Group Weights
-        self._group_weights = None
-        if self.split == TRAIN_SPLIT:
-            self._group_weights = {}
-            for key in self._group_partition.keys():
-                self._group_weights[key] = len(self._group_partition[key]) / len(self.data.X)
+        self._group_weights = {}
+        for key in self._group_partition.keys():
+            self._group_weights[key] = len(self._group_partition[key]) / len(self.data.X)
                 
     @property
     def group_partition(self) -> Dict[Tuple[int, int], List[int]]:
