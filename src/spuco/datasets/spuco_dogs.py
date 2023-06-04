@@ -3,9 +3,7 @@ import random
 import tarfile
 from copy import deepcopy
 from typing import Callable, Optional
-import shutil 
 
-import matplotlib.cm as cm
 import numpy as np
 import requests
 import torch
@@ -18,12 +16,12 @@ from spuco.datasets import (TEST_SPLIT, TRAIN_SPLIT, VAL_SPLIT,
 from spuco.utils.random_seed import seed_randomness
 
 # Constants
-DOWNLOAD_URL = "https://ucla.box.com/shared/static/8ex41vae3hutohce2l6t42e1uw3nmvc4"
-DATASET_NAME = "spuco_waterbirds"
-LANDBIRDS = "landbirds"
-WATERBIRDS = "waterbirds"
-LAND = "land"
-WATER = "water"
+DOWNLOAD_URL = "https://ucla.box.com/shared/static/u3dkllvq7a2py4x443pqul295wwd549e"
+DATASET_NAME = "spuco_dogs"
+SMALL_DOGS = "small_dogs"
+BIG_DOGS = "big_dogs"
+INDOOR = "indoor"
+OUTDOOR = "outdoor"
 MAJORITY_SIZE = {
     TRAIN_SPLIT: 10000,
     VAL_SPLIT: 1000,
@@ -35,7 +33,7 @@ MINORITY_SIZE = {
     TEST_SPLIT: 500,
 }
 
-class SpuCoWaterbirds(BaseSpuCoDataset):
+class SpuCoDogs(BaseSpuCoDataset):
     """
     """
 
@@ -82,37 +80,38 @@ class SpuCoWaterbirds(BaseSpuCoDataset):
                 raise RuntimeError(f"Dataset not found {self.dset_dir}, run again with download=True")
             self.download_data()
             self.untar_data()
-
+            os.remove(self.filename)
+            
         try:
             self.data = SourceData()
             
-            # Landbirds Land 
-            landbirds_land = os.listdir(os.path.join(self.dset_dir, f"{LANDBIRDS}/{LAND}"))
-            self.data.X.extend([str(os.path.join(self.dset_dir, f"{LANDBIRDS}/{LAND}", x)) for x in landbirds_land])
-            self.data.labels.extend([0] * len(landbirds_land))
-            self.data.spurious.extend([0] * len(landbirds_land))
-            assert len(landbirds_land) == MAJORITY_SIZE[self.split], f"Dataset corrupted or missing files. Expected {MAJORITY_SIZE[self.split]} files got {len(landbirds_land)}"
+            # Small Dogs - Indoor
+            small_dogs_indoor = os.listdir(os.path.join(self.dset_dir, f"{SMALL_DOGS}/{INDOOR}"))
+            self.data.X.extend([str(os.path.join(self.dset_dir, f"{SMALL_DOGS}/{INDOOR}", x)) for x in small_dogs_indoor])
+            self.data.labels.extend([0] * len(small_dogs_indoor))
+            self.data.spurious.extend([0] * len(small_dogs_indoor))
+            assert len(small_dogs_indoor) == MAJORITY_SIZE[self.split], f"Dataset corrupted or missing files. Expected {MAJORITY_SIZE[self.split]} files got {len(small_dogs_indoor)}"
             
-            # Landbirds Water 
-            landbirds_water = os.listdir(os.path.join(self.dset_dir, f"{LANDBIRDS}/{WATER}"))
-            self.data.X.extend([str(os.path.join(self.dset_dir, f"{LANDBIRDS}/{WATER}", x)) for x in landbirds_water])
-            self.data.labels.extend([0] * len(landbirds_water))
-            self.data.spurious.extend([1] * len(landbirds_water))   
-            assert len(landbirds_water) == MINORITY_SIZE[self.split], f"Dataset corrupted or missing files. Expected {MINORITY_SIZE[self.split]} files got {len(landbirds_water)}"
+            # Small Dogs - Outdoor
+            small_dogs_outdoor = os.listdir(os.path.join(self.dset_dir, f"{SMALL_DOGS}/{OUTDOOR}"))
+            self.data.X.extend([str(os.path.join(self.dset_dir, f"{SMALL_DOGS}/{OUTDOOR}", x)) for x in small_dogs_outdoor])
+            self.data.labels.extend([0] * len(small_dogs_outdoor))
+            self.data.spurious.extend([1] * len(small_dogs_outdoor))   
+            assert len(small_dogs_outdoor) == MINORITY_SIZE[self.split], f"Dataset corrupted or missing files. Expected {MINORITY_SIZE[self.split]} files got {len(small_dogs_outdoor)}"
             
-            # Waterbirds Land
-            waterbirds_land = os.listdir(os.path.join(self.dset_dir, f"{WATERBIRDS}/{LAND}"))
-            self.data.X.extend([str(os.path.join(self.dset_dir, f"{WATERBIRDS}/{LAND}", x)) for x in waterbirds_land])
-            self.data.labels.extend([1] * len(waterbirds_land))
-            self.data.spurious.extend([0] * len(waterbirds_land))
-            assert len(waterbirds_land) == MINORITY_SIZE[self.split], f"Dataset corrupted or missing files. Expected {MINORITY_SIZE[self.split]} files got {len(waterbirds_land)}"
+            # Big Dogs - Indoor
+            big_dogs_indoor = os.listdir(os.path.join(self.dset_dir, f"{BIG_DOGS}/{INDOOR}"))
+            self.data.X.extend([str(os.path.join(self.dset_dir, f"{BIG_DOGS}/{INDOOR}", x)) for x in big_dogs_indoor])
+            self.data.labels.extend([1] * len(big_dogs_indoor))
+            self.data.spurious.extend([0] * len(big_dogs_indoor))
+            assert len(big_dogs_indoor) == MINORITY_SIZE[self.split], f"Dataset corrupted or missing files. Expected {MINORITY_SIZE[self.split]} files got {len(big_dogs_indoor)}"
             
-            # Waterbirds Water
-            waterbirds_water = os.listdir(os.path.join(self.dset_dir, f"{WATERBIRDS}/{WATER}"))
-            self.data.X.extend([str(os.path.join(self.dset_dir, f"{WATERBIRDS}/{WATER}", x)) for x in waterbirds_water])
-            self.data.labels.extend([1] * len(waterbirds_water))
-            self.data.spurious.extend([1] * len(waterbirds_water)) 
-            assert len(waterbirds_water) == MAJORITY_SIZE[self.split], f"Dataset corrupted or missing files. Expected {MAJORITY_SIZE[self.split]} files got {len(waterbirds_water)}"
+            # Big Dogs - Outdoor
+            big_dogs_outdoor = os.listdir(os.path.join(self.dset_dir, f"{BIG_DOGS}/{OUTDOOR}"))
+            self.data.X.extend([str(os.path.join(self.dset_dir, f"{BIG_DOGS}/{OUTDOOR}", x)) for x in big_dogs_outdoor])
+            self.data.labels.extend([1] * len(big_dogs_outdoor))
+            self.data.spurious.extend([1] * len(big_dogs_outdoor)) 
+            assert len(big_dogs_outdoor) == MAJORITY_SIZE[self.split], f"Dataset corrupted or missing files. Expected {MAJORITY_SIZE[self.split]} files got {len(big_dogs_outdoor)}"
             
             if self.label_noise > 0.0:
                 self.data.clean_labels = deepcopy(self.data.labels)
@@ -131,7 +130,7 @@ class SpuCoWaterbirds(BaseSpuCoDataset):
         response.raise_for_status()
 
         with open(self.filename, "wb") as file:
-            for chunk in tqdm(response.iter_content(chunk_size=1024), total=3070904, desc="Downloading SpuCoWaterbirds", unit="KB"):
+            for chunk in tqdm(response.iter_content(chunk_size=1024), total=3070904, desc="Downloading SpuCoDogs", unit="KB"):
                 file.write(chunk)
     
     def untar_data(self):

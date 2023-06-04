@@ -5,4 +5,5 @@ from .group_labeled_dataset_wrapper import GroupLabeledDatasetWrapper
 from .wilds_dataset_wrapper import WILDSDatasetWrapper
 from .spuco_mnist import SpuCoMNIST
 from .spuco_ct import SpuCoCT
-from .spuco_waterbirds import SpuCoWaterbirds
+from .spuco_birds import SpuCoBirds
+from .spuco_dogs import SpuCoDogs
