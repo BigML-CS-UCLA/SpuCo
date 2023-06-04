@@ -69,6 +69,7 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
     def __init__(
         self,
         root: str,
+        num_classes: int,
         split: str = "train",
         transform: Optional[Callable] = None,
         verbose: bool = False,
@@ -82,6 +83,7 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
         """
         super().__init__()
         self.root = root 
+        self._num_classes = num_classes
         assert split == TRAIN_SPLIT or split == VAL_SPLIT or split == TEST_SPLIT, f"split must be one of {TRAIN_SPLIT}, {VAL_SPLIT}, {TEST_SPLIT}"
         self.split = split
         self.transform = transform
@@ -94,7 +96,6 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
         """
         # Load Data
         self.data, classes, spurious_classes = self.load_data()
-        self._num_classes = len(classes)
         self.num_spurious = len(spurious_classes)
         
         # Group Partition

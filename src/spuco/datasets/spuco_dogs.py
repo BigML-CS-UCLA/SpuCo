@@ -55,6 +55,7 @@ class SpuCoDogs(BaseSpuCoDataset):
             root=root, 
             split=split,
             transform=transform,
+            num_classes=2,
             verbose=verbose
         )
         self.download = download
