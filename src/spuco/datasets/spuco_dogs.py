@@ -68,7 +68,7 @@ class SpuCoDogs(BaseSpuCoDataset):
         
     def load_data(self) -> SourceData:
         """
-        Loads SpuCoWaterbirds and sets spurious labels, label noise.
+        Loads SpuCoDogs and sets spurious labels, label noise.
 
         :return: The spurious correlation dataset.
         :rtype: SourceData, List[int], List[int]
@@ -130,7 +130,7 @@ class SpuCoDogs(BaseSpuCoDataset):
         response.raise_for_status()
 
         with open(self.filename, "wb") as file:
-            for chunk in tqdm(response.iter_content(chunk_size=1024), total=3070904, desc="Downloading SpuCoDogs", unit="KB"):
+            for chunk in tqdm(response.iter_content(chunk_size=1024), total=2593935, desc="Downloading SpuCoDogs", unit="KB"):
                 file.write(chunk)
     
     def untar_data(self):
