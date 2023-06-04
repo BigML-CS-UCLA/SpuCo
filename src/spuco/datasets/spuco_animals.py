@@ -33,7 +33,7 @@ class SpuCoAnimals(BaseSpuCoDataset):
             root=root, 
             split=split,
             transform=transform,
-            num_classes=2,
+            num_classes=4,
             verbose=verbose
         )
         self.download = download
