@@ -27,7 +27,7 @@ class SupportedModels(Enum):
     DistilBERT = "distilbert"
     ResNet50 = "resnet50"
 
-def model_factory(arch: str, input_shape: Tuple[int, int, int], num_classes: int):
+def model_factory(arch: str, input_shape: Tuple[int, int, int], num_classes: int, pretrained: bool = True):
     """
     Factory function to create a SpuCoModel based on the specified architecture.
 
@@ -61,8 +61,10 @@ def model_factory(arch: str, input_shape: Tuple[int, int, int], num_classes: int
         backbone = DistilBert.from_pretrained('distilbert-base-uncased')
         representation_dim = backbone.d_out
     elif arch == SupportedModels.ResNet50:
-        backbone = resnet50(weights=ResNet50_Weights.IMAGENET1K_V2)
-        backbone = resnet50(pretrained=True)
+        if pretrained:
+            backbone = resnet50(weights=ResNet50_Weights.IMAGENET1K_V2)
+        else:
+            backbone = resnet50(weights=None)
         representation_dim = backbone.fc.in_features
         backbone.fc = Identity()
     else:
