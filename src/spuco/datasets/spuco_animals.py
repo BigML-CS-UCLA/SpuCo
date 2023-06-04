@@ -33,6 +33,7 @@ class SpuCoAnimals(BaseSpuCoDataset):
             root=root, 
             split=split,
             transform=transform,
+            num_classes=2,
             verbose=verbose
         )
         self.download = download
@@ -94,7 +95,7 @@ class SpuCoAnimals(BaseSpuCoDataset):
         :rtype: tuple
         """
         
-        image = self.base_transform(Image.open(self.data.X[index]).convert("RGB"))
+        image = self.base_transform(Image.open(self.data.X[index]))
         label = self.data.labels[index]
         if self.transform is None:
             return image, label
