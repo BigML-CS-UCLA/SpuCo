@@ -65,3 +65,6 @@ class ERM(BaseInvariantTrain):
             verbose=verbose,
             device=device
         )
+
+    def train_epoch(self, epoch: int):
+        self.trainer.train_epoch(epoch)

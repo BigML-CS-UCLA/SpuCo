@@ -4,3 +4,4 @@ from .jtt_inference import JTTInference
 from .eiil import EIIL
 from .ssa import SSA
 from .cnc_inference import CorrectNContrastInference
+from .spare_inference import SpareInference
