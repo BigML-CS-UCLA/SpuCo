@@ -6,10 +6,8 @@ from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 from .dfr import DFR
 from spuco.datasets import BaseSpuCoCompatibleDataset, GroupLabeledDatasetWrapper
-
 from spuco.models import SpuCoModel
 from spuco.utils.random_seed import seed_randomness
-
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from typing import Union, List, Optional
