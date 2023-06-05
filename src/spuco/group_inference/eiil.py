@@ -90,7 +90,7 @@ class EIIL(BaseGroupInference):
         # Partition using group labels to get group partition 
         group_partition = {}
         for i in range(len(spurious_labels)):
-            group_label = (self.class_labels[i], spurious_labels[i])
+            group_label = (0, spurious_labels[i])
             if group_label not in group_partition:
                 group_partition[group_label] = []
             group_partition[group_label].append(i)
