@@ -5,7 +5,7 @@ from typing import Tuple
 import numpy as np
 import torch
 import torch.nn as nn
-from torchvision.models import resnet50, ResNet50_Weights
+from torchvision.models import resnet50, ResNet50_Weights, resnet18, ResNet18_Weights
 
 from spuco.models import MLP, Bert, DistilBert, LeNet, SpuCoModel
 from spuco.utils.random_seed import seed_randomness
@@ -25,6 +25,7 @@ class SupportedModels(Enum):
     LeNet = "lenet"
     BERT = "bert"
     DistilBERT = "distilbert"
+    ResNet18 = "resnet18"
     ResNet50 = "resnet50"
 
 def model_factory(arch: str, input_shape: Tuple[int, int, int], num_classes: int, pretrained: bool = True):
@@ -60,9 +61,16 @@ def model_factory(arch: str, input_shape: Tuple[int, int, int], num_classes: int
     elif arch == SupportedModels.DistilBERT:
         backbone = DistilBert.from_pretrained('distilbert-base-uncased')
         representation_dim = backbone.d_out
+    elif arch == SupportedModels.ResNet18:
+        if pretrained:
+            backbone = resnet18(weights=ResNet18_Weights.IMAGENET1K_V1)
+        else:
+            backbone = resnet18(weights=None)
+        representation_dim = backbone.fc.in_features
+        backbone.fc = Identity()
     elif arch == SupportedModels.ResNet50:
         if pretrained:
-            backbone = resnet50(weights=ResNet50_Weights.IMAGENET1K_V2)
+            backbone = resnet50(weights=ResNet50_Weights.IMAGENET1K_V1)
         else:
             backbone = resnet50(weights=None)
         representation_dim = backbone.fc.in_features
