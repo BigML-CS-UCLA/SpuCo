@@ -95,7 +95,7 @@ class SpuCoAnimals(BaseSpuCoDataset):
         :rtype: tuple
         """
         
-        image = self.base_transform(Image.open(self.data.X[index]))
+        image = self.base_transform(Image.open(self.data.X[index]).convert('RGB'))
         label = self.data.labels[index]
         if self.transform is None:
             return image, label
