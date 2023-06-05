@@ -85,7 +85,7 @@ class Evaluator:
             else:
                 self.accuracies[key] = self._evaluate_accuracy(self.testloaders[key])
             if self.verbose:
-                print(f"Group {key} Test Accuracy: {self.accuracies[key]}")
+                print(f"Group {key} Accuracy: {self.accuracies[key]}")
         return self.accuracies
     
     def _evaluate_accuracy(self, testloader: DataLoader):
