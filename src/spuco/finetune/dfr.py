@@ -104,6 +104,9 @@ class DFR():
     
 
     def train(self):
+        
+        if self.verbose:
+            print('Encoding data ...')
         X_labeled, y_labeled, g_labeled = self.encode_dataset(self.group_labeled_set)
         X_labeled = X_labeled.detach().cpu().numpy()
         y_labeled = y_labeled.detach().cpu().numpy()
