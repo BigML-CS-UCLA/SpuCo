@@ -55,25 +55,27 @@ class SpuCoCT(BaseSpuCoDataset):
 
         super().__init__(
             root=root, 
-            spurious_correlation_strength=spurious_correlation_strength,
-            spurious_feature_difficulty=spurious_feature_difficulty,
             split=split,
             num_classes=4,
             transform=transform,
-            label_noise=label_noise,
-            core_feature_noise=core_feature_noise,
             verbose=verbose
         )
-        if self.spurious_correlation_strength == SpuriousCorrelationStrength.UNIFORM:
+
+        if spurious_correlation_strength == SpuriousCorrelationStrength.UNIFORM:
             self.spurious_correlation_strength = SPURIOUS_UNIFORM
-        elif self.spurious_correlation_strength == SpuriousCorrelationStrength.LINEAR:
+        elif spurious_correlation_strength == SpuriousCorrelationStrength.LINEAR:
             self.spurious_correlation_strength = SPURIOUS_LINEAR
         else:
             raise ValueError("Invalid argument value, unsupported correlation strength")
+        self.spurious_feature_difficulty = spurious_feature_difficulty
+        self.label_noise = label_noise
+        self.core_feature_noise = core_feature_noise
+        self.save = save
+        
+        self.skip_group_validation = True
+        
         if split != TRAIN_SPLIT:
             assert (label_noise > 0 or core_feature_noise > 0), "Label noise and feature noise not allowed if validation or test data"
-        
-        self.save = save
 
     def load_data(self) -> SourceData:
         """
@@ -84,17 +86,25 @@ class SpuCoCT(BaseSpuCoDataset):
         :rtype: Tuple[SourceData, int, int]
         """
 
-        # TODO: Loading from saved copies
-        
-        if self.verbose:
-            print("Assembling SpuCoCT")
-
+        self.data = None
+        try:
+            self.data = torch.load(f"\
+                {self.root}\
+                /{self.spurious_feature_difficulty}-\
+                {self.spurious_correlation_strength}-\
+                {self.label_noise}-\
+                {self.core_feature_noise}\
+            .pt")
+        except:
+            if self.verbose:
+                print("This version of SpuCoCT doesn't exist. Assembling SpuCoCT.")
+            
         # Load data into source data
         self.data = SourceData()
         to_tensor = T.ToTensor()
         self.root = os.path.join(self.root, self.split)
         for class_label, class_dir in enumerate(os.listdir(self.root)):
-            for file in tqdm(list(os.listdir(os.path.join(self.root, class_dir))[:100]), desc=f"loading {class_dir}", disable=not self.verbose):
+            for file in tqdm(list(os.listdir(os.path.join(self.root, class_dir))), desc=f"loading {class_dir}", disable=not self.verbose):
                 self.data.X.append(to_tensor(Image.open(os.path.join(self.root, class_dir, file)))[0])
                 self.data.labels.append(class_label)
         self.class_partition = convert_labels_to_partition(self.data.labels)
@@ -150,14 +160,20 @@ class SpuCoCT(BaseSpuCoDataset):
         
         # Save data
         if self.save:
-            torch.save(self.source_Data, f"\
-                {self.root} \
-                /{self.spurious_feature_difficulty} \
-                {self.spurious_correlation_strength} \
-                {self.label_noise} \
-                {self.feature_noise} \
-                {self.verbose} \
-            .pt")
+            print("".join(f"\
+                {self.root}/\
+                {self.spurious_feature_difficulty}-\
+                {self.spurious_correlation_strength}-\
+                {self.label_noise}-\
+                {self.core_feature_noise}\
+            .pt".split()))
+            torch.save(self.data, "".join(f"\
+                {self.root}/\
+                {self.spurious_feature_difficulty}-\
+                {self.spurious_correlation_strength}-\
+                {self.label_noise}-\
+                {self.core_feature_noise}\
+            .pt".split()))
         
         # Return data, list containing all class labels, list containing all spurious labels
         return self.data, range(self.num_classes), range(self.num_classes)
