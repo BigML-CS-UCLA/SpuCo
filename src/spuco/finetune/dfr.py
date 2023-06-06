@@ -4,14 +4,11 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader, Dataset
 from spuco.datasets import BaseSpuCoCompatibleDataset, GroupLabeledDatasetWrapper
-from tqdm import tqdm
-
 from spuco.models import SpuCoModel
 from spuco.utils.random_seed import seed_randomness
-
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
-from typing import Union, List, Optional
+from typing import List, Optional, Dict
 import random
 
 
@@ -23,9 +20,11 @@ class DFR():
         n_lin_models: int = 20, 
         labeled_valset_size: float = 0.5,
         C_range: List[float] = [1., 0.7, 0.3, 0.1, 0.07, 0.03, 0.01],
+        class_weight_options: Optional[List[Dict]] = None,
+        validation_set: Optional[GroupLabeledDatasetWrapper] = None,
         device: torch.device = torch.device("cpu"),
         verbose: bool = False,
-        data_for_scaler: Optional[Dataset] = None,
+        data_for_scaler: Optional[Dataset] = None
     ):
         """
         Initializes the DFR object.
@@ -47,9 +46,11 @@ class DFR():
         self.data_for_scaler = data_for_scaler
         self.scaler = None
         self.preprocess = self.data_for_scaler is not None
+        self.class_weight_options = class_weight_options
+        self.validation_set = validation_set
     
 
-    def train_single_model(self, C, X_train, y_train, g_train):
+    def train_single_model(self, C, X_train, y_train, g_train, class_weight):
         
         group_partition = []
         for g in range(np.max(g_train)+1):
@@ -64,19 +65,19 @@ class DFR():
         X_train_balanced = np.concatenate(X_train_balanced)
         y_train_balanced = np.concatenate(y_train_balanced)
 
-        logreg = LogisticRegression(penalty='l1', C=C, solver="liblinear")
+        logreg = LogisticRegression(penalty='l1', C=C, solver="liblinear", class_weight=class_weight)
         logreg.fit(X_train_balanced, y_train_balanced)
         return logreg.coef_, logreg.intercept_
 
 
-    def train_multiple_model(self, C, X_labeled_train, y_labeled_train, g_labeled_train):
+    def train_multiple_model(self, C, X_labeled_train, y_labeled_train, g_labeled_train, class_weight):
         """
         Trains the DFR model.
         """
         
         coefs, intercepts = [], []
         for i in range(self.n_lin_models):
-            coef_, intercept_ = self.train_single_model(C, X_labeled_train, y_labeled_train, g_labeled_train)
+            coef_, intercept_ = self.train_single_model(C, X_labeled_train, y_labeled_train, g_labeled_train, class_weight)
             coefs.append(coef_)
             intercepts.append(intercept_)
         return np.mean(coefs, axis=0), np.mean(intercepts, axis=0)
@@ -87,19 +88,26 @@ class DFR():
         best_wg_acc = -1
         if self.verbose:
             print('Searching for best hyperparameters ...')
+
         for C in self.C_range:
-            coef, intercept = self.train_single_model(C, X_labeled_train, y_labeled_train, g_labeled_train)
-            # coef, intercept = self.train_multiple_model(C, X_labeled_train, y_labeled_train, g_labeled_train)
-            wg_acc = self.evaluate_worstgroup_acc(C, coef, intercept, X_labeled_val, y_labeled_val, g_labeled_val)
-            if wg_acc > best_wg_acc:
-                best_wg_acc = wg_acc
-                self.best_C = C
-            if self.verbose:
-                print('C {}: Val Worst-Group Accuracy: {}'.format(C, wg_acc))
-                print('Best C {}: Best Val Worst-Group Accuracy: {}'.format(self.best_C, best_wg_acc))
-   
+            for class_weight in self.class_weight_options:
+                coef, intercept = self.train_single_model(C, X_labeled_train, y_labeled_train, g_labeled_train, class_weight)
+                # coef, intercept = self.train_multiple_model(C, X_labeled_train, y_labeled_train, g_labeled_train)
+                wg_acc = self.evaluate_worstgroup_acc(C, coef, intercept, X_labeled_val, y_labeled_val, g_labeled_val)
+                if wg_acc > best_wg_acc:
+                    best_wg_acc = wg_acc
+                    self.best_C = C
+                    self.best_class_weight = class_weight
+                if self.verbose:
+                    print('C {} | class weight {}: Val Worst-Group Accuracy: {}'.format(C, class_weight, wg_acc))
+                    print('Best C {} | class weight {}: Best Val Worst-Group Accuracy: {}'.format(self.best_C, self.best_class_weight, best_wg_acc))
+    
+
     def train(self):
-        X_labeled, y_labeled, g_labeled = self.encode_trainset(self.group_labeled_set)
+        
+        if self.verbose:
+            print('Encoding data ...')
+        X_labeled, y_labeled, g_labeled = self.encode_dataset(self.group_labeled_set)
         X_labeled = X_labeled.detach().cpu().numpy()
         y_labeled = y_labeled.detach().cpu().numpy()
         g_labeled = g_labeled.detach().cpu().numpy()
@@ -108,7 +116,7 @@ class DFR():
         if self.preprocess:
             self.scaler = StandardScaler()
             if self.data_for_scaler:
-                X_scaler, _ = self.encode_trainset(self.data_for_scaler)
+                X_scaler, _ = self.encode_dataset(self.data_for_scaler)
                 X_scaler = X_scaler.detach().cpu().numpy()
                 self.scaler.fit(X_scaler)
             else:
@@ -116,20 +124,33 @@ class DFR():
                 self.scaler.fit(X_labeled)
             X_labeled = self.scaler.transform(X_labeled)
         
-        # Splite labeled data into training and validation data
-        n_labeled = X_labeled.shape[0]
-        ids = {i for i in range(n_labeled)}
-        ids_val = set(random.sample(ids, int(self.labeled_valset_size*n_labeled)))
-        ids_train = ids - ids_val
-        ids_val = np.array(list(ids_val))
-        ids_train = np.array(list(ids_train))
+        # If validation set is not provided, split labeled data into training and validation data
+        # Otherwise, use the given validation set 
+        if self.validation_set is None:
+            n_labeled = X_labeled.shape[0]
+            ids = {i for i in range(n_labeled)}
+            ids_val = set(random.sample(ids, int(self.labeled_valset_size*n_labeled)))
+            ids_train = ids - ids_val
+            ids_val = np.array(list(ids_val))
+            ids_train = np.array(list(ids_train))
 
-        X_labeled_train, y_labeled_train, g_labeled_train = X_labeled[ids_train], y_labeled[ids_train], g_labeled[ids_train]
+            X_labeled_train, y_labeled_train, g_labeled_train = X_labeled[ids_train], y_labeled[ids_train], g_labeled[ids_train]
+            X_labeled_val, y_labeled_val, g_labeled_val = X_labeled[ids_val], y_labeled[ids_val], g_labeled[ids_val]
+        else:
+            X_labeled_train, y_labeled_train, g_labeled_train = X_labeled, y_labeled, g_labeled
+            X_labeled_val, y_labeled_val, g_labeled_val = self.encode_dataset(self.validation_set)
+            X_labeled_val = X_labeled_val.detach().cpu().numpy()
+            y_labeled_val = y_labeled_val.detach().cpu().numpy()
+            g_labeled_val = g_labeled_val.detach().cpu().numpy()
+            if self.preprocess:
+                X_labeled_val = self.scaler.transform(X_labeled_val)
         
-        X_labeled_val, y_labeled_val, g_labeled_val = X_labeled[ids_val], y_labeled[ids_val], g_labeled[ids_val]
+        if self.class_weight_options is None:
+            n_class = np.max(y_labeled_val) + 1
+            self.class_weight_options = [{c: 1 for c in range(n_class)}]
         
         self.hyperparam_selection(X_labeled_train, y_labeled_train, g_labeled_train, X_labeled_val, y_labeled_val, g_labeled_val)
-        coef, intercept = self.train_multiple_model(self.best_C, X_labeled_train, y_labeled_train, g_labeled_train)
+        coef, intercept = self.train_multiple_model(self.best_C, X_labeled_train, y_labeled_train, g_labeled_train, self.best_class_weight)
         self.linear_model = (self.best_C, coef, intercept, self.scaler)
 
 
@@ -149,7 +170,7 @@ class DFR():
         return np.min(accs)
 
 
-    def encode_trainset(self, dataset):
+    def encode_dataset(self, dataset):
         """
         Encodes the training set using the DFR model.
 

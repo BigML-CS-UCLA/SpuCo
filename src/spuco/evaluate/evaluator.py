@@ -56,6 +56,7 @@ class Evaluator:
         self.verbose = verbose
         self.accuracies = None
         self.sklearn_linear_model = sklearn_linear_model
+        self.n_classes = np.max(testset.labels) + 1
 
         # Create DataLoaders 
 
@@ -84,7 +85,7 @@ class Evaluator:
             else:
                 self.accuracies[key] = self._evaluate_accuracy(self.testloaders[key])
             if self.verbose:
-                print(f"Group {key} Test Accuracy: {self.accuracies[key]}")
+                print(f"Group {key} Accuracy: {self.accuracies[key]}")
         return self.accuracies
     
     def _evaluate_accuracy(self, testloader: DataLoader):
@@ -108,9 +109,9 @@ class Evaluator:
         y_test = y_test.detach().cpu().numpy()
         if scaler:
             X_test = scaler.transform(X_test)
-        logreg = LogisticRegression(penalty='l1', C=C, solver="liblinear", class_weight={0: 1, 1: 1})
+        logreg = LogisticRegression(penalty='l1', C=C, solver="liblinear")
         # the fit is only needed to set up logreg
-        logreg.fit(X_test[:2], np.arange(2))
+        logreg.fit(X_test[: self.n_classes], np.arange(self.n_classes))
         logreg.coef_ = coef
         logreg.intercept_ = intercept
         preds_test = logreg.predict(X_test)
