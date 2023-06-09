@@ -260,22 +260,22 @@ class SpuCoMNIST(BaseSpuCoDataset):
         :rtype: torch.Tensor
         """
         background = SpuCoMNIST.rgb_to_mnist_background(hex_code)
-        if spurious_feature_difficulty == SpuriousFeatureDifficulty.MAGNITUDE_EASY:
+        if spurious_feature_difficulty == SpuriousFeatureDifficulty.MAGNITUDE_LARGE:
             return background
         elif spurious_feature_difficulty == SpuriousFeatureDifficulty.MAGNITUDE_MEDIUM:
             unmask_points = torch.tensor(list(itertools.product(range(4), range(4))))
             mask = SpuCoMNIST.compute_mask(unmask_points)
-        elif spurious_feature_difficulty == SpuriousFeatureDifficulty.MAGNITUDE_HARD:
+        elif spurious_feature_difficulty == SpuriousFeatureDifficulty.MAGNITUDE_SMALL:
             unmask_points = torch.tensor(list(itertools.product(range(2), range(2))))
             mask = SpuCoMNIST.compute_mask(unmask_points)
-        elif spurious_feature_difficulty == SpuriousFeatureDifficulty.VARIANCE_EASY:
+        elif spurious_feature_difficulty == SpuriousFeatureDifficulty.VARIANCE_LOW:
             unmask_points = torch.tensor(list(itertools.product(range(7), range(7))))
             mask = SpuCoMNIST.compute_mask(unmask_points)
         elif spurious_feature_difficulty == SpuriousFeatureDifficulty.VARIANCE_MEDIUM:
             all_points = torch.tensor(list(itertools.product(range(14), range(14))))
             unmask_points = all_points[torch.randperm(len(all_points))[:49]]
             mask = SpuCoMNIST.compute_mask(unmask_points)
-        elif spurious_feature_difficulty == SpuriousFeatureDifficulty.VARIANCE_HARD:
+        elif spurious_feature_difficulty == SpuriousFeatureDifficulty.VARIANCE_HIGH:
             all_points = torch.tensor(list(itertools.product(range(28), range(28))))
             unmask_points = all_points[torch.randperm(len(all_points))[:49]]
             mask = SpuCoMNIST.compute_mask(unmask_points)

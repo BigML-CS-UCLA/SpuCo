@@ -48,8 +48,8 @@ class SpuCoCT(BaseSpuCoDataset):
         Initializes SpuCoCT object
         """
 
-        assert (spurious_feature_difficulty == SpuriousFeatureDifficulty.MAGNITUDE_EASY 
-                or spurious_feature_difficulty == SpuriousFeatureDifficulty.MAGNITUDE_HARD), "SpuCoCT only supports MAGNITUDE EASY and MAGNITUDE HARD spurious feature difficulty"
+        assert (spurious_feature_difficulty == SpuriousFeatureDifficulty.MAGNITUDE_LARGE 
+                or spurious_feature_difficulty == SpuriousFeatureDifficulty.MAGNITUDE_SMALL), "SpuCoCT only supports MAGNITUDE EASY and MAGNITUDE HARD spurious feature difficulty"
 
         seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
 
@@ -228,7 +228,7 @@ class SpuCoCT(BaseSpuCoDataset):
         if shape == Shape.NONE:
             return None 
         elif shape == Shape.CIRCLE:
-            if spurious_feature_difficulty == SpuriousFeatureDifficulty.MAGNITUDE_EASY:
+            if spurious_feature_difficulty == SpuriousFeatureDifficulty.MAGNITUDE_LARGE:
                 patch_size = (20, 20)
             else:
                 patch_size = (10, 10)
@@ -243,7 +243,7 @@ class SpuCoCT(BaseSpuCoDataset):
             patch = draw_circle(patch, center, radius, 1.0)
             patch = draw_circle(patch, center, radius-2, 0.75)
         elif shape == Shape.TRIANGLE:
-            if spurious_feature_difficulty == SpuriousFeatureDifficulty.MAGNITUDE_EASY:
+            if spurious_feature_difficulty == SpuriousFeatureDifficulty.MAGNITUDE_LARGE:
                 patch_size = (20, 20)
             else:
                 patch_size = (10, 10)
@@ -259,7 +259,7 @@ class SpuCoCT(BaseSpuCoDataset):
             vertices = [(0,0), (patch_size[0]/2, patch_size[1]), (0, patch_size[1])]
             patch = draw_triangle(patch, vertices, 0.75)
         elif shape == Shape.RECTANGLE:
-            if spurious_feature_difficulty == SpuriousFeatureDifficulty.MAGNITUDE_EASY:
+            if spurious_feature_difficulty == SpuriousFeatureDifficulty.MAGNITUDE_LARGE:
                 patch_size = (10, 20)
             else:
                 patch_size = (5, 10)
