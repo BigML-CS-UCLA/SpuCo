@@ -97,7 +97,7 @@ class Cluster(BaseGroupInference):
         for class_label in tqdm(self.class_partition.keys(), disable=not self.verbose, desc="Clustering class-wise"):
             Z = self.Z[self.class_partition[class_label]]
             if self.num_clusters < 2:
-                partition = self.silhouette(Z)
+                partition, scores = self.silhouette(Z)
             elif self.cluster_alg == ClusterAlg.KMEANS:
                 _, partition = self.kmeans(Z)
             else:
@@ -146,7 +146,7 @@ class Cluster(BaseGroupInference):
                     "The average silhouette_score is :", silhouette_scores[-1])
         # Pick best num_clusters
         best_partition_idx = np.argmax(silhouette_scores)
-        return partitions[best_partition_idx]
+        return partitions[best_partition_idx], silhouette_scores
     
     def kmeans(self, Z, num_clusters: int =-1):
         """
