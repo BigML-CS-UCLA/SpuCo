@@ -28,6 +28,7 @@ class BaseInvariantTrain(ABC):
                 if self.val_evaluator.worst_group_accuracy[1] > self._best_wg_acc:
                     self._best_wg_acc = self.val_evaluator.worst_group_accuracy[1]
                     self._best_model = deepcopy(self.trainer.model)
+                    self._best_epoch = epoch
                 if self.verbose:
                     print('Epoch {}: Val Worst-Group Accuracy: {}'.format(epoch, self.val_evaluator.worst_group_accuracy[1]))
                     print('Best Val Worst-Group Accuracy: {}'.format(self._best_wg_acc))
@@ -50,3 +51,11 @@ class BaseInvariantTrain(ABC):
                 no val_evaluator passed.")
         else:
             return self._best_wg_acc
+        
+    @property
+    def best_epoch(self):
+        if self.val_evaluator is None:
+            raise NotImplementedError("Cannot get early stopping epoch \
+                no val_evaluator passed.")
+        else:
+            return self._best_epoch

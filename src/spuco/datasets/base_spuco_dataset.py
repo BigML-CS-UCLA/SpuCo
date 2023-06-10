@@ -16,26 +16,26 @@ class SpuriousFeatureDifficulty(Enum):
     of the spurious feature.
 
     Magnitude definition of difficulty:
-        Easy <-> Large Magnitude
+        Large Magnitude <-> Easy
 
-        Medium <-> Medium Magnitude
+        Medium Magnitude <-> Medium
 
-        Hard <-> Small Magnitude
+        Small Magnitude <-> Hard
 
     Variance definition of difficulty:
-        Easy <-> Small Variance
+        Low Variance <-> Easy
 
-        Medium <-> Medium Variance
+        Medium Variance <-> Medium
 
-        Hard <-> Large Variance
+        High Variance <-> Hard
     """
 
-    MAGNITUDE_EASY = "magnitude_easy"
+    MAGNITUDE_LARGE = "magnitude_large"
     MAGNITUDE_MEDIUM = "magnitude_medium"
-    MAGNITUDE_HARD = "magnitude_hard"
-    VARIANCE_EASY = "variance_easy"
+    MAGNITUDE_SMALL = "magnitude_small"
+    VARIANCE_LOW = "variance_low"
     VARIANCE_MEDIUM = "variance_medium"
-    VARIANCE_HARD = "variance_hard"
+    VARIANCE_HIGH = "variance_high"
 
 class SpuriousCorrelationStrength(Enum):
     UNIFORM = "unform"
