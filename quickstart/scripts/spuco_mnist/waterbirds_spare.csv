@@ -1,0 +1,3 @@
+timestamp,seed,high_sampling_power,lr,weight_decay,momentum,num_epochs,batch_size,worst_group_accuracy,average_accuracy,early_stopping_worst_group_accuracy,early_stopping_average_accuracy
+2023-06-06 08:43:50.313745,0,2,0.001,0.0001,0.9,20,32,41.86666666666667,99.37925134097948,0.0,56.27463879185701
+2023-06-06 08:54:15.246503,0,2,0.001,0.0001,0.9,20,32,35.82887700534759,99.19955208141278,42.4,99.11740115731422

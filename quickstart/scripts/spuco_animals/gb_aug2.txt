@@ -1,0 +1,1020 @@
+Group (0, 0) Accuracy: 31.6
+Group (0, 1) Accuracy: 36.0
+Group (1, 0) Accuracy: 48.0
+Group (1, 1) Accuracy: 54.4
+Group (2, 2) Accuracy: 46.4
+Group (2, 3) Accuracy: 20.0
+Group (3, 2) Accuracy: 28.0
+Group (3, 3) Accuracy: 20.0
+Epoch 0: Val Worst-Group Accuracy: 20.0
+Best Val Worst-Group Accuracy: 20.0
+Group (0, 0) Accuracy: 32.2
+Group (0, 1) Accuracy: 40.0
+Group (1, 0) Accuracy: 64.0
+Group (1, 1) Accuracy: 55.4
+Group (2, 2) Accuracy: 42.2
+Group (2, 3) Accuracy: 28.0
+Group (3, 2) Accuracy: 44.0
+Group (3, 3) Accuracy: 21.4
+Epoch 1: Val Worst-Group Accuracy: 21.4
+Best Val Worst-Group Accuracy: 21.4
+Group (0, 0) Accuracy: 35.6
+Group (0, 1) Accuracy: 32.0
+Group (1, 0) Accuracy: 84.0
+Group (1, 1) Accuracy: 66.2
+Group (2, 2) Accuracy: 37.4
+Group (2, 3) Accuracy: 8.0
+Group (3, 2) Accuracy: 32.0
+Group (3, 3) Accuracy: 25.8
+Epoch 2: Val Worst-Group Accuracy: 8.0
+Best Val Worst-Group Accuracy: 21.4
+Group (0, 0) Accuracy: 40.0
+Group (0, 1) Accuracy: 52.0
+Group (1, 0) Accuracy: 76.0
+Group (1, 1) Accuracy: 57.0
+Group (2, 2) Accuracy: 49.0
+Group (2, 3) Accuracy: 20.0
+Group (3, 2) Accuracy: 32.0
+Group (3, 3) Accuracy: 27.2
+Epoch 3: Val Worst-Group Accuracy: 20.0
+Best Val Worst-Group Accuracy: 21.4
+Group (0, 0) Accuracy: 34.6
+Group (0, 1) Accuracy: 40.0
+Group (1, 0) Accuracy: 76.0
+Group (1, 1) Accuracy: 67.2
+Group (2, 2) Accuracy: 40.6
+Group (2, 3) Accuracy: 24.0
+Group (3, 2) Accuracy: 40.0
+Group (3, 3) Accuracy: 31.2
+Epoch 4: Val Worst-Group Accuracy: 24.0
+Best Val Worst-Group Accuracy: 24.0
+Group (0, 0) Accuracy: 32.8
+Group (0, 1) Accuracy: 40.0
+Group (1, 0) Accuracy: 76.0
+Group (1, 1) Accuracy: 70.8
+Group (2, 2) Accuracy: 53.4
+Group (2, 3) Accuracy: 44.0
+Group (3, 2) Accuracy: 16.0
+Group (3, 3) Accuracy: 17.8
+Epoch 5: Val Worst-Group Accuracy: 16.0
+Best Val Worst-Group Accuracy: 24.0
+Group (0, 0) Accuracy: 36.0
+Group (0, 1) Accuracy: 52.0
+Group (1, 0) Accuracy: 64.0
+Group (1, 1) Accuracy: 48.6
+Group (2, 2) Accuracy: 55.4
+Group (2, 3) Accuracy: 40.0
+Group (3, 2) Accuracy: 20.0
+Group (3, 3) Accuracy: 34.2
+Epoch 6: Val Worst-Group Accuracy: 20.0
+Best Val Worst-Group Accuracy: 24.0
+Group (0, 0) Accuracy: 40.8
+Group (0, 1) Accuracy: 48.0
+Group (1, 0) Accuracy: 72.0
+Group (1, 1) Accuracy: 66.2
+Group (2, 2) Accuracy: 46.0
+Group (2, 3) Accuracy: 32.0
+Group (3, 2) Accuracy: 20.0
+Group (3, 3) Accuracy: 31.2
+Epoch 7: Val Worst-Group Accuracy: 20.0
+Best Val Worst-Group Accuracy: 24.0
+Group (0, 0) Accuracy: 48.4
+Group (0, 1) Accuracy: 48.0
+Group (1, 0) Accuracy: 64.0
+Group (1, 1) Accuracy: 53.6
+Group (2, 2) Accuracy: 48.8
+Group (2, 3) Accuracy: 40.0
+Group (3, 2) Accuracy: 32.0
+Group (3, 3) Accuracy: 36.0
+Epoch 8: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 32.0
+Group (0, 0) Accuracy: 45.4
+Group (0, 1) Accuracy: 52.0
+Group (1, 0) Accuracy: 76.0
+Group (1, 1) Accuracy: 61.8
+Group (2, 2) Accuracy: 36.2
+Group (2, 3) Accuracy: 32.0
+Group (3, 2) Accuracy: 36.0
+Group (3, 3) Accuracy: 42.0
+Epoch 9: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 32.0
+Group (0, 0) Accuracy: 53.8
+Group (0, 1) Accuracy: 60.0
+Group (1, 0) Accuracy: 40.0
+Group (1, 1) Accuracy: 44.4
+Group (2, 2) Accuracy: 53.4
+Group (2, 3) Accuracy: 56.0
+Group (3, 2) Accuracy: 24.0
+Group (3, 3) Accuracy: 36.2
+Epoch 10: Val Worst-Group Accuracy: 24.0
+Best Val Worst-Group Accuracy: 32.0
+Group (0, 0) Accuracy: 46.4
+Group (0, 1) Accuracy: 56.0
+Group (1, 0) Accuracy: 52.0
+Group (1, 1) Accuracy: 52.4
+Group (2, 2) Accuracy: 49.0
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 28.0
+Group (3, 3) Accuracy: 38.8
+Epoch 11: Val Worst-Group Accuracy: 28.0
+Best Val Worst-Group Accuracy: 32.0
+Group (0, 0) Accuracy: 44.6
+Group (0, 1) Accuracy: 52.0
+Group (1, 0) Accuracy: 68.0
+Group (1, 1) Accuracy: 58.0
+Group (2, 2) Accuracy: 49.6
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 28.0
+Group (3, 3) Accuracy: 36.2
+Epoch 12: Val Worst-Group Accuracy: 28.0
+Best Val Worst-Group Accuracy: 32.0
+Group (0, 0) Accuracy: 47.8
+Group (0, 1) Accuracy: 60.0
+Group (1, 0) Accuracy: 56.0
+Group (1, 1) Accuracy: 59.4
+Group (2, 2) Accuracy: 29.6
+Group (2, 3) Accuracy: 32.0
+Group (3, 2) Accuracy: 32.0
+Group (3, 3) Accuracy: 50.0
+Epoch 13: Val Worst-Group Accuracy: 29.6
+Best Val Worst-Group Accuracy: 32.0
+Group (0, 0) Accuracy: 49.2
+Group (0, 1) Accuracy: 60.0
+Group (1, 0) Accuracy: 40.0
+Group (1, 1) Accuracy: 50.8
+Group (2, 2) Accuracy: 39.8
+Group (2, 3) Accuracy: 48.0
+Group (3, 2) Accuracy: 44.0
+Group (3, 3) Accuracy: 52.0
+Epoch 14: Val Worst-Group Accuracy: 39.8
+Best Val Worst-Group Accuracy: 39.8
+Group (0, 0) Accuracy: 52.4
+Group (0, 1) Accuracy: 52.0
+Group (1, 0) Accuracy: 68.0
+Group (1, 1) Accuracy: 58.0
+Group (2, 2) Accuracy: 42.2
+Group (2, 3) Accuracy: 44.0
+Group (3, 2) Accuracy: 32.0
+Group (3, 3) Accuracy: 39.0
+Epoch 15: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 39.8
+Group (0, 0) Accuracy: 41.2
+Group (0, 1) Accuracy: 48.0
+Group (1, 0) Accuracy: 48.0
+Group (1, 1) Accuracy: 65.4
+Group (2, 2) Accuracy: 48.2
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 48.0
+Group (3, 3) Accuracy: 50.8
+Epoch 16: Val Worst-Group Accuracy: 41.2
+Best Val Worst-Group Accuracy: 41.2
+Group (0, 0) Accuracy: 46.6
+Group (0, 1) Accuracy: 60.0
+Group (1, 0) Accuracy: 68.0
+Group (1, 1) Accuracy: 66.2
+Group (2, 2) Accuracy: 43.2
+Group (2, 3) Accuracy: 36.0
+Group (3, 2) Accuracy: 24.0
+Group (3, 3) Accuracy: 41.4
+Epoch 17: Val Worst-Group Accuracy: 24.0
+Best Val Worst-Group Accuracy: 41.2
+Group (0, 0) Accuracy: 51.2
+Group (0, 1) Accuracy: 52.0
+Group (1, 0) Accuracy: 56.0
+Group (1, 1) Accuracy: 69.2
+Group (2, 2) Accuracy: 42.0
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 36.0
+Group (3, 3) Accuracy: 44.0
+Epoch 18: Val Worst-Group Accuracy: 36.0
+Best Val Worst-Group Accuracy: 41.2
+Group (0, 0) Accuracy: 55.6
+Group (0, 1) Accuracy: 60.0
+Group (1, 0) Accuracy: 84.0
+Group (1, 1) Accuracy: 62.6
+Group (2, 2) Accuracy: 48.6
+Group (2, 3) Accuracy: 40.0
+Group (3, 2) Accuracy: 28.0
+Group (3, 3) Accuracy: 40.8
+Epoch 19: Val Worst-Group Accuracy: 28.0
+Best Val Worst-Group Accuracy: 41.2
+Group (0, 0) Accuracy: 55.4
+Group (0, 1) Accuracy: 64.0
+Group (1, 0) Accuracy: 52.0
+Group (1, 1) Accuracy: 56.4
+Group (2, 2) Accuracy: 51.2
+Group (2, 3) Accuracy: 40.0
+Group (3, 2) Accuracy: 40.0
+Group (3, 3) Accuracy: 44.4
+Epoch 20: Val Worst-Group Accuracy: 40.0
+Best Val Worst-Group Accuracy: 41.2
+Group (0, 0) Accuracy: 57.2
+Group (0, 1) Accuracy: 60.0
+Group (1, 0) Accuracy: 64.0
+Group (1, 1) Accuracy: 61.8
+Group (2, 2) Accuracy: 43.4
+Group (2, 3) Accuracy: 40.0
+Group (3, 2) Accuracy: 40.0
+Group (3, 3) Accuracy: 46.0
+Epoch 21: Val Worst-Group Accuracy: 40.0
+Best Val Worst-Group Accuracy: 41.2
+Group (0, 0) Accuracy: 53.6
+Group (0, 1) Accuracy: 68.0
+Group (1, 0) Accuracy: 56.0
+Group (1, 1) Accuracy: 51.0
+Group (2, 2) Accuracy: 52.8
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 40.0
+Group (3, 3) Accuracy: 45.8
+Epoch 22: Val Worst-Group Accuracy: 40.0
+Best Val Worst-Group Accuracy: 41.2
+Group (0, 0) Accuracy: 50.8
+Group (0, 1) Accuracy: 52.0
+Group (1, 0) Accuracy: 64.0
+Group (1, 1) Accuracy: 63.2
+Group (2, 2) Accuracy: 48.6
+Group (2, 3) Accuracy: 60.0
+Group (3, 2) Accuracy: 48.0
+Group (3, 3) Accuracy: 43.8
+Epoch 23: Val Worst-Group Accuracy: 43.8
+Best Val Worst-Group Accuracy: 43.8
+Group (0, 0) Accuracy: 51.6
+Group (0, 1) Accuracy: 56.0
+Group (1, 0) Accuracy: 52.0
+Group (1, 1) Accuracy: 64.6
+Group (2, 2) Accuracy: 52.0
+Group (2, 3) Accuracy: 60.0
+Group (3, 2) Accuracy: 36.0
+Group (3, 3) Accuracy: 44.2
+Epoch 24: Val Worst-Group Accuracy: 36.0
+Best Val Worst-Group Accuracy: 43.8
+Group (0, 0) Accuracy: 54.4
+Group (0, 1) Accuracy: 68.0
+Group (1, 0) Accuracy: 56.0
+Group (1, 1) Accuracy: 57.6
+Group (2, 2) Accuracy: 53.0
+Group (2, 3) Accuracy: 60.0
+Group (3, 2) Accuracy: 40.0
+Group (3, 3) Accuracy: 47.0
+Epoch 25: Val Worst-Group Accuracy: 40.0
+Best Val Worst-Group Accuracy: 43.8
+Group (0, 0) Accuracy: 46.2
+Group (0, 1) Accuracy: 64.0
+Group (1, 0) Accuracy: 60.0
+Group (1, 1) Accuracy: 55.8
+Group (2, 2) Accuracy: 53.6
+Group (2, 3) Accuracy: 56.0
+Group (3, 2) Accuracy: 52.0
+Group (3, 3) Accuracy: 43.4
+Epoch 26: Val Worst-Group Accuracy: 43.4
+Best Val Worst-Group Accuracy: 43.8
+Group (0, 0) Accuracy: 49.8
+Group (0, 1) Accuracy: 52.0
+Group (1, 0) Accuracy: 60.0
+Group (1, 1) Accuracy: 63.8
+Group (2, 2) Accuracy: 47.0
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 44.0
+Group (3, 3) Accuracy: 48.6
+Epoch 27: Val Worst-Group Accuracy: 44.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 57.0
+Group (0, 1) Accuracy: 64.0
+Group (1, 0) Accuracy: 56.0
+Group (1, 1) Accuracy: 55.8
+Group (2, 2) Accuracy: 46.8
+Group (2, 3) Accuracy: 48.0
+Group (3, 2) Accuracy: 36.0
+Group (3, 3) Accuracy: 43.6
+Epoch 28: Val Worst-Group Accuracy: 36.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 61.2
+Group (0, 1) Accuracy: 60.0
+Group (1, 0) Accuracy: 60.0
+Group (1, 1) Accuracy: 67.0
+Group (2, 2) Accuracy: 41.4
+Group (2, 3) Accuracy: 44.0
+Group (3, 2) Accuracy: 28.0
+Group (3, 3) Accuracy: 41.4
+Epoch 29: Val Worst-Group Accuracy: 28.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 59.4
+Group (0, 1) Accuracy: 56.0
+Group (1, 0) Accuracy: 64.0
+Group (1, 1) Accuracy: 65.8
+Group (2, 2) Accuracy: 47.8
+Group (2, 3) Accuracy: 48.0
+Group (3, 2) Accuracy: 28.0
+Group (3, 3) Accuracy: 39.2
+Epoch 30: Val Worst-Group Accuracy: 28.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 54.0
+Group (0, 1) Accuracy: 64.0
+Group (1, 0) Accuracy: 60.0
+Group (1, 1) Accuracy: 65.2
+Group (2, 2) Accuracy: 59.0
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 28.0
+Group (3, 3) Accuracy: 39.6
+Epoch 31: Val Worst-Group Accuracy: 28.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 54.4
+Group (0, 1) Accuracy: 64.0
+Group (1, 0) Accuracy: 48.0
+Group (1, 1) Accuracy: 56.2
+Group (2, 2) Accuracy: 48.2
+Group (2, 3) Accuracy: 48.0
+Group (3, 2) Accuracy: 40.0
+Group (3, 3) Accuracy: 50.8
+Epoch 32: Val Worst-Group Accuracy: 40.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 46.6
+Group (0, 1) Accuracy: 44.0
+Group (1, 0) Accuracy: 52.0
+Group (1, 1) Accuracy: 77.0
+Group (2, 2) Accuracy: 58.2
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 32.0
+Group (3, 3) Accuracy: 40.4
+Epoch 33: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 55.2
+Group (0, 1) Accuracy: 64.0
+Group (1, 0) Accuracy: 52.0
+Group (1, 1) Accuracy: 61.6
+Group (2, 2) Accuracy: 53.2
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 32.0
+Group (3, 3) Accuracy: 45.6
+Epoch 34: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 48.4
+Group (0, 1) Accuracy: 44.0
+Group (1, 0) Accuracy: 48.0
+Group (1, 1) Accuracy: 74.8
+Group (2, 2) Accuracy: 50.6
+Group (2, 3) Accuracy: 56.0
+Group (3, 2) Accuracy: 32.0
+Group (3, 3) Accuracy: 39.2
+Epoch 35: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 58.6
+Group (0, 1) Accuracy: 64.0
+Group (1, 0) Accuracy: 72.0
+Group (1, 1) Accuracy: 63.4
+Group (2, 2) Accuracy: 34.8
+Group (2, 3) Accuracy: 40.0
+Group (3, 2) Accuracy: 36.0
+Group (3, 3) Accuracy: 42.4
+Epoch 36: Val Worst-Group Accuracy: 34.8
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 57.0
+Group (0, 1) Accuracy: 68.0
+Group (1, 0) Accuracy: 60.0
+Group (1, 1) Accuracy: 65.6
+Group (2, 2) Accuracy: 56.6
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 20.0
+Group (3, 3) Accuracy: 38.0
+Epoch 37: Val Worst-Group Accuracy: 20.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 56.2
+Group (0, 1) Accuracy: 60.0
+Group (1, 0) Accuracy: 76.0
+Group (1, 1) Accuracy: 67.0
+Group (2, 2) Accuracy: 45.0
+Group (2, 3) Accuracy: 48.0
+Group (3, 2) Accuracy: 36.0
+Group (3, 3) Accuracy: 45.8
+Epoch 38: Val Worst-Group Accuracy: 36.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 49.4
+Group (0, 1) Accuracy: 64.0
+Group (1, 0) Accuracy: 60.0
+Group (1, 1) Accuracy: 63.2
+Group (2, 2) Accuracy: 50.0
+Group (2, 3) Accuracy: 48.0
+Group (3, 2) Accuracy: 40.0
+Group (3, 3) Accuracy: 48.8
+Epoch 39: Val Worst-Group Accuracy: 40.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 52.4
+Group (0, 1) Accuracy: 72.0
+Group (1, 0) Accuracy: 68.0
+Group (1, 1) Accuracy: 62.2
+Group (2, 2) Accuracy: 56.6
+Group (2, 3) Accuracy: 56.0
+Group (3, 2) Accuracy: 28.0
+Group (3, 3) Accuracy: 37.4
+Epoch 40: Val Worst-Group Accuracy: 28.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 60.8
+Group (0, 1) Accuracy: 64.0
+Group (1, 0) Accuracy: 60.0
+Group (1, 1) Accuracy: 66.6
+Group (2, 2) Accuracy: 50.6
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 28.0
+Group (3, 3) Accuracy: 41.6
+Epoch 41: Val Worst-Group Accuracy: 28.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 58.0
+Group (0, 1) Accuracy: 64.0
+Group (1, 0) Accuracy: 60.0
+Group (1, 1) Accuracy: 61.8
+Group (2, 2) Accuracy: 46.6
+Group (2, 3) Accuracy: 36.0
+Group (3, 2) Accuracy: 40.0
+Group (3, 3) Accuracy: 47.8
+Epoch 42: Val Worst-Group Accuracy: 36.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 49.0
+Group (0, 1) Accuracy: 60.0
+Group (1, 0) Accuracy: 56.0
+Group (1, 1) Accuracy: 70.0
+Group (2, 2) Accuracy: 62.2
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 36.0
+Group (3, 3) Accuracy: 41.6
+Epoch 43: Val Worst-Group Accuracy: 36.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 53.8
+Group (0, 1) Accuracy: 52.0
+Group (1, 0) Accuracy: 44.0
+Group (1, 1) Accuracy: 74.2
+Group (2, 2) Accuracy: 46.6
+Group (2, 3) Accuracy: 60.0
+Group (3, 2) Accuracy: 32.0
+Group (3, 3) Accuracy: 47.6
+Epoch 44: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 53.0
+Group (0, 1) Accuracy: 52.0
+Group (1, 0) Accuracy: 52.0
+Group (1, 1) Accuracy: 76.8
+Group (2, 2) Accuracy: 52.8
+Group (2, 3) Accuracy: 56.0
+Group (3, 2) Accuracy: 32.0
+Group (3, 3) Accuracy: 38.8
+Epoch 45: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 57.0
+Group (0, 1) Accuracy: 60.0
+Group (1, 0) Accuracy: 64.0
+Group (1, 1) Accuracy: 71.0
+Group (2, 2) Accuracy: 50.8
+Group (2, 3) Accuracy: 40.0
+Group (3, 2) Accuracy: 36.0
+Group (3, 3) Accuracy: 46.4
+Epoch 46: Val Worst-Group Accuracy: 36.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 58.2
+Group (0, 1) Accuracy: 64.0
+Group (1, 0) Accuracy: 32.0
+Group (1, 1) Accuracy: 65.8
+Group (2, 2) Accuracy: 47.8
+Group (2, 3) Accuracy: 48.0
+Group (3, 2) Accuracy: 48.0
+Group (3, 3) Accuracy: 55.0
+Epoch 47: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 50.8
+Group (0, 1) Accuracy: 44.0
+Group (1, 0) Accuracy: 44.0
+Group (1, 1) Accuracy: 77.4
+Group (2, 2) Accuracy: 54.0
+Group (2, 3) Accuracy: 60.0
+Group (3, 2) Accuracy: 32.0
+Group (3, 3) Accuracy: 45.8
+Epoch 48: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 54.0
+Group (0, 1) Accuracy: 56.0
+Group (1, 0) Accuracy: 64.0
+Group (1, 1) Accuracy: 71.0
+Group (2, 2) Accuracy: 61.2
+Group (2, 3) Accuracy: 48.0
+Group (3, 2) Accuracy: 24.0
+Group (3, 3) Accuracy: 41.2
+Epoch 49: Val Worst-Group Accuracy: 24.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 54.8
+Group (0, 1) Accuracy: 64.0
+Group (1, 0) Accuracy: 52.0
+Group (1, 1) Accuracy: 60.2
+Group (2, 2) Accuracy: 54.8
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 40.0
+Group (3, 3) Accuracy: 45.6
+Epoch 50: Val Worst-Group Accuracy: 40.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 61.6
+Group (0, 1) Accuracy: 60.0
+Group (1, 0) Accuracy: 64.0
+Group (1, 1) Accuracy: 67.8
+Group (2, 2) Accuracy: 49.0
+Group (2, 3) Accuracy: 40.0
+Group (3, 2) Accuracy: 28.0
+Group (3, 3) Accuracy: 45.0
+Epoch 51: Val Worst-Group Accuracy: 28.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 64.8
+Group (0, 1) Accuracy: 72.0
+Group (1, 0) Accuracy: 36.0
+Group (1, 1) Accuracy: 62.8
+Group (2, 2) Accuracy: 48.0
+Group (2, 3) Accuracy: 44.0
+Group (3, 2) Accuracy: 36.0
+Group (3, 3) Accuracy: 47.8
+Epoch 52: Val Worst-Group Accuracy: 36.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 49.4
+Group (0, 1) Accuracy: 56.0
+Group (1, 0) Accuracy: 64.0
+Group (1, 1) Accuracy: 77.2
+Group (2, 2) Accuracy: 58.2
+Group (2, 3) Accuracy: 44.0
+Group (3, 2) Accuracy: 32.0
+Group (3, 3) Accuracy: 45.4
+Epoch 53: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 54.4
+Group (0, 1) Accuracy: 64.0
+Group (1, 0) Accuracy: 48.0
+Group (1, 1) Accuracy: 58.0
+Group (2, 2) Accuracy: 58.0
+Group (2, 3) Accuracy: 60.0
+Group (3, 2) Accuracy: 40.0
+Group (3, 3) Accuracy: 45.6
+Epoch 54: Val Worst-Group Accuracy: 40.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 59.2
+Group (0, 1) Accuracy: 64.0
+Group (1, 0) Accuracy: 32.0
+Group (1, 1) Accuracy: 66.4
+Group (2, 2) Accuracy: 56.0
+Group (2, 3) Accuracy: 60.0
+Group (3, 2) Accuracy: 44.0
+Group (3, 3) Accuracy: 47.8
+Epoch 55: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 57.0
+Group (0, 1) Accuracy: 52.0
+Group (1, 0) Accuracy: 64.0
+Group (1, 1) Accuracy: 79.0
+Group (2, 2) Accuracy: 57.2
+Group (2, 3) Accuracy: 60.0
+Group (3, 2) Accuracy: 24.0
+Group (3, 3) Accuracy: 38.8
+Epoch 56: Val Worst-Group Accuracy: 24.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 57.0
+Group (0, 1) Accuracy: 56.0
+Group (1, 0) Accuracy: 36.0
+Group (1, 1) Accuracy: 72.6
+Group (2, 2) Accuracy: 54.6
+Group (2, 3) Accuracy: 48.0
+Group (3, 2) Accuracy: 40.0
+Group (3, 3) Accuracy: 52.8
+Epoch 57: Val Worst-Group Accuracy: 36.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 65.8
+Group (0, 1) Accuracy: 68.0
+Group (1, 0) Accuracy: 52.0
+Group (1, 1) Accuracy: 69.0
+Group (2, 2) Accuracy: 49.6
+Group (2, 3) Accuracy: 44.0
+Group (3, 2) Accuracy: 32.0
+Group (3, 3) Accuracy: 45.6
+Epoch 58: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 51.4
+Group (0, 1) Accuracy: 56.0
+Group (1, 0) Accuracy: 60.0
+Group (1, 1) Accuracy: 72.8
+Group (2, 2) Accuracy: 55.0
+Group (2, 3) Accuracy: 60.0
+Group (3, 2) Accuracy: 32.0
+Group (3, 3) Accuracy: 44.6
+Epoch 59: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 63.8
+Group (0, 1) Accuracy: 64.0
+Group (1, 0) Accuracy: 44.0
+Group (1, 1) Accuracy: 61.0
+Group (2, 2) Accuracy: 47.0
+Group (2, 3) Accuracy: 48.0
+Group (3, 2) Accuracy: 40.0
+Group (3, 3) Accuracy: 48.8
+Epoch 60: Val Worst-Group Accuracy: 40.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 61.8
+Group (0, 1) Accuracy: 52.0
+Group (1, 0) Accuracy: 56.0
+Group (1, 1) Accuracy: 75.4
+Group (2, 2) Accuracy: 55.8
+Group (2, 3) Accuracy: 48.0
+Group (3, 2) Accuracy: 32.0
+Group (3, 3) Accuracy: 45.0
+Epoch 61: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 55.6
+Group (0, 1) Accuracy: 44.0
+Group (1, 0) Accuracy: 48.0
+Group (1, 1) Accuracy: 78.0
+Group (2, 2) Accuracy: 64.6
+Group (2, 3) Accuracy: 64.0
+Group (3, 2) Accuracy: 36.0
+Group (3, 3) Accuracy: 41.4
+Epoch 62: Val Worst-Group Accuracy: 36.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 49.2
+Group (0, 1) Accuracy: 56.0
+Group (1, 0) Accuracy: 44.0
+Group (1, 1) Accuracy: 71.6
+Group (2, 2) Accuracy: 61.4
+Group (2, 3) Accuracy: 60.0
+Group (3, 2) Accuracy: 44.0
+Group (3, 3) Accuracy: 52.0
+Epoch 63: Val Worst-Group Accuracy: 44.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 70.6
+Group (0, 1) Accuracy: 60.0
+Group (1, 0) Accuracy: 40.0
+Group (1, 1) Accuracy: 63.4
+Group (2, 2) Accuracy: 54.0
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 28.0
+Group (3, 3) Accuracy: 45.4
+Epoch 64: Val Worst-Group Accuracy: 28.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 63.0
+Group (0, 1) Accuracy: 40.0
+Group (1, 0) Accuracy: 56.0
+Group (1, 1) Accuracy: 86.0
+Group (2, 2) Accuracy: 55.2
+Group (2, 3) Accuracy: 44.0
+Group (3, 2) Accuracy: 28.0
+Group (3, 3) Accuracy: 40.4
+Epoch 65: Val Worst-Group Accuracy: 28.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 52.8
+Group (0, 1) Accuracy: 52.0
+Group (1, 0) Accuracy: 60.0
+Group (1, 1) Accuracy: 78.8
+Group (2, 2) Accuracy: 63.8
+Group (2, 3) Accuracy: 56.0
+Group (3, 2) Accuracy: 36.0
+Group (3, 3) Accuracy: 47.8
+Epoch 66: Val Worst-Group Accuracy: 36.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 66.0
+Group (0, 1) Accuracy: 56.0
+Group (1, 0) Accuracy: 60.0
+Group (1, 1) Accuracy: 77.0
+Group (2, 2) Accuracy: 54.0
+Group (2, 3) Accuracy: 48.0
+Group (3, 2) Accuracy: 24.0
+Group (3, 3) Accuracy: 47.6
+Epoch 67: Val Worst-Group Accuracy: 24.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 52.6
+Group (0, 1) Accuracy: 56.0
+Group (1, 0) Accuracy: 44.0
+Group (1, 1) Accuracy: 67.8
+Group (2, 2) Accuracy: 59.8
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 44.0
+Group (3, 3) Accuracy: 53.4
+Epoch 68: Val Worst-Group Accuracy: 44.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 57.4
+Group (0, 1) Accuracy: 52.0
+Group (1, 0) Accuracy: 56.0
+Group (1, 1) Accuracy: 84.6
+Group (2, 2) Accuracy: 50.8
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 44.0
+Group (3, 3) Accuracy: 49.4
+Epoch 69: Val Worst-Group Accuracy: 44.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 66.0
+Group (0, 1) Accuracy: 52.0
+Group (1, 0) Accuracy: 52.0
+Group (1, 1) Accuracy: 77.6
+Group (2, 2) Accuracy: 62.0
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 28.0
+Group (3, 3) Accuracy: 39.0
+Epoch 70: Val Worst-Group Accuracy: 28.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 72.4
+Group (0, 1) Accuracy: 56.0
+Group (1, 0) Accuracy: 44.0
+Group (1, 1) Accuracy: 76.4
+Group (2, 2) Accuracy: 59.0
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 28.0
+Group (3, 3) Accuracy: 44.8
+Epoch 71: Val Worst-Group Accuracy: 28.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 64.2
+Group (0, 1) Accuracy: 72.0
+Group (1, 0) Accuracy: 44.0
+Group (1, 1) Accuracy: 69.4
+Group (2, 2) Accuracy: 63.2
+Group (2, 3) Accuracy: 56.0
+Group (3, 2) Accuracy: 36.0
+Group (3, 3) Accuracy: 51.0
+Epoch 72: Val Worst-Group Accuracy: 36.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 58.6
+Group (0, 1) Accuracy: 48.0
+Group (1, 0) Accuracy: 64.0
+Group (1, 1) Accuracy: 82.4
+Group (2, 2) Accuracy: 54.2
+Group (2, 3) Accuracy: 48.0
+Group (3, 2) Accuracy: 36.0
+Group (3, 3) Accuracy: 46.0
+Epoch 73: Val Worst-Group Accuracy: 36.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 54.6
+Group (0, 1) Accuracy: 48.0
+Group (1, 0) Accuracy: 32.0
+Group (1, 1) Accuracy: 79.4
+Group (2, 2) Accuracy: 66.2
+Group (2, 3) Accuracy: 60.0
+Group (3, 2) Accuracy: 28.0
+Group (3, 3) Accuracy: 41.6
+Epoch 74: Val Worst-Group Accuracy: 28.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 65.8
+Group (0, 1) Accuracy: 48.0
+Group (1, 0) Accuracy: 60.0
+Group (1, 1) Accuracy: 81.0
+Group (2, 2) Accuracy: 60.0
+Group (2, 3) Accuracy: 44.0
+Group (3, 2) Accuracy: 20.0
+Group (3, 3) Accuracy: 39.4
+Epoch 75: Val Worst-Group Accuracy: 20.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 76.2
+Group (0, 1) Accuracy: 72.0
+Group (1, 0) Accuracy: 36.0
+Group (1, 1) Accuracy: 65.2
+Group (2, 2) Accuracy: 44.8
+Group (2, 3) Accuracy: 36.0
+Group (3, 2) Accuracy: 36.0
+Group (3, 3) Accuracy: 50.8
+Epoch 76: Val Worst-Group Accuracy: 36.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 56.8
+Group (0, 1) Accuracy: 48.0
+Group (1, 0) Accuracy: 40.0
+Group (1, 1) Accuracy: 86.8
+Group (2, 2) Accuracy: 61.0
+Group (2, 3) Accuracy: 56.0
+Group (3, 2) Accuracy: 32.0
+Group (3, 3) Accuracy: 46.8
+Epoch 77: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 44.2
+Group (0, 1) Accuracy: 36.0
+Group (1, 0) Accuracy: 56.0
+Group (1, 1) Accuracy: 88.8
+Group (2, 2) Accuracy: 66.6
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 24.0
+Group (3, 3) Accuracy: 42.6
+Epoch 78: Val Worst-Group Accuracy: 24.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 64.2
+Group (0, 1) Accuracy: 60.0
+Group (1, 0) Accuracy: 56.0
+Group (1, 1) Accuracy: 81.0
+Group (2, 2) Accuracy: 54.2
+Group (2, 3) Accuracy: 44.0
+Group (3, 2) Accuracy: 28.0
+Group (3, 3) Accuracy: 46.2
+Epoch 79: Val Worst-Group Accuracy: 28.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 58.8
+Group (0, 1) Accuracy: 56.0
+Group (1, 0) Accuracy: 48.0
+Group (1, 1) Accuracy: 69.6
+Group (2, 2) Accuracy: 58.8
+Group (2, 3) Accuracy: 56.0
+Group (3, 2) Accuracy: 44.0
+Group (3, 3) Accuracy: 59.2
+Epoch 80: Val Worst-Group Accuracy: 44.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 69.0
+Group (0, 1) Accuracy: 64.0
+Group (1, 0) Accuracy: 36.0
+Group (1, 1) Accuracy: 71.6
+Group (2, 2) Accuracy: 62.4
+Group (2, 3) Accuracy: 56.0
+Group (3, 2) Accuracy: 36.0
+Group (3, 3) Accuracy: 49.2
+Epoch 81: Val Worst-Group Accuracy: 36.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 68.8
+Group (0, 1) Accuracy: 56.0
+Group (1, 0) Accuracy: 40.0
+Group (1, 1) Accuracy: 77.8
+Group (2, 2) Accuracy: 62.0
+Group (2, 3) Accuracy: 56.0
+Group (3, 2) Accuracy: 36.0
+Group (3, 3) Accuracy: 47.6
+Epoch 82: Val Worst-Group Accuracy: 36.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 53.4
+Group (0, 1) Accuracy: 44.0
+Group (1, 0) Accuracy: 56.0
+Group (1, 1) Accuracy: 85.0
+Group (2, 2) Accuracy: 59.4
+Group (2, 3) Accuracy: 48.0
+Group (3, 2) Accuracy: 44.0
+Group (3, 3) Accuracy: 57.6
+Epoch 83: Val Worst-Group Accuracy: 44.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 62.2
+Group (0, 1) Accuracy: 48.0
+Group (1, 0) Accuracy: 36.0
+Group (1, 1) Accuracy: 85.0
+Group (2, 2) Accuracy: 71.4
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 20.0
+Group (3, 3) Accuracy: 51.8
+Epoch 84: Val Worst-Group Accuracy: 20.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 66.4
+Group (0, 1) Accuracy: 56.0
+Group (1, 0) Accuracy: 32.0
+Group (1, 1) Accuracy: 77.0
+Group (2, 2) Accuracy: 60.8
+Group (2, 3) Accuracy: 56.0
+Group (3, 2) Accuracy: 44.0
+Group (3, 3) Accuracy: 55.6
+Epoch 85: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 62.0
+Group (0, 1) Accuracy: 40.0
+Group (1, 0) Accuracy: 40.0
+Group (1, 1) Accuracy: 84.2
+Group (2, 2) Accuracy: 66.6
+Group (2, 3) Accuracy: 60.0
+Group (3, 2) Accuracy: 40.0
+Group (3, 3) Accuracy: 52.6
+Epoch 86: Val Worst-Group Accuracy: 40.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 59.4
+Group (0, 1) Accuracy: 48.0
+Group (1, 0) Accuracy: 64.0
+Group (1, 1) Accuracy: 85.4
+Group (2, 2) Accuracy: 53.8
+Group (2, 3) Accuracy: 40.0
+Group (3, 2) Accuracy: 32.0
+Group (3, 3) Accuracy: 49.2
+Epoch 87: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 76.6
+Group (0, 1) Accuracy: 72.0
+Group (1, 0) Accuracy: 36.0
+Group (1, 1) Accuracy: 74.6
+Group (2, 2) Accuracy: 50.2
+Group (2, 3) Accuracy: 36.0
+Group (3, 2) Accuracy: 44.0
+Group (3, 3) Accuracy: 52.4
+Epoch 88: Val Worst-Group Accuracy: 36.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 54.8
+Group (0, 1) Accuracy: 32.0
+Group (1, 0) Accuracy: 52.0
+Group (1, 1) Accuracy: 86.8
+Group (2, 2) Accuracy: 72.0
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 32.0
+Group (3, 3) Accuracy: 49.2
+Epoch 89: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 57.8
+Group (0, 1) Accuracy: 32.0
+Group (1, 0) Accuracy: 52.0
+Group (1, 1) Accuracy: 86.0
+Group (2, 2) Accuracy: 59.6
+Group (2, 3) Accuracy: 36.0
+Group (3, 2) Accuracy: 36.0
+Group (3, 3) Accuracy: 64.0
+Epoch 90: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 59.4
+Group (0, 1) Accuracy: 52.0
+Group (1, 0) Accuracy: 56.0
+Group (1, 1) Accuracy: 88.0
+Group (2, 2) Accuracy: 61.4
+Group (2, 3) Accuracy: 36.0
+Group (3, 2) Accuracy: 24.0
+Group (3, 3) Accuracy: 49.4
+Epoch 91: Val Worst-Group Accuracy: 24.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 62.4
+Group (0, 1) Accuracy: 64.0
+Group (1, 0) Accuracy: 56.0
+Group (1, 1) Accuracy: 82.6
+Group (2, 2) Accuracy: 52.4
+Group (2, 3) Accuracy: 44.0
+Group (3, 2) Accuracy: 48.0
+Group (3, 3) Accuracy: 56.4
+Epoch 92: Val Worst-Group Accuracy: 44.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 65.0
+Group (0, 1) Accuracy: 52.0
+Group (1, 0) Accuracy: 32.0
+Group (1, 1) Accuracy: 80.8
+Group (2, 2) Accuracy: 75.2
+Group (2, 3) Accuracy: 60.0
+Group (3, 2) Accuracy: 32.0
+Group (3, 3) Accuracy: 49.2
+Epoch 93: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 57.6
+Group (0, 1) Accuracy: 44.0
+Group (1, 0) Accuracy: 48.0
+Group (1, 1) Accuracy: 89.4
+Group (2, 2) Accuracy: 53.4
+Group (2, 3) Accuracy: 40.0
+Group (3, 2) Accuracy: 36.0
+Group (3, 3) Accuracy: 55.2
+Epoch 94: Val Worst-Group Accuracy: 36.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 74.0
+Group (0, 1) Accuracy: 60.0
+Group (1, 0) Accuracy: 48.0
+Group (1, 1) Accuracy: 83.6
+Group (2, 2) Accuracy: 71.6
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 20.0
+Group (3, 3) Accuracy: 42.4
+Epoch 95: Val Worst-Group Accuracy: 20.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 67.8
+Group (0, 1) Accuracy: 56.0
+Group (1, 0) Accuracy: 48.0
+Group (1, 1) Accuracy: 80.2
+Group (2, 2) Accuracy: 60.8
+Group (2, 3) Accuracy: 48.0
+Group (3, 2) Accuracy: 40.0
+Group (3, 3) Accuracy: 52.6
+Epoch 96: Val Worst-Group Accuracy: 40.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 59.2
+Group (0, 1) Accuracy: 48.0
+Group (1, 0) Accuracy: 60.0
+Group (1, 1) Accuracy: 86.6
+Group (2, 2) Accuracy: 73.0
+Group (2, 3) Accuracy: 48.0
+Group (3, 2) Accuracy: 16.0
+Group (3, 3) Accuracy: 51.4
+Epoch 97: Val Worst-Group Accuracy: 16.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 60.8
+Group (0, 1) Accuracy: 44.0
+Group (1, 0) Accuracy: 44.0
+Group (1, 1) Accuracy: 85.0
+Group (2, 2) Accuracy: 43.2
+Group (2, 3) Accuracy: 32.0
+Group (3, 2) Accuracy: 68.0
+Group (3, 3) Accuracy: 65.2
+Epoch 98: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 67.4
+Group (0, 1) Accuracy: 72.0
+Group (1, 0) Accuracy: 32.0
+Group (1, 1) Accuracy: 71.0
+Group (2, 2) Accuracy: 79.4
+Group (2, 3) Accuracy: 52.0
+Group (3, 2) Accuracy: 32.0
+Group (3, 3) Accuracy: 49.6
+Epoch 99: Val Worst-Group Accuracy: 32.0
+Best Val Worst-Group Accuracy: 44.0
+Group (0, 0) Accuracy: 63.8
+Group (0, 1) Accuracy: 71.2
+Group (1, 0) Accuracy: 42.0
+Group (1, 1) Accuracy: 72.6
+Group (2, 2) Accuracy: 73.6
+Group (2, 3) Accuracy: 61.8
+Group (3, 2) Accuracy: 27.2
+Group (3, 3) Accuracy: 54.2
+Group (0, 0) Accuracy: 47.6
+Group (0, 1) Accuracy: 61.2
+Group (1, 0) Accuracy: 67.2
+Group (1, 1) Accuracy: 66.8
+Group (2, 2) Accuracy: 49.2
+Group (2, 3) Accuracy: 48.8
+Group (3, 2) Accuracy: 51.4
+Group (3, 3) Accuracy: 51.4
+                   timestamp  ...  early_stopping_average_accuracy
+0 2023-06-06 08:10:55.925889  ...                        53.911905
+
+[1 rows x 13 columns]

@@ -18,7 +18,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--gpu", type=int, default=0)
 parser.add_argument("--seed", type=int, default=0)
 parser.add_argument("--root_dir", type=str, default="/data/mnist/")
-parser.add_argument("--results_csv", type=str, default="~/spuco/results/spuco_mnist_ssa.csv")
+parser.add_argument("--results_csv", type=str, default="spuco_mnist_ssa.csv")
 
 parser.add_argument("--batch_size", type=int, default=32)
 parser.add_argument("--num_epochs", type=int, default=10)
@@ -27,10 +27,10 @@ parser.add_argument("--weight_decay", type=float, default=1e-3)
 parser.add_argument("--momentum", type=float, default=0.9)
 parser.add_argument("--pretrained", action="store_true")
 
-parser.add_argument("--infer_lr", type=float, default=5e-3)
-parser.add_argument("--infer_weight_decay", type=float, default=1e-4)
+parser.add_argument("--infer_lr", type=float, default=1e-3)
+parser.add_argument("--infer_weight_decay", type=float, default=1e-5)
 parser.add_argument("--infer_momentum", type=float, default=0.9)
-parser.add_argument("--infer_num_iters", type=int, default=200)
+parser.add_argument("--infer_num_iters", type=int, default=500)
 parser.add_argument("--infer_val_frac", type=float, default=0.5)
 
 args = parser.parse_args()
@@ -40,7 +40,7 @@ set_seed(args.seed)
 
 # Load the full dataset, and download it if necessary
 classes = [[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]
-difficulty = SpuriousFeatureDifficulty.MAGNITUDE_EASY
+difficulty = SpuriousFeatureDifficulty.MAGNITUDE_LARGE
 
 trainset = SpuCoMNIST(
     root="/data/mnist/",
@@ -78,7 +78,7 @@ ssa = SSA(
     weight_decay=args.infer_weight_decay,
     num_iters=args.infer_num_iters,
     tau_g_min=0.95,
-    num_splits=1,
+    num_splits=3,
     device=device,
     verbose=True
 )

@@ -17,17 +17,18 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--gpu", type=int, default=0)
 parser.add_argument("--seed", type=int, default=0)
 parser.add_argument("--root_dir", type=str, default="/data")
-parser.add_argument("--results_csv", type=str, default="results/waterbirds_group_balance.csv")
+parser.add_argument("--results_csv", type=str, default="waterbirds_group_balance.csv")
 
 parser.add_argument("--batch_size", type=int, default=128)
 parser.add_argument("--num_epochs", type=int, default=300)
-parser.add_argument("--lr", type=float, default=1e-5)
-parser.add_argument("--weight_decay", type=float, default=1.0)
+parser.add_argument("--lr", type=float, default=1e-4)
+parser.add_argument("--weight_decay", type=float, default=1e-3)
 parser.add_argument("--momentum", type=float, default=0.9)
+parser.add_argument("--aug", action="store_true")
 parser.add_argument("--pretrained", action="store_true")
 
 args = parser.parse_args()
-
+args.results_csv = f"{args.seed}_{args.results_csv}"
 device = torch.device(f"cuda:{args.gpu}" if torch.cuda.is_available() else "cpu")
 set_seed(args.seed)
 
@@ -40,11 +41,22 @@ transform = transforms.Compose([
             transforms.ToTensor(),
             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
         ])
-
+train_transform = transform
+if args.aug:
+    train_transform = transforms.Compose([
+            transforms.RandomResizedCrop(
+                (224, 224),
+                scale=(0.7, 1.0),
+                ratio=(0.75, 1.3333333333333333),
+                interpolation=2),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+        ])
 # Get the training set
 train_data = dataset.get_subset(
     "train",
-    transform=transform
+    transform=train_transform
 )
 
 val_data = dataset.get_subset(
