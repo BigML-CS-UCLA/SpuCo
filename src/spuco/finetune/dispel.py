@@ -3,14 +3,13 @@ import random
 import numpy as np
 import torch
 from torch.utils.data import DataLoader, Dataset
-from tqdm import tqdm
 from .dfr import DFR
 from spuco.datasets import BaseSpuCoCompatibleDataset, GroupLabeledDatasetWrapper
 from spuco.models import SpuCoModel
 from spuco.utils.random_seed import seed_randomness
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
-from typing import Union, List, Optional, Dict
+from typing import List, Optional, Dict
 import random
 
 class DISPEL(DFR):
@@ -34,9 +33,30 @@ class DISPEL(DFR):
         """
         Initializes the DISPEL object.
 
-        :param group_labeled_dataset: The group-labeled dataset.
-        :type group_labeled_dataset: Dataset
-        TODO
+        :param group_labeled_set: The group-labeled dataset.
+        :type group_labeled_set: Dataset
+        :param model: The base model.
+        :type model: SpucoModel
+        :param n_lin_models: Number of linear models to average.
+        :type trainset: int
+        :param labeled_valset_size: The ratio of the labeled data to be used for validation if no validation set is given. 
+        :type labeled_valset_size: float
+        :param C_range: Options of C, which is the inverse of l1 regularization strength as in sklearn.
+        :type C_range: list
+        :param s_range: Options of s, which is the weights assigned to the group-labeled data when generating mixed data.
+        :type s_range: list
+        :param alpha_range: Options of alpha, which is the probabilty of mixing data 
+        :type alpha_range: list
+        :param size_of_mixed: size of the mixed dataset. 
+        :type size of_mixed: int
+        :param group_unlabeled_set: group unlabeled dataset. If provided, it will be included in the group unbalanced dataset.
+        :type group_unlabeled_set: Dataset
+        :param class_weight_options: options for class weight.
+        :type class_weight_options: list
+        :param validation_set: data used for hyperparameter selection. If not provided, half of the group labeled data will be used.
+        :type validation_set: GroupLabeledDatasetWrapper
+        :param data_for_scaler: Data used for fitting the sklearn scaler. If not provided, group labeled data will be used.
+        :type data_for_scaler: Dataset
         """
 
         super().__init__(
@@ -117,6 +137,7 @@ class DISPEL(DFR):
 
         logreg = LogisticRegression(penalty='l1', C=C, solver="liblinear", class_weight=class_weight)
         logreg.fit(X_mixed, y_mixed)
+        
         return logreg.coef_, logreg.intercept_
     
 
