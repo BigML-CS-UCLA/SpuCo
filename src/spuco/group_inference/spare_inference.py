@@ -1,5 +1,4 @@
 import random
-from enum import Enum
 from typing import Dict, List, Optional
 
 import numpy as np
@@ -7,16 +6,11 @@ import torch
 from sklearn.metrics import silhouette_score
 from tqdm import tqdm
 
+from spuco.group_inference.cluster import ClusterAlg
 from spuco.group_inference import Cluster
-from spuco.utils import pairwise_similarity
 from spuco.utils.random_seed import seed_randomness
 
 
-class ClusterAlg(Enum):
-    KMEANS = "kmeans"
-    KMEDOIDS = "kmedoids"
-
-        
 class SpareInference(Cluster):
     """
     Clustering-based Group Inference
@@ -27,7 +21,7 @@ class SpareInference(Cluster):
         class_labels: Optional[List[int]] = None,
         cluster_alg: ClusterAlg = ClusterAlg.KMEANS,
         num_clusters: int = -1,
-        max_clusters: int = 10,
+        max_clusters: int = -1,
         random_seed: int = 0,
         silhoutte_threshold: float = 0.9,
         high_sampling_power: int = 2,
@@ -77,9 +71,13 @@ class SpareInference(Cluster):
         sampling_powers = []
         for class_label in tqdm(self.class_partition.keys(), disable=not self.verbose, desc="Clustering class-wise"):
             Z = self.Z[self.class_partition[class_label]]
-            partition, silhouette_score = self.silhouette(Z)
+            if self.num_clusters == -1:
+                partition, silhouette = self.silhouette(Z)
+            else:
+                cluster_labels, partition = self.kmeans(Z, num_clusters=self.num_clusters)
+                silhouette = silhouette_score(Z, cluster_labels)
             cluster_partitions.append(partition)
-            if silhouette_score < self.silhouette_threshold:
+            if silhouette < self.silhouette_threshold:
                 sampling_powers.append(self.high_sampling_power)
             else:
                 sampling_powers.append(1)
