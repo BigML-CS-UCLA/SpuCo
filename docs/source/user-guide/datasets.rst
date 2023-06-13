@@ -3,8 +3,8 @@ Datasets
 
 The package currently provides the following datasets:
 
-- `SpuCoMNIST`: A controllable synthetic dataset that explores real-world data properties (spurious feature: colored background, core feature: MNIST digit)
-- `SpuCoAnimals`: A large-scale vision dataset curated from ImageNet to explore real-world spurious correlations (spurious feature: background, core_feature: animal)
+- **SpuCoMNIST**: A controllable synthetic dataset that explores real-world data properties (spurious feature: colored background, core feature: MNIST digit)
+- **SpuCoAnimals**: A large-scale vision dataset curated from ImageNet to explore real-world spurious correlations (spurious feature: background, core_feature: animal)
 
 SpuCoMNIST 
 ----------
