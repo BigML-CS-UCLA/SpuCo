@@ -13,6 +13,7 @@ to catastrophically poor performance on the groups of data without such *spuriou
 The SpuCo package is designed to help researchers and practitioners evaluate
 the robustness of their machine learning algorithms against spurious
 correlations that may exist in real-world data. SpuCo provides:
+
 - Modular implementations of current SOTA to address spurious correlations
 - SpuCoMNIST: a controllable synthetic dataset that explores real-world data properties such as 
 spurious feature difficulty, label noise and feature noise. 
