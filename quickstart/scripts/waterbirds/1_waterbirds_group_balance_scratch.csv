@@ -1,2 +1,0 @@
-timestamp,seed,pretrained,lr,weight_decay,momentum,num_epochs,batch_size,worst_group_accuracy,average_accuracy,early_stopping_worst_group_accuracy,early_stopping_average_accuracy
-2023-06-06 21:50:38.825695,1,False,0.0001,0.001,0.9,300,128,37.38359201773836,73.31086028793422,50.24390243902439,63.87202987561045

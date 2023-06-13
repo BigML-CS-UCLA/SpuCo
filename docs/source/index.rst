@@ -1,21 +1,24 @@
 SpuCo
 ============
 
-**SpuCo** is a Python package that provides complex Vision and NLP datasets
-with the *spurious correlations* problem. 
-
-The SpuCo package is designed to help researchers and practitioners evaluate
-the robustness of their machine learning algorithms against spurious
-correlations that may exist in real-world data. The package includes datasets
-that have been artificially modified to introduce spurious correlations
-between features, making it possible to evaluate how well different algorithms
-can identify and handle these spurious correlations.
-
-Link to GitHub: https://github.com/BigML-CS-UCLA/SpuCo
+**SpuCo** is a Python package developed to further research to address *spurious correlations*. 
+Spurious correlations arise when machine learning models learn to exploit *easy* features that are not 
+predictive of class membership but are correlated with a given class in the training data. This leads
+to catastrophically poor performance on the groups of data without such *spurious* features at test time. 
 
 .. image:: intro_fig.png
    :width: 600
    :alt: Diagram illustrating the spurious correlations problem
+
+The SpuCo package is designed to help researchers and practitioners evaluate
+the robustness of their machine learning algorithms against spurious
+correlations that may exist in real-world data. SpuCo provides:
+- Modular implementations of current SOTA to address spurious correlations
+- SpuCoMNIST: a controllable synthetic dataset that explores real-world data properties such as 
+spurious feature difficulty, label noise and feature noise. 
+- SpuCoAnimals: a large-scale vision dataset curated from ImageNet to explore real-world spurious correlations
+
+Link to GitHub: https://github.com/BigML-CS-UCLA/SpuCo
 
 .. note::
 
