@@ -1,5 +1,4 @@
 import random
-from enum import Enum
 from typing import Dict, List, Optional
 
 import numpy as np
@@ -7,19 +6,14 @@ import torch
 from sklearn.metrics import silhouette_score
 from tqdm import tqdm
 
+from spuco.group_inference.cluster import ClusterAlg
 from spuco.group_inference import Cluster
-from spuco.utils import pairwise_similarity
 from spuco.utils.random_seed import seed_randomness
 
 
-class ClusterAlg(Enum):
-    KMEANS = "kmeans"
-    KMEDOIDS = "kmedoids"
-
-        
 class SpareInference(Cluster):
     """
-    Clustering-based Group Inference
+    Sparse Inference: https://arxiv.org/abs/2305.18761
     """
     def __init__(
         self,
@@ -27,7 +21,7 @@ class SpareInference(Cluster):
         class_labels: Optional[List[int]] = None,
         cluster_alg: ClusterAlg = ClusterAlg.KMEANS,
         num_clusters: int = -1,
-        max_clusters: int = 10,
+        max_clusters: int = -1,
         random_seed: int = 0,
         silhoutte_threshold: float = 0.9,
         high_sampling_power: int = 2,
@@ -35,9 +29,9 @@ class SpareInference(Cluster):
         verbose: bool = False
     ):
         """
-        Initializes the Cluster object.
+        Initializes Spare Inference.
 
-        :param Z: The input tensor for clustering.
+        :param Z: The output of the network.
         :type Z: torch.Tensor
         :param class_labels: Optional list of class labels for class-wise clustering. Defaults to None.
         :type class_labels: Optional[List[int]], optional
@@ -49,6 +43,10 @@ class SpareInference(Cluster):
         :type max_clusters: int, optional
         :param random_seed: The random seed for reproducibility. Defaults to 0.
         :type random_seed: int, optional
+        :param silhoutte_threshold: The silhouette threshold for determining the sampling powers. Defaults to 0.9.
+        :type silhoutte_threshold: float, optional
+        :param high_sampling_power: The sampling power for the low-silhouette clusters. Defaults to 2.
+        :type high_sampling_power: int, optional
         :param device: The device to run the clustering on. Defaults to torch.device("cpu").
         :type device: torch.device, optional
         :param verbose: Whether to display progress and logging information. Defaults to False.
@@ -77,9 +75,13 @@ class SpareInference(Cluster):
         sampling_powers = []
         for class_label in tqdm(self.class_partition.keys(), disable=not self.verbose, desc="Clustering class-wise"):
             Z = self.Z[self.class_partition[class_label]]
-            partition, silhouette_score = self.silhouette(Z)
+            if self.num_clusters == -1:
+                partition, silhouette = self.silhouette(Z)
+            else:
+                cluster_labels, partition = self.kmeans(Z, num_clusters=self.num_clusters)
+                silhouette = silhouette_score(Z, cluster_labels)
             cluster_partitions.append(partition)
-            if silhouette_score < self.silhouette_threshold:
+            if silhouette < self.silhouette_threshold:
                 sampling_powers.append(self.high_sampling_power)
             else:
                 sampling_powers.append(1)
