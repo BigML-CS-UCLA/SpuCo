@@ -29,8 +29,8 @@ parser.add_argument("--pretrained", action="store_true")
 
 args = parser.parse_args()
 
-args.logits_save_dir = os.path.join(args.logits_save_dir, f"lr={args.lr}_wd={args.weight_decay}_seed={args.seed}")
-os.makedirs(args.logits_save_dir, exist_ok=True)
+#args.logits_save_dir = os.path.join(args.logits_save_dir, f"lr={args.lr}_wd={args.weight_decay}_seed={args.seed}")
+#os.makedirs(args.logits_save_dir, exist_ok=True)
 
 device = torch.device(f"cuda:{args.gpu}" if torch.cuda.is_available() else "cpu")
 set_seed(args.seed)
@@ -64,7 +64,7 @@ testset = SpuCoAnimals(
 )
 testset.initialize()
 
-model = model_factory("resnet50", trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
+model = model_factory("resnet18", trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
 
 valid_evaluator = Evaluator(
     testset=valset,
@@ -79,7 +79,6 @@ valid_evaluator = Evaluator(
 erm = ERM(
     model=model,
     val_evaluator=valid_evaluator,
-    valset=valset,
     num_epochs=args.num_epochs,
     trainset=trainset,
     batch_size=args.batch_size,
@@ -129,13 +128,13 @@ results["early_stopping_average_accuracy"] = evaluator.average_accuracy
 
 print(results)
 
-if os.path.exists(args.results_csv):
-    results_df = pd.read_csv(args.results_csv)
-else:
-    results_df = pd.DataFrame()
+#if os.path.exists(args.results_csv):
+ #   results_df = pd.read_csv(args.results_csv)
+#else:
+#    results_df = pd.DataFrame()
 
-results_df = pd.concat([results_df, results], ignore_index=True)
-results_df.to_csv(args.results_csv, index=False)
+#results_df = pd.concat([results_df, results], ignore_index=True)
+#results_df.to_csv(args.results_csv, index=False)
 
 print('Done!')
 print('Results saved to', args.results_csv)

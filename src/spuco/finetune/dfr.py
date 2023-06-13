@@ -29,9 +29,22 @@ class DFR():
         """
         Initializes the DFR object.
 
-        :param group_labeled_dataset: The group-labeled dataset.
-        :type group_labeled_dataset: Dataset
-        TODO
+        :param group_labeled_set: The group-labeled dataset.
+        :type group_labeled_set: Dataset
+        :param model: The base model.
+        :type model: SpucoModel
+        :param n_lin_models: Number of linear models to average.
+        :type trainset: int
+        :param labeled_valset_size: The ratio of the labeled data to be used for validation if no validation set is given. 
+        :type labeled_valset_size: float
+        :param C_range: Options of C, which is the inverse of l1 regularization strength as in sklearn.
+        :type C_range: list
+        :param class_weight_options: options for class weight.
+        :type class_weight_options: list
+        :param validation_set: data used for hyperparameter selection. If not provided, half of the group labeled data will be used.
+        :type validation_set: GroupLabeledDatasetWrapper
+        :param data_for_scaler: Data used for fitting the sklearn scaler. If not provided, group labeled data will be used.
+        :type data_for_scaler: Dataset
         """
           
         seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
@@ -67,6 +80,7 @@ class DFR():
 
         logreg = LogisticRegression(penalty='l1', C=C, solver="liblinear", class_weight=class_weight)
         logreg.fit(X_train_balanced, y_train_balanced)
+        
         return logreg.coef_, logreg.intercept_
 
 

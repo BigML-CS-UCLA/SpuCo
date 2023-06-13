@@ -1,15 +1,15 @@
 import argparse
+from copy import deepcopy
 import os
 
 import pandas as pd
 import torch
 import torchvision.transforms as transforms
 from torch.optim import SGD
-from wilds import get_dataset
 
-from spuco.datasets import GroupLabeledDatasetWrapper, WILDSDatasetWrapper
+from spuco.datasets import GroupLabeledDatasetWrapper, SpuCoAnimals, SpuCoDogs, SpuCoBirds
 from spuco.evaluate import Evaluator
-from spuco.invariant_train import GroupBalanceBatchERM
+from spuco.invariant_train import GroupDRO
 from spuco.models import model_factory
 from spuco.utils import set_seed
 
@@ -17,64 +17,54 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--gpu", type=int, default=0)
 parser.add_argument("--seed", type=int, default=0)
 parser.add_argument("--root_dir", type=str, default="/data")
-parser.add_argument("--results_csv", type=str, default="waterbirds_group_balance.csv")
+parser.add_argument("--label_noise", type=float, default=0.0)
+parser.add_argument("--results_csv", type=str, default="results/spucoanimals_groupdro.csv")
 
+parser.add_argument("--arch", type=str, default="resnet18")
 parser.add_argument("--batch_size", type=int, default=128)
-parser.add_argument("--num_epochs", type=int, default=300)
+parser.add_argument("--num_epochs", type=int, default=100)
 parser.add_argument("--lr", type=float, default=1e-4)
 parser.add_argument("--weight_decay", type=float, default=1e-3)
 parser.add_argument("--momentum", type=float, default=0.9)
-parser.add_argument("--aug", action="store_true")
 parser.add_argument("--pretrained", action="store_true")
 
 args = parser.parse_args()
-args.results_csv = f"{args.seed}_{args.results_csv}"
+
 device = torch.device(f"cuda:{args.gpu}" if torch.cuda.is_available() else "cpu")
 set_seed(args.seed)
 
 # Load the full dataset, and download it if necessary
-dataset = get_dataset(dataset="waterbirds", download=True, root_dir=args.root_dir)
-
 transform = transforms.Compose([
-            transforms.Resize(256),
-            transforms.CenterCrop(224),
-            transforms.ToTensor(),
             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
         ])
-train_transform = transform
-if args.aug:
-    train_transform = transforms.Compose([
-            transforms.RandomResizedCrop(
-                (224, 224),
-                scale=(0.7, 1.0),
-                ratio=(0.75, 1.3333333333333333),
-                interpolation=2),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-        ])
-# Get the training set
-train_data = dataset.get_subset(
-    "train",
-    transform=train_transform
+
+trainset = SpuCoBirds(
+    root=args.root_dir,
+    label_noise=args.label_noise,
+    split="train",
+    transform=transform,
 )
+trainset.initialize()
 
-val_data = dataset.get_subset(
-    "val",
-    transform=transform
+valset = SpuCoBirds(
+    root=args.root_dir,
+    label_noise=args.label_noise,
+    split="val",
+    transform=transform,
 )
+valset.initialize()
 
-# Get the training set
-test_data = dataset.get_subset(
-    "test",
-    transform=transform
+testset = SpuCoBirds(
+    root=args.root_dir,
+    label_noise=args.label_noise,
+    split="test",
+    transform=transform,
 )
+testset.initialize()
 
-trainset = WILDSDatasetWrapper(dataset=train_data, metadata_spurious_label="background", verbose=True)
-valset = WILDSDatasetWrapper(dataset=val_data, metadata_spurious_label="background", verbose=True)
-testset = WILDSDatasetWrapper(dataset=test_data, metadata_spurious_label="background", verbose=True)
+invariant_trainset = GroupLabeledDatasetWrapper(trainset, trainset.group_partition)
 
-model = model_factory("resnet50", trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
+model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
 
 valid_evaluator = Evaluator(
     testset=valset,
@@ -85,25 +75,35 @@ valid_evaluator = Evaluator(
     device=device,
     verbose=True
 )
-
-group_balance = GroupBalanceBatchERM(
+group_dro = GroupDRO(
     model=model,
-    group_partition=trainset.group_partition,
     val_evaluator=valid_evaluator,
     num_epochs=args.num_epochs,
-    trainset=trainset,
+    trainset=invariant_trainset,
     batch_size=args.batch_size,
     optimizer=SGD(model.parameters(), lr=args.lr, weight_decay=args.weight_decay, momentum=args.momentum),
     device=device,
     verbose=True
 )
-group_balance.train()
+
+for epoch in range(group_dro.num_epochs):
+    group_dro.train_epoch(epoch)
+    if group_dro.val_evaluator is not None:
+        group_dro.val_evaluator.evaluate()
+        if group_dro.val_evaluator.worst_group_accuracy[1] > group_dro._best_wg_acc:
+            group_dro._best_wg_acc = group_dro.val_evaluator.worst_group_accuracy[1]
+            group_dro._best_model = deepcopy(group_dro.trainer.model)
+            group_dro._best_epoch = epoch
+        if group_dro.verbose:
+            print('Epoch {}: Val Worst-Group Accuracy: {}'.format(epoch, group_dro.val_evaluator.worst_group_accuracy[1]))
+            print('Best Val Worst-Group Accuracy: {}'.format(group_dro._best_wg_acc))
+            print(group_dro.group_weighted_loss.group_weights.data)
 
 evaluator = Evaluator(
     testset=testset,
     group_partition=testset.group_partition,
     group_weights=trainset.group_weights,
-    batch_size=64,
+    batch_size=args.batch_size,
     model=model,
     device=device,
     verbose=True
@@ -114,6 +114,7 @@ results = pd.DataFrame(index=[0])
 results["timestamp"] = pd.Timestamp.now()
 results["seed"] = args.seed
 results["pretrained"] = args.pretrained
+results["arch"] = args.arch
 results["lr"] = args.lr
 results["weight_decay"] = args.weight_decay
 results["momentum"] = args.momentum
@@ -128,7 +129,7 @@ evaluator = Evaluator(
     group_partition=testset.group_partition,
     group_weights=trainset.group_weights,
     batch_size=args.batch_size,
-    model=group_balance.best_model,
+    model=group_dro.best_model,
     device=device,
     verbose=True
 )
@@ -149,5 +150,3 @@ results_df.to_csv(args.results_csv, index=False)
 
 print('Done!')
 print('Results saved to', args.results_csv)
-
-
