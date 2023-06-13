@@ -130,7 +130,7 @@ class Evaluator:
                 y_test.append(labels)
             return torch.cat(X_test), torch.cat(y_test)
         
-    def evaluate_spurious_task(self):
+    def evaluate_spurious_attribute_prediction(self):
         """
         Evaluates accuracy if the task was predicting the spurious attribute.
         """
