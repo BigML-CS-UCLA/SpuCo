@@ -13,7 +13,7 @@ from spuco.utils.random_seed import seed_randomness
 
 class SpareInference(Cluster):
     """
-    Clustering-based Group Inference
+    Sparse Inference: https://arxiv.org/abs/2305.18761
     """
     def __init__(
         self,
@@ -29,9 +29,9 @@ class SpareInference(Cluster):
         verbose: bool = False
     ):
         """
-        Initializes the Cluster object.
+        Initializes Spare Inference.
 
-        :param Z: The input tensor for clustering.
+        :param Z: The output of the network.
         :type Z: torch.Tensor
         :param class_labels: Optional list of class labels for class-wise clustering. Defaults to None.
         :type class_labels: Optional[List[int]], optional
@@ -43,6 +43,10 @@ class SpareInference(Cluster):
         :type max_clusters: int, optional
         :param random_seed: The random seed for reproducibility. Defaults to 0.
         :type random_seed: int, optional
+        :param silhoutte_threshold: The silhouette threshold for determining the sampling powers. Defaults to 0.9.
+        :type silhoutte_threshold: float, optional
+        :param high_sampling_power: The sampling power for the low-silhouette clusters. Defaults to 2.
+        :type high_sampling_power: int, optional
         :param device: The device to run the clustering on. Defaults to torch.device("cpu").
         :type device: torch.device, optional
         :param verbose: Whether to display progress and logging information. Defaults to False.
