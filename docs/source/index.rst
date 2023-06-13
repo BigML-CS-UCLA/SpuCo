@@ -11,15 +11,16 @@ that have been artificially modified to introduce spurious correlations
 between features, making it possible to evaluate how well different algorithms
 can identify and handle these spurious correlations.
 
-Link to GitHub: https://github.com/sjoshi804/SpuCo/
+Link to GitHub: https://github.com/BigML-CS-UCLA/SpuCo
+
+.. image:: intro_fig.png
+   :width: 600
+   :alt: Diagram illustrating the spurious correlations problem
 
 .. note::
 
    This project is under active development.
 
-About Us
---------
-This package is maintained by `Siddharth Joshi <https://sjoshi804.github.io/>`_ and `Yu Yang <https://sites.google.com/g.ucla.edu/yuyang/home>`_ from `Professor Baharan Mirzasoleiman <http://web.cs.ucla.edu/~baharan/group.htm>`_'s lab at **UCLA**.
 
 Getting Started
 ---------------
@@ -38,3 +39,7 @@ Getting Started
    :glob:
 
    reference/*
+
+About Us
+--------
+This package is maintained by `Siddharth Joshi <https://sjoshi804.github.io/>`_  from BigML lab at UCLA headed by `Professor Baharan Mirzasoleiman <http://web.cs.ucla.edu/~baharan/group.htm>`_.
