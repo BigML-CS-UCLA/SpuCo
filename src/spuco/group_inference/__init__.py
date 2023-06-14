@@ -5,3 +5,4 @@ from .eiil import EIIL
 from .ssa import SSA
 from .cnc_inference import CorrectNContrastInference
 from .spare_inference import SpareInference
+from .spare_inference_trainer import SpareInferenceTrainer
