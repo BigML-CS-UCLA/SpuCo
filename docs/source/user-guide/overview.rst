@@ -102,15 +102,6 @@ Currently, we support the following finetuning methods:
 - Deep Feature Reweighting 
 
 
-End to End Methods 
--------------------
-
-Methods that do not decouple the solution into a group inference and invariant training / finetuning phase are placed under 
-the ``end2end`` module. 
-
-Currently, we support the following end2end methods:
-- Learning from Failure 
-
 Evaluation
 -----------
 
