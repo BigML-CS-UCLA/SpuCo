@@ -1,3 +1,4 @@
+============
 SpuCo
 ============
 
@@ -24,9 +25,9 @@ Link to GitHub: https://github.com/BigML-CS-UCLA/SpuCo
 
    This project is under active development.
 
-
+----------------
 Getting Started
----------------
+----------------
 
 .. toctree::
    :caption: User Guide
