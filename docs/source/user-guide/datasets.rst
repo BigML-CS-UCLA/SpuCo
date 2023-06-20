@@ -26,7 +26,7 @@ SpuCoMNIST
 SpuCoAnimals
 ------------
 
-Next, we introduce SpuCoAnimals, a large-scale vision dataset curated from ImageNet with **two realistic spurious correlations*. 
+Next, we introduce SpuCoAnimals, a large-scale vision dataset curated from ImageNet with **two realistic spurious correlations**. 
 
 *SpuCoAnimals* has 4 classes: 
 
