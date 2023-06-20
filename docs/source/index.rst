@@ -45,4 +45,4 @@ Getting Started
 
 About Us
 --------
-This package is maintained by `Siddharth Joshi <https://sjoshi804.github.io/>`_  from BigML lab at UCLA headed by `Professor Baharan Mirzasoleiman <http://web.cs.ucla.edu/~baharan/group.htm>`_.
+This package is maintained by `Siddharth Joshi <https://sjoshi804.github.io/>`_  from the BigML group at UCLA headed by `Professor Baharan Mirzasoleiman <http://web.cs.ucla.edu/~baharan/group.htm>`_.

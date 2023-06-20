@@ -8,7 +8,7 @@ Experiment with SpuCo can be broken into 4 stages:
 
 - Data Preparation
 - Group Inference
-- Invariant Training / Finetuning 
+- Robust Training or ERM + Last Layer Retraining
 - Evaluation 
 
 Data Preparation
