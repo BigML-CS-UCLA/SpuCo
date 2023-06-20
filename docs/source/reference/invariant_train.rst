@@ -70,7 +70,7 @@ Correct-N-Contrast Train
 Base Invariant Train 
 ---------------------------------
 
-.. automodule:: spuco.invariant_train.base_invariant_train
+.. automodule:: spuco.invariant_train.base_robust_train
    :members:
    :undoc-members:
    :show-inheritance:

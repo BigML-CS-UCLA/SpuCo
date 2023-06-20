@@ -1,4 +1,4 @@
-from .base_invariant_train import BaseInvariantTrain
+from .base_robust_train import BaseRobustTrain
 from .erm import ERM
 from .group_dro import GroupDRO, GroupWeightedLoss
 from .custom_sample_erm import CustomSampleERM

@@ -7,12 +7,12 @@ from torch import nn, optim
 from torch.utils.data import Dataset
 
 from spuco.evaluate import Evaluator
-from spuco.invariant_train import BaseInvariantTrain
+from spuco.invariant_train import BaseRobustTrain
 from spuco.utils import CustomIndicesSampler, Trainer
 from spuco.utils.random_seed import seed_randomness
 
 
-class CustomSampleERM(BaseInvariantTrain):
+class CustomSampleERM(BaseRobustTrain):
     """
     CustomSampleERM class for training a model using custom sampling of the dataset
     """

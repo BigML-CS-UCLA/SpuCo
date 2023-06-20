@@ -9,12 +9,12 @@ from tqdm import tqdm
 
 from spuco.datasets import GroupLabeledDatasetWrapper
 from spuco.evaluate import Evaluator
-from spuco.invariant_train import BaseInvariantTrain
+from spuco.invariant_train import BaseRobustTrain
 from spuco.models import SpuCoModel
 from spuco.utils.random_seed import seed_randomness
 
 
-class CorrectNContrastTrain(BaseInvariantTrain):
+class CorrectNContrastTrain(BaseRobustTrain):
     """
     CorrectNContrastTrain class for training a model using CNC's 
     Cross Entropy + modified Supervised Contrastive Learning loss.

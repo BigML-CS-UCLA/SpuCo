@@ -7,7 +7,7 @@ from torch import nn, optim
 
 from spuco.datasets import GroupLabeledDatasetWrapper
 from spuco.evaluate import Evaluator 
-from spuco.invariant_train import BaseInvariantTrain
+from spuco.invariant_train import BaseRobustTrain
 from spuco.utils import CustomIndicesSampler, Trainer
 from spuco.utils.random_seed import seed_randomness
 
@@ -67,7 +67,7 @@ class GroupWeightedLoss(nn.Module):
         group_weights = group_weights / group_weights.sum()
         self.group_weights.data = group_weights.data
 
-class GroupDRO(BaseInvariantTrain):
+class GroupDRO(BaseRobustTrain):
     """
     Group DRO (https://arxiv.org/abs/1911.08731)
     """

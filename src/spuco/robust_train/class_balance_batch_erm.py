@@ -5,13 +5,13 @@ from torch import nn, optim
 
 from spuco.datasets import BaseSpuCoCompatibleDataset
 from spuco.evaluate import Evaluator
-from spuco.invariant_train import BaseInvariantTrain
+from spuco.invariant_train import BaseRobustTrain
 from spuco.utils import (CustomIndicesSampler, Trainer,
                          convert_labels_to_partition)
 from spuco.utils.random_seed import seed_randomness
 import numpy as np
 
-class ClassBalanceBatchERM(BaseInvariantTrain):
+class ClassBalanceBatchERM(BaseRobustTrain):
     """
     ClassBalanceBatchERM class for training a model using class-balanced sampling.
     """

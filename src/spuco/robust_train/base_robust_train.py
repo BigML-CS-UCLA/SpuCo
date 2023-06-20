@@ -4,7 +4,7 @@ from copy import deepcopy
 from spuco.evaluate import Evaluator
 
 
-class BaseInvariantTrain(ABC):
+class BaseRobustTrain(ABC):
     """
     Abstract base class for InvariantTrain methods
     Provides support for worst group accuracy early stopping
