@@ -35,7 +35,6 @@ Getting Started
 
    user-guide/overview
    user-guide/datasets
-   user-guide/quickstart
 
 .. toctree::
    :caption: API Reference

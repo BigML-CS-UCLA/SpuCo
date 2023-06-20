@@ -23,8 +23,9 @@ SpuCoMNIST
    :width: 600
    :alt: Examples from SpuCoMNIST
 
+-------------
 SpuCoAnimals
-------------
+-------------
 
 Next, we introduce SpuCoAnimals, a large-scale vision dataset curated from ImageNet with **two realistic spurious correlations**. 
 
@@ -41,12 +42,14 @@ Waterbirds and Landbirds are spuriously correlated with *water* and *land* backg
    :width: 600
    :alt: Examples from SpuCoAnimals
 
+---------
 SpuCoDogs
---------
+---------
 
 Subset of SpuCoAnimals containing only dogs. 
 
+----------
 SpuCoBirds
---------
+----------
 
 Subset of SpuCoAnimals containing only birds. 

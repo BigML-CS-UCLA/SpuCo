@@ -34,7 +34,7 @@ packaged with group information as needed.
 In particular, SpuCo provides support for all datasets for *Waterbids* and *Civil Comments* provided by *WILDS* through the ``WILDSDatasetWrapper``
 that populates these attributes from a *WILDS* dataset object.
 
----------------
+----------------
 Group Inference 
 ----------------
 
