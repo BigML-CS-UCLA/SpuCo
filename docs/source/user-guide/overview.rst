@@ -1,28 +1,25 @@
+=========
 Overview
 =========
 
-SpuCo makes the process of developing and evaluation methods to tackle the spurious correlation problem 
+*SpuCo* makes the process of developing and evaluation methods to tackle the spurious correlation problem 
 effortless and reproducible. 
 
-Experiment with SpuCo can be broken into 4 stages:
+Experiment with *SpuCo* can be broken into 4 stages:
 
 - Data Preparation
 - Group Inference
 - Robust Training or ERM + Last Layer Retraining
 - Evaluation 
 
+-----------------
 Data Preparation
 -----------------
 
-SpuCo provides 3 custom datasets with configurable spurious feature difficulty and strength of spurious correlations. 
+SpuCo provides 2 custom datasets: *SpuCoMNIST* (a synthetic dataset that enables simulating the effect of real world data properties e.g. difficulty of learning spurious feature, as well as noise in the labels and features) and 
+*SpuCoAnimals* (a large-scale dataset curated from ImageNet capturing spurious correlations in the wild)
 
-Important SpuCoDataset attributes:
-- spurious_correlation_strength - The strength of the spurious correlation 
-- spurious_feature difficulty - The difficulty of learning the spurious feature. SpuCo characterizes difficulty of features
-using two theoretically motivated notions: magnitude and variance. Easy spurious features have larger magnitude or alternatively 
-present with lesser variance and vice-a-versa for harder spurious features. 
-
-
+Important Properties*
 Group Information about a dataset in SpuCo is encapsulated in the following 3 attributes: 
 - spurious - A list specifying the label of the spurious attribute present in an example. E.g. For Waterbirds, 
 the spurious label of an examples is either 0 - land background or 1 - water background. 
@@ -59,8 +56,9 @@ Currently, we support the following group inference methods:
 - Correct-n-Contrast
 - Environment Inference for Invariant Learning 
 
-Invariant Training 
-------------------
+----------------
+Robust Training
+----------------
 
 Invariant Training refers to the stage in methods tackling spurious correlation which utilize group information to train
 models that achieve high accuracy across all groups. 
@@ -89,8 +87,9 @@ Currently, we support the following invariant training methods:
 - Group-Balanced Batch Sampling
 - Correct-n-Contrast
 
+-----------
 Finetuning
-----------
+-----------
 
 Methods that take a model trained using ERM on datasets with spurious correlations and finetune to ensure high accuracy on 
 all groups are placed in the finetuning module. 
@@ -101,7 +100,7 @@ the last layer if that is sufficient.
 Currently, we support the following finetuning methods: 
 - Deep Feature Reweighting 
 
-
+-----------
 Evaluation
 -----------
 
