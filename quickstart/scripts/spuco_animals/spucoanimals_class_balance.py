@@ -7,7 +7,7 @@ import torchvision.transforms as transforms
 from torch.optim import SGD
 
 from spuco.evaluate import Evaluator
-from spuco.invariant_train import ClassBalanceBatchERM
+from spuco.robust_train import ClassBalanceBatchERM
 from spuco.models import model_factory
 from spuco.utils import set_seed
 from spuco.datasets import SpuCoAnimals

@@ -6,7 +6,7 @@ from torch import nn, optim
 from torch.utils.data import Dataset
 
 from spuco.evaluate import Evaluator
-from spuco.invariant_train import BaseRobustTrain
+from spuco.robust_train import BaseRobustTrain
 from spuco.utils import Trainer
 from spuco.utils.random_seed import seed_randomness
 

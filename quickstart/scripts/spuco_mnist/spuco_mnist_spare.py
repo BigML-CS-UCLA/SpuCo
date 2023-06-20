@@ -10,7 +10,7 @@ from wilds import get_dataset
 from spuco.datasets import SpuCoMNIST, SpuriousFeatureDifficulty
 from spuco.evaluate import Evaluator
 from spuco.group_inference import SSA, SpareInference
-from spuco.invariant_train import GroupDRO, SpareTrain
+from spuco.robust_train import GroupDRO, SpareTrain
 from spuco.models import model_factory
 from spuco.utils import Trainer, set_seed
 

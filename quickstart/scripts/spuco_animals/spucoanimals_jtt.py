@@ -13,7 +13,7 @@ from wilds import get_dataset
 from spuco.datasets import GroupLabeledDatasetWrapper, SpuCoAnimals
 from spuco.evaluate import Evaluator
 from spuco.group_inference import JTTInference
-from spuco.invariant_train import CustomSampleERM
+from spuco.robust_train import CustomSampleERM
 from spuco.models import model_factory
 from spuco.utils import Trainer, set_seed
 
@@ -103,7 +103,7 @@ evaluator = Evaluator(
 )
 evaluator.evaluate()
 
-invariant_trainset = GroupLabeledDatasetWrapper(trainset, group_partition)
+robust_trainset = GroupLabeledDatasetWrapper(trainset, group_partition)
 
 val_evaluator = Evaluator(
     testset=testset,

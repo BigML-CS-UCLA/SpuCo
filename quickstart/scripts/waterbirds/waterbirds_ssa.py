@@ -10,7 +10,7 @@ from wilds import get_dataset
 from spuco.datasets import GroupLabeledDatasetWrapper, WILDSDatasetWrapper, SpuriousTargetDatasetWrapper
 from spuco.evaluate import Evaluator
 from spuco.group_inference import SSA
-from spuco.invariant_train import GroupDRO
+from spuco.robust_train import GroupDRO
 from spuco.models import model_factory
 from spuco.utils import Trainer, set_seed
 
@@ -99,7 +99,7 @@ evaluator = Evaluator(
 )
 evaluator.evaluate()
 
-invariant_trainset = GroupLabeledDatasetWrapper(trainset, group_partition)
+robust_trainset = GroupLabeledDatasetWrapper(trainset, group_partition)
 
 valid_evaluator = Evaluator(
     testset=valset,
@@ -130,7 +130,7 @@ group_dro = GroupDRO(
     model=model,
     val_evaluator=valid_evaluator,
     num_epochs=args.num_epochs,
-    trainset=invariant_trainset,
+    trainset=robust_trainset,
     valset=valset,
     batch_size=args.batch_size,
     optimizer=SGD(model.parameters(), lr=args.lr, weight_decay=args.weight_decay, momentum=args.momentum),

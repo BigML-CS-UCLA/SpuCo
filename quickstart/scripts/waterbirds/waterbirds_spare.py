@@ -10,7 +10,7 @@ from wilds import get_dataset
 from spuco.datasets import WILDSDatasetWrapper
 from spuco.evaluate import Evaluator
 from spuco.group_inference import SpareInference, SpareInferenceTrainer
-from spuco.invariant_train import SpareTrain
+from spuco.robust_train import SpareTrain
 from spuco.models import model_factory
 from spuco.utils import set_seed, Trainer
 

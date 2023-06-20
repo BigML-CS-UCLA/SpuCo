@@ -8,7 +8,7 @@ from torch import nn, optim
 from torch.utils.data import Dataset
 
 from spuco.evaluate import Evaluator
-from spuco.invariant_train import GroupBalanceBatchERM
+from spuco.robust_train import GroupBalanceBatchERM
 from spuco.utils import Trainer, convert_labels_to_partition
 from spuco.utils.random_seed import seed_randomness
 

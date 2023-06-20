@@ -12,7 +12,7 @@ from torch.optim import SGD
 from spuco.datasets import SpuCoAnimals
 from spuco.evaluate import Evaluator
 from spuco.group_inference import SpareInference
-from spuco.invariant_train import SpareTrain
+from spuco.robust_train import SpareTrain
 from spuco.models import model_factory
 from spuco.utils import Trainer, set_seed
 

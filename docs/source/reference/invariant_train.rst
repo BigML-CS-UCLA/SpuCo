@@ -6,7 +6,7 @@ Invariant Training Methods.
 ERM
 ---------------------------------
 
-.. automodule:: spuco.invariant_train.erm
+.. automodule:: spuco.robust_train.erm
    :members:
    :undoc-members:
    :show-inheritance:
@@ -14,7 +14,7 @@ ERM
 Group DRO
 ----------------------------------------
 
-.. automodule:: spuco.invariant_train.group_dro
+.. automodule:: spuco.robust_train.group_dro
    :members:
    :undoc-members:
    :show-inheritance:
@@ -22,7 +22,7 @@ Group DRO
 Group Balance Batch ERM
 ----------------------------------------
 
-.. automodule:: spuco.invariant_train.group_balance_batch_erm
+.. automodule:: spuco.robust_train.group_balance_batch_erm
    :members:
    :undoc-members:
    :show-inheritance:
@@ -30,7 +30,7 @@ Group Balance Batch ERM
 Class Balance Batch ERM
 ----------------------------------------
 
-.. automodule:: spuco.invariant_train.class_balance_batch_erm
+.. automodule:: spuco.robust_train.class_balance_batch_erm
    :members:
    :undoc-members:
    :show-inheritance:
@@ -38,7 +38,7 @@ Class Balance Batch ERM
 DownSample ERM
 ----------------------------------------
 
-.. automodule:: spuco.invariant_train.downsample_erm
+.. automodule:: spuco.robust_train.downsample_erm
    :members:
    :undoc-members:
    :show-inheritance:
@@ -46,7 +46,7 @@ DownSample ERM
 UpSample ERM
 ----------------------------------------
 
-.. automodule:: spuco.invariant_train.upsample_erm
+.. automodule:: spuco.robust_train.upsample_erm
    :members:
    :undoc-members:
    :show-inheritance:
@@ -54,7 +54,7 @@ UpSample ERM
 Custom Sample ERM
 ----------------------------------------
 
-.. automodule:: spuco.invariant_train.custom_sample_erm
+.. automodule:: spuco.robust_train.custom_sample_erm
    :members:
    :undoc-members:
    :show-inheritance:
@@ -62,15 +62,15 @@ Custom Sample ERM
 Correct-N-Contrast Train
 ----------------------------------------
 
-.. automodule:: spuco.invariant_train.cnc_train
+.. automodule:: spuco.robust_train.cnc_train
    :members:
    :undoc-members:
    :show-inheritance:
 
-Base Invariant Train 
+Base Robust Train 
 ---------------------------------
 
-.. automodule:: spuco.invariant_train.base_robust_train
+.. automodule:: spuco.robust_train.base_robust_train
    :members:
    :undoc-members:
    :show-inheritance:

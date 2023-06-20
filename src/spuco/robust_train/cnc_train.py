@@ -9,7 +9,7 @@ from tqdm import tqdm
 
 from spuco.datasets import GroupLabeledDatasetWrapper
 from spuco.evaluate import Evaluator
-from spuco.invariant_train import BaseRobustTrain
+from spuco.robust_train import BaseRobustTrain
 from spuco.models import SpuCoModel
 from spuco.utils.random_seed import seed_randomness
 

@@ -5,7 +5,7 @@ from torch import nn, optim
 
 from spuco.datasets import BaseSpuCoCompatibleDataset
 from spuco.evaluate import Evaluator
-from spuco.invariant_train import BaseRobustTrain
+from spuco.robust_train import BaseRobustTrain
 from spuco.utils import (CustomIndicesSampler, Trainer,
                          convert_labels_to_partition)
 from spuco.utils.random_seed import seed_randomness

@@ -9,7 +9,7 @@ from wilds import get_dataset
 
 from spuco.datasets import GroupLabeledDatasetWrapper, WILDSDatasetWrapper
 from spuco.evaluate import Evaluator
-from spuco.invariant_train import GroupDRO
+from spuco.robust_train import GroupDRO
 from spuco.models import model_factory
 from spuco.utils import set_seed
 
@@ -62,7 +62,7 @@ trainset = WILDSDatasetWrapper(dataset=train_data, metadata_spurious_label="back
 valset = WILDSDatasetWrapper(dataset=val_data, metadata_spurious_label="background", verbose=True)
 testset = WILDSDatasetWrapper(dataset=test_data, metadata_spurious_label="background", verbose=True)
 
-invariant_trainset = GroupLabeledDatasetWrapper(trainset, trainset.group_partition)
+robust_trainset = GroupLabeledDatasetWrapper(trainset, trainset.group_partition)
 
 model = model_factory("resnet50", trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
 
@@ -80,7 +80,7 @@ group_dro = GroupDRO(
     model=model,
     val_evaluator=valid_evaluator,
     num_epochs=args.num_epochs,
-    trainset=invariant_trainset,
+    trainset=robust_trainset,
     valset=valset,
     batch_size=args.batch_size,
     optimizer=SGD(model.parameters(), lr=args.lr, weight_decay=args.weight_decay, momentum=args.momentum),

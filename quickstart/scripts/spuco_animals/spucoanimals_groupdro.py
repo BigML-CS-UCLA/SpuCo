@@ -8,7 +8,7 @@ from torch.optim import SGD
 
 from spuco.datasets import GroupLabeledDatasetWrapper, SpuCoAnimals
 from spuco.evaluate import Evaluator
-from spuco.invariant_train import GroupDRO
+from spuco.robust_train import GroupDRO
 from spuco.models import model_factory
 from spuco.utils import set_seed
 
@@ -61,7 +61,7 @@ testset = SpuCoAnimals(
 )
 testset.initialize()
 
-invariant_trainset = GroupLabeledDatasetWrapper(trainset, trainset.group_partition)
+robust_trainset = GroupLabeledDatasetWrapper(trainset, trainset.group_partition)
 
 model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
 
@@ -79,7 +79,7 @@ group_dro = GroupDRO(
     model=model,
     val_evaluator=valid_evaluator,
     num_epochs=args.num_epochs,
-    trainset=invariant_trainset,
+    trainset=robust_trainset,
     batch_size=args.batch_size,
     optimizer=SGD(model.parameters(), lr=args.lr, weight_decay=args.weight_decay, momentum=args.momentum),
     device=device,

@@ -8,7 +8,7 @@ from torch.optim import SGD
 
 from spuco.datasets import WILDSDatasetWrapper
 from spuco.evaluate import Evaluator
-from spuco.invariant_train import ERM
+from spuco.robust_train import ERM
 from spuco.models import model_factory
 from spuco.utils import set_seed
 from spuco.datasets import SpuCoAnimals

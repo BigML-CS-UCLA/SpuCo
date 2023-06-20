@@ -9,7 +9,7 @@ from wilds import get_dataset
 
 from spuco.datasets import GroupLabeledDatasetWrapper, WILDSDatasetWrapper
 from spuco.evaluate import Evaluator
-from spuco.invariant_train import GroupBalanceBatchERM
+from spuco.robust_train import GroupBalanceBatchERM
 from spuco.models import model_factory
 from spuco.utils import set_seed
 
