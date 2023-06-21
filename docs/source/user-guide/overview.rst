@@ -128,8 +128,8 @@ Quickstart
 
 Google Colab Notebooks: 
 
-- [Explore Data](https://drive.google.com/file/d/1jwZJ27gTh2t9V3rY6Co-oSIeUvCt3php/view?usp=sharing)
-- [SpuCoMNIST GroupDRO](https://drive.google.com/file/d/1LXAwbkIt4nryI6K6OYhv7zo3LRNmBCW0/view?usp=drive_link)
-- [SpuCoMNIST EIIL](https://drive.google.com/file/d/1Ut3BCeCV7DFQ2BUF01gqxZwTEJPIh5Cj/view?usp=drive_link)
+- `Explore Data <https://drive.google.com/file/d/1jwZJ27gTh2t9V3rY6Co-oSIeUvCt3php/view?usp=sharing>`_
+- `SpuCoMNIST GroupDRO <https://drive.google.com/file/d/1LXAwbkIt4nryI6K6OYhv7zo3LRNmBCW0/view?usp=drive_link>`_
+- `SpuCoMNIST EIIL <https://drive.google.com/file/d/1Ut3BCeCV7DFQ2BUF01gqxZwTEJPIh5Cj/view?usp=drive_link>`_
 
-[Reference Scripts]()
+`Reference Scripts <https://github.com/BigML-CS-UCLA/SpuCo/tree/master/quickstart>`_
