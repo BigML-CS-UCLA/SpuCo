@@ -4,7 +4,6 @@ from typing import Dict, List, Optional
 
 import numpy as np
 import torch
-from utils.random_seed import get_seed
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from tqdm import tqdm
