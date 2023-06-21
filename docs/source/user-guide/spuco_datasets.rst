@@ -1,6 +1,6 @@
-=========
-Datasets
-=========
+===============
+SpuCo Datasets
+===============
 
 The package currently provides the following datasets:
 

@@ -34,7 +34,7 @@ Getting Started
    :maxdepth: 2
 
    user-guide/overview
-   user-guide/datasets
+   user-guide/spuco_datasets
 
 .. toctree::
    :caption: API Reference
@@ -43,6 +43,7 @@ Getting Started
 
    reference/*
 
+---------
 About Us
---------
+---------
 This package is maintained by `Siddharth Joshi <https://sjoshi804.github.io/>`_  from the BigML group at UCLA headed by `Professor Baharan Mirzasoleiman <http://web.cs.ucla.edu/~baharan/group.htm>`_.
