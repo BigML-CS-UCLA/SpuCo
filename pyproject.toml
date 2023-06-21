@@ -11,7 +11,7 @@ authors = [
 
 description = "SpuCo: Spurious Correlations Datasets and Benchmarks"
 readme = "README.md"
-requires-python = ">=3.10.9"
+requires-python = ">=3.10.0"
 
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
