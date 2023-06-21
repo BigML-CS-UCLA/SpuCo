@@ -4,7 +4,7 @@
 
 SpuCo is a Python package developed to further research to address spurious correlations. Spurious correlations arise when machine learning models learn to exploit *easy* features that are not predictive of class membership but are correlated with a given class in the training data. This leads to catastrophically poor performance on the groups of data without such spurious features at test time.
 
-![Diagram illustrating the spurious correlations problem](intro_fig.png)
+![Diagram illustrating the spurious correlations problem](docs/source/intro_fig.png)
 
 The SpuCo package is designed to help researchers and practitioners evaluate the robustness of their machine learning algorithms against spurious correlations that may exist in real-world data. SpuCo provides:
 
