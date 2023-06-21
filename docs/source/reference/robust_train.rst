@@ -1,4 +1,4 @@
-spuco.robust\_train
+spuco.robust_train
 ==============================
 
 Robust Training Methods.
@@ -70,7 +70,7 @@ Correct-N-Contrast Train
 SPARE Train
 -------------------------------------------
 
-.. automodule:: spuco.group_inference.spare_train
+.. automodule:: spuco.robust_train.spare_train
    :members:
    :undoc-members:
    :show-inheritance:
