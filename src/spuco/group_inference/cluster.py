@@ -11,7 +11,7 @@ from tqdm import tqdm
 from spuco.group_inference import BaseGroupInference
 from spuco.utils import (cluster_by_exemplars, convert_labels_to_partition,
                          convert_partition_to_labels, pairwise_similarity)
-from spuco.utils.random_seed import seed_randomness
+from spuco.utils.random_seed import seed_randomness, get_seed
 
 
 class ClusterAlg(Enum):
