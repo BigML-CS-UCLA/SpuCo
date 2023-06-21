@@ -44,6 +44,14 @@ Correct-N-Contrast Inference (CNC)
    :undoc-members:
    :show-inheritance:
 
+SPARE
+-------------------------------------------
+
+.. automodule:: spuco.group_inference.spare_inference
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Base Group Inference
 -------------------------------------------
 

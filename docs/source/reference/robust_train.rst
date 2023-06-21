@@ -1,7 +1,7 @@
-spuco.invariant\_train
+spuco.robust\_train
 ==============================
 
-Invariant Training Methods.
+Robust Training Methods.
 
 ERM
 ---------------------------------
@@ -66,6 +66,15 @@ Correct-N-Contrast Train
    :members:
    :undoc-members:
    :show-inheritance:
+
+SPARE Train
+-------------------------------------------
+
+.. automodule:: spuco.group_inference.spare_train
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 
 Base Robust Train 
 ---------------------------------
