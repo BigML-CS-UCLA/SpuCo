@@ -132,3 +132,10 @@ ToDo:
 - [x] label noise for psucomnist
 - [x] feature noise for psucomnist
 - [x] SpuCoCT
+
+
+# Need to Do:
+
+- [ ] Run all scripts and notebooks
+- [ ] Update all docstrings
+- [ ] Upload package to PyPi
