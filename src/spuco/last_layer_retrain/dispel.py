@@ -241,9 +241,10 @@ class DISPEL(DFR):
             
     
     def train(self):
-       """
-       Last Layer Retraining.
-       """
+        """
+        Last Layer Retraining.
+        """
+        
         if self.verbose:
             print('Encoding data ...')
 
@@ -273,7 +274,7 @@ class DISPEL(DFR):
             X_labeled = self.scaler.transform(X_labeled)
             if self.group_unlabeled_set:
                 self.X_unlabeled = self.scaler.transform(self.X_unlabeled)
-        
+
         # If validation set is not provided, split labeled data into training and validation data
         # Otherwise, use the given validation set 
         if self.validation_set is None:
@@ -294,7 +295,7 @@ class DISPEL(DFR):
             g_labeled_val = g_labeled_val.detach().cpu().numpy()
             if self.preprocess:
                 X_labeled_val = self.scaler.transform(X_labeled_val)    
-        
+
         if self.class_weight_options is None:
             n_class = np.max(y_labeled_val) + 1
             self.class_weight_options = [{c: 1 for c in range(n_class)}]

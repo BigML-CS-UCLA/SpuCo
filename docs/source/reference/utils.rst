@@ -20,7 +20,7 @@ Custom Indices Sampler
    :show-inheritance:
 
 Exemplar Clustering (K-Medoids)
--------------------------
+--------------------------------
 
 .. automodule:: spuco.utils.exemplar_cluster
    :members:
