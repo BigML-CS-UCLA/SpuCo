@@ -19,8 +19,8 @@ Data Preparation
 SpuCo provides 2 custom datasets: *SpuCoMNIST* (a synthetic dataset that enables simulating the effect of real world data properties e.g. difficulty of learning spurious feature, as well as noise in the labels and features) and 
 *SpuCoAnimals* (a large-scale dataset curated from ImageNet capturing spurious correlations in the wild)
 
-Important Properties*
 Group Information about a dataset in SpuCo is encapsulated in the following 3 attributes: 
+
 - spurious - A list specifying the label of the spurious attribute present in an example. E.g. For Waterbirds, 
 the spurious label of an examples is either 0 - land background or 1 - water background. 
 - group_partition - Specifies how indices of dataset should be partitioned into groups. Dictionary mapping group label = ``(class_label, spurious_label)`` 
@@ -50,6 +50,7 @@ Similarly, for methods relying on spurious attribute labeled subsets, the Spurio
 only the example and spurious attribute information. (``__get_item__`` returns ``data, spurious_label``). 
 
 Currently, we support the following group inference methods: 
+
 - Just Train Twice (JTT)
 - Clustering
 - Spread Spurious Attribute (SSA)
@@ -78,9 +79,11 @@ that it is class-balanced or group-balanced (e.g. Class-Balanced Batch Sampling 
 Currently, we support the following invariant training methods: 
 - GroupDRO 
 - Sampling Methods:
+
     - Upsampling
     - Downsampling
     - Custom Sampling
+
 - Class-Balanced Batch Sampling
 - Group-Balanced Batch Sampling
 - Correct-n-Contrast Training
@@ -95,7 +98,8 @@ all groups are placed in the finetuning module.
 SpuCo Models are organized as two module structures, namely backbone and classifier, to allow such methods to only finetune
 the last layer if that is sufficient. 
 
-Currently, we support the following finetuning methods: 
+Currently, we support the following finetuning methods:
+ 
 - Deep Feature Reweighting 
 - DISPEL
 
@@ -113,3 +117,12 @@ the entire dataset in each group.
 
 Additionally, we provide an API for evaluating how good the model is at identifying the spurious attribute presented in examples. 
 This allows for validation of whether or not the spurious attribute was truly learnt by the model. 
+
+---------------
+Quickstart
+---------------
+
+Explore Data: 
+
+Scripts / Notebooks: 
+
