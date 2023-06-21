@@ -25,11 +25,11 @@ SpuCo provides 2 custom datasets: *SpuCoMNIST* (a synthetic dataset that enables
 
 Group Information about a dataset in SpuCo is encapsulated in the following 3 attributes: 
 
-- spurious - A list specifying the label of the spurious attribute present in an example. E.g. For Waterbirds, 
+- spurious: A list specifying the label of the spurious attribute present in an example. E.g. For Waterbirds, 
 the spurious label of an examples is either ``0 i.e. land background`` or ``1 i.e. water background``.
-- group_partition - Specifies how indices of dataset should be partitioned into groups. Dictionary mapping group label = ``(class_label, spurious_label)`` 
+- group_partition: Specifies how indices of dataset should be partitioned into groups. Dictionary mapping group label = ``(class_label, spurious_label)`` 
 to list of indices belonging to that group. 
-- group_weights - Specifies the proportion of total data in each group. Dictionary mapping group label = ``(class_label, spurious_label)`` 
+- group_weights: Specifies the proportion of total data in each group. Dictionary mapping group label = ``(class_label, spurious_label)`` 
 to the fraction of examples belonging to that group. 
 
 SpuCo Datasets come with these properties set and we provide dataset wrapper classes that allow other datasets to be 
