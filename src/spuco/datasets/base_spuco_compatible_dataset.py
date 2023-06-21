@@ -5,6 +5,9 @@ from torch.utils.data import Dataset
 
 
 class BaseSpuCoCompatibleDataset(Dataset):
+    """
+    Base class for all SpuCo Compatible Datasets
+    """
     def __init__(self):
         super().__init__()
 

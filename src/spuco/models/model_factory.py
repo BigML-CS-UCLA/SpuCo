@@ -38,10 +38,13 @@ def model_factory(arch: str, input_shape: Tuple[int, int, int], num_classes: int
     :type input_shape: Tuple[int, int, int]
     :param num_classes: The number of output classes.
     :type num_classes: int
+    :param pretrained: Whether to load pretrained weights. Default is True.
+    :type pretrained: bool
     :return: A SpuCoModel instance.
     :rtype: SpuCoModel
     :raises NotImplementedError: If the specified architecture is not supported.
     """
+    
     seed_randomness(random_module=random, torch_module=torch, numpy_module=np)
     arch = SupportedModels(arch)
     channel = input_shape[0]

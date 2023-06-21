@@ -76,6 +76,12 @@ class SpareTrain(GroupBalanceBatchERM):
 
         
     def train_epoch(self, epoch: int):
+        """
+        Trains the model for a single epoch with a custom upsampled batch
+
+        :param epoch: The current epoch number.
+        :type epoch: int
+        """
         self.trainer.sampler.indices = random.choices(
             population=self.base_indices,
             weights=self.sampling_weights, 

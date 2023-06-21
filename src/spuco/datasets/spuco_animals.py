@@ -13,6 +13,16 @@ from spuco.utils.random_seed import seed_randomness
 
 class SpuCoAnimals(BaseSpuCoDataset):
     """
+    Next, we introduce SpuCoAnimals, a large-scale vision dataset curated from ImageNet with two realistic spurious correlations. 
+
+    SpuCoAnimals has 4 classes: 
+
+    - landbirds
+    - waterbirds
+    - small dog breeds
+    - big dog breeds.
+
+    Waterbirds and Landbirds are spuriously correlated with *water* and *land* backgrounds, respectively. Small dogs and big dogs are spuriously correlated with *indoor* and *outdoor* backgrounds, respectively.
     """
 
     def __init__(
@@ -25,6 +35,25 @@ class SpuCoAnimals(BaseSpuCoDataset):
         verbose: bool = False
     ):
         """
+        Initializes the dataset.
+
+        :param root: Root directory of the dataset.
+        :type root: str
+
+        :param download: Whether to download the dataset. Defaults to True.
+        :type download: bool, optional
+
+        :param label_noise: The amount of label noise to apply. Defaults to 0.0.
+        :type label_noise: float, optional
+
+        :param split: The split of the dataset. Defaults to TRAIN_SPLIT.
+        :type split: str, optional
+
+        :param transform: Optional transform to be applied to the data. Defaults to None.
+        :type transform: Callable, optional
+
+        :param verbose: Whether to print verbose information during dataset initialization. Defaults to False.
+        :type verbose: bool, optional
         """
 
         seed_randomness(torch_module=torch, numpy_module=np, random_module=random)

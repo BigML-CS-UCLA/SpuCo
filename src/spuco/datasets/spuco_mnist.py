@@ -47,19 +47,38 @@ class SpuCoMNIST(BaseSpuCoDataset):
 
         :param root: The root directory of the dataset.
         :type root: str
+
         :param spurious_feature_difficulty: The difficulty level of the spurious feature.
         :type spurious_feature_difficulty: SpuriousFeatureDifficulty
+
         :param classes: The list of class labels for each digit.
         :type classes: List[List[int]]
-        :param spurious_correlation_strength: The strength of the spurious feature correlation. Default is 0.
-        :param color_map: The color map to use. Default is ColourMap.HSV.
-        :type color_map: ColourMap
-        :param split: The dataset split to load. Default is "train".
-        :type split: str
-        :param transform: The data transformation function. Default is None.
-        :type transform: Optional[Callable]
-        """
 
+        :param spurious_correlation_strength: The strength of the spurious feature correlation. Default is 0.
+        :type spurious_correlation_strength: float, optional
+
+        :param label_noise: The amount of label noise to apply. Default is 0.0.
+        :type label_noise: float, optional
+
+        :param core_feature_noise: The amount of noise to add to the core features. Default is 0.0.
+        :type core_feature_noise: float, optional
+
+        :param color_map: The color map to use. Default is ColourMap.HSV.
+        :type color_map: ColourMap, optional
+
+        :param split: The dataset split to load. Default is "train".
+        :type split: str, optional
+
+        :param transform: The data transformation function. Default is None.
+        :type transform: Optional[Callable], optional
+
+        :param verbose: Whether to print verbose information during dataset initialization. Default is False.
+        :type verbose: bool, optional
+
+        :param download: Whether to download the dataset. Default is True.
+        :type download: bool, optional
+        """
+        
         seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
 
         super().__init__(

@@ -63,7 +63,6 @@ class ClassBalanceBatchERM(BaseRobustTrain):
             verbose=verbose,
             device=device
         )
-
         max_class_len = max([len(self.class_partition[key]) for key in self.class_partition.keys()])
         self.base_indices = []
         self.sampling_weights = []
@@ -72,6 +71,12 @@ class ClassBalanceBatchERM(BaseRobustTrain):
             self.sampling_weights.extend([max_class_len / len(self.class_partition[key])] * len(self.class_partition[key]))
         
     def train_epoch(self, epoch: int):
+        """
+        Trains the model for a single epoch.
+
+        :param epoch: The current epoch number.
+        :type epoch: int
+        """
         self.trainer.sampler.indices = random.choices(
             population=self.base_indices,
             weights=self.sampling_weights, 

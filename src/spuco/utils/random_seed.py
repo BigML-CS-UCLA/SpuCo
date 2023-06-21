@@ -8,12 +8,21 @@ class Singleton(object):
 
 def set_seed(new_seed: int):
     """
-    Set seed for SpuCo module.
+    Set the seed for the SpuCo module.
+
+    :param new_seed: The new seed value to set.
+    :type new_seed: int
     """
     seed_class = Singleton()
     seed_class.seed = new_seed 
 
 def get_seed():
+    """
+    Get the seed value of the SpuCo module.
+
+    :return: The seed value.
+    :rtype: int
+    """
     seed_class = Singleton()
     if not hasattr(seed_class, "seed"):
         return random.randint(0, 10000000)
@@ -21,6 +30,16 @@ def get_seed():
         return seed_class.seed
     
 def seed_randomness(random_module=None, torch_module=None, numpy_module=None):
+    """
+    Seed the randomness of the specified modules.
+
+    :param random_module: The random module. Default is None.
+    :type random_module: Optional[ModuleType]
+    :param torch_module: The torch module. Default is None.
+    :type torch_module: Optional[ModuleType]
+    :param numpy_module: The numpy module. Default is None.
+    :type numpy_module: Optional[ModuleType]
+    """
     seed = get_seed()
     if torch_module is not None:
         torch_module.backends.cudnn.deterministic = True 

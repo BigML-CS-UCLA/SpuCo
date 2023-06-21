@@ -138,7 +138,10 @@ class GroupDRO(BaseRobustTrain):
         
     def train_epoch(self, epoch):
         """
-        Trains the model using the given hyperparameters.
+        Trains the model for a single epoch with a group balanced batch (in expectation)
+
+        :param epoch: The current epoch number.
+        :type epoch: int
         """
         self.trainer.sampler.indices = random.choices(
             population=self.base_indices,

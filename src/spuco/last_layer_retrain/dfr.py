@@ -64,7 +64,24 @@ class DFR():
     
 
     def train_single_model(self, C, X_train, y_train, g_train, class_weight):
-        
+        """
+        Trains a single model.
+
+        :param C: Regularization parameter C for the SVM model.
+        :type C: float
+
+        :param X_train: Training features.
+        :type X_train: numpy.ndarray
+
+        :param y_train: Training labels.
+        :type y_train: numpy.ndarray
+
+        :param g_train: Training group labels.
+        :type g_train: numpy.ndarray
+
+        :param class_weight: Weight associated with each class.
+        :type class_weight: dict or 'balanced', optional
+        """
         group_partition = []
         for g in range(np.max(g_train)+1):
             group_partition.append(np.where(g_train==g)[0])
@@ -83,12 +100,25 @@ class DFR():
         
         return logreg.coef_, logreg.intercept_
 
-
     def train_multiple_model(self, C, X_labeled_train, y_labeled_train, g_labeled_train, class_weight):
         """
         Trains the DFR model.
+
+        :param C: Regularization parameter C for the SVM model.
+        :type C: float
+
+        :param X_labeled_train: Labeled training features.
+        :type X_labeled_train: numpy.ndarray
+
+        :param y_labeled_train: Labeled training labels.
+        :type y_labeled_train: numpy.ndarray
+
+        :param g_labeled_train: Labeled training group labels.
+        :type g_labeled_train: numpy.ndarray
+
+        :param class_weight: Weight associated with each class.
+        :type class_weight: dict or 'balanced', optional
         """
-        
         coefs, intercepts = [], []
         for i in range(self.n_lin_models):
             coef_, intercept_ = self.train_single_model(C, X_labeled_train, y_labeled_train, g_labeled_train, class_weight)
@@ -98,7 +128,27 @@ class DFR():
     
 
     def hyperparam_selection(self, X_labeled_train, y_labeled_train, g_labeled_train, X_labeled_val, y_labeled_val, g_labeled_val):
+        """
+        Performs hyperparameter selection for the DFR model.
 
+        :param X_labeled_train: Labeled training features.
+        :type X_labeled_train: numpy.ndarray
+
+        :param y_labeled_train: Labeled training labels.
+        :type y_labeled_train: numpy.ndarray
+
+        :param g_labeled_train: Labeled training group labels.
+        :type g_labeled_train: numpy.ndarray
+
+        :param X_labeled_val: Labeled validation features.
+        :type X_labeled_val: numpy.ndarray
+
+        :param y_labeled_val: Labeled validation labels.
+        :type y_labeled_val: numpy.ndarray
+
+        :param g_labeled_val: Labeled validation group labels.
+        :type g_labeled_val: numpy.ndarray
+        """
         best_wg_acc = -1
         if self.verbose:
             print('Searching for best hyperparameters ...')
@@ -116,9 +166,10 @@ class DFR():
                     print('C {} | class weight {}: Val Worst-Group Accuracy: {}'.format(C, class_weight, wg_acc))
                     print('Best C {} | class weight {}: Best Val Worst-Group Accuracy: {}'.format(self.best_C, self.best_class_weight, best_wg_acc))
     
-
     def train(self):
-        
+        """
+        Retrain last layer
+        """
         if self.verbose:
             print('Encoding data ...')
         X_labeled, y_labeled, g_labeled = self.encode_dataset(self.group_labeled_set)
@@ -169,7 +220,27 @@ class DFR():
 
 
     def evaluate_worstgroup_acc(self, C, coef, intercept, X_val, y_val, g_val):
+        """
+        Evaluates the worst-group accuracy for the DFR model.
 
+        :param C: Regularization parameter C for the SVM model.
+        :type C: float
+
+        :param coef: Coefficients of the linear SVM model.
+        :type coef: numpy.ndarray
+
+        :param intercept: Intercept of the linear SVM model.
+        :type intercept: numpy.ndarray
+
+        :param X_val: Validation features.
+        :type X_val: numpy.ndarray
+
+        :param y_val: Validation labels.
+        :type y_val: numpy.ndarray
+
+        :param g_val: Validation group labels.
+        :type g_val: numpy.ndarray
+        """
         logreg = LogisticRegression(penalty='l1', C=C, solver="liblinear")
         n_classes = np.max(y_val) + 1
         # the fit is only needed to set up logreg
@@ -187,6 +258,9 @@ class DFR():
     def encode_dataset(self, dataset):
         """
         Encodes the training set using the DFR model.
+
+        :param dataset: The training dataset.
+        :type dataset: torch.utils.data.Dataset
 
         :return: The encoded features and labels of the training set.
         :rtype: Tuple[torch.Tensor, torch.Tensor]

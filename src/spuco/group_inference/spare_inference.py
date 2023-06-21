@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 from spuco.group_inference.cluster import ClusterAlg
 from spuco.group_inference import Cluster
-from spuco.utils.random_seed import seed_randomness
+from spuco.utils.random_seed import seed_randomness, get_seed
 
 
 class SpareInference(Cluster):
@@ -22,7 +22,6 @@ class SpareInference(Cluster):
         cluster_alg: ClusterAlg = ClusterAlg.KMEANS,
         num_clusters: int = -1,
         max_clusters: int = -1,
-        random_seed: int = 0,
         silhoutte_threshold: float = 0.9,
         high_sampling_power: int = 2,
         device: torch.device = torch.device("cpu"), 
@@ -41,8 +40,6 @@ class SpareInference(Cluster):
         :type num_clusters: int, optional
         :param max_clusters: The maximum number of clusters to consider. Defaults to -1.
         :type max_clusters: int, optional
-        :param random_seed: The random seed for reproducibility. Defaults to 0.
-        :type random_seed: int, optional
         :param silhoutte_threshold: The silhouette threshold for determining the sampling powers. Defaults to 0.9.
         :type silhoutte_threshold: float, optional
         :param high_sampling_power: The sampling power for the low-silhouette clusters. Defaults to 2.
@@ -53,7 +50,6 @@ class SpareInference(Cluster):
         :type verbose: bool, optional
         """
         
-        # FIXME: Take a pass over this code and make semantically correct
         seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
         super().__init__(Z=Z, class_labels=class_labels, cluster_alg=cluster_alg, num_clusters=num_clusters, max_clusters=max_clusters, random_seed=random_seed, device=device, verbose=verbose)
 

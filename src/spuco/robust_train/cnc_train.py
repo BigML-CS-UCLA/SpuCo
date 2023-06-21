@@ -213,7 +213,7 @@ class CNCTrainer:
             
     def train_epoch(self, epoch: int) -> None:
         """
-        Trains the PyTorch model for 1 epoch
+        Trains the model for 1 epoch using CNC method
 
         :param epoch: epoch number that is being trained (only used by logging)
         :type epoch: int
@@ -227,7 +227,7 @@ class CNCTrainer:
             idx_batch = 1
             for batch in pbar:
                 loss, outputs, labels = self.forward_pass(self, batch)
-                accuracy = TrainerTwoOptimizers.compute_accuracy(outputs, labels)
+                accuracy = CNCTrainer.compute_accuracy(outputs, labels)
 
                 # backward pass and optimization
                 

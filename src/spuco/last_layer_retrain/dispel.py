@@ -77,7 +77,30 @@ class DISPEL(DFR):
         self.size_of_mixed = size_of_mixed
 
     def train_single_model(self, alpha, s, C, X_labeled, y_labeled, g_labeled, class_weight):
-        
+        """
+        Trains a single model.
+
+        :param alpha: Trade-off parameter between accuracy and fairness.
+        :type alpha: float
+
+        :param s: Sensitivity parameter for fairness regularization.
+        :type s: float
+
+        :param C: Regularization parameter C for the SVM model.
+        :type C: float
+
+        :param X_labeled: Labeled training features.
+        :type X_labeled: numpy.ndarray
+
+        :param y_labeled: Labeled training labels.
+        :type y_labeled: numpy.ndarray
+
+        :param g_labeled: Labeled training group labels.
+        :type g_labeled: numpy.ndarray
+
+        :param class_weight: Weight associated with each class.
+        :type class_weight: dict or 'balanced', optional
+        """
         # sample the maximal group balanced set from the group labeled data
         group_partition = []
         for g in range(np.max(g_labeled)+1):
@@ -142,7 +165,30 @@ class DISPEL(DFR):
     
 
     def train_multiple_model(self, alpha, s, C, X_labeled_train, y_labeled_train, g_labeled_train, class_weight):
-    
+        """
+        Trains the DFR model.
+
+        :param alpha: Trade-off parameter between accuracy and fairness.
+        :type alpha: float
+
+        :param s: Sensitivity parameter for fairness regularization.
+        :type s: float
+
+        :param C: Regularization parameter C for the SVM model.
+        :type C: float
+
+        :param X_labeled_train: Labeled training features.
+        :type X_labeled_train: numpy.ndarray
+
+        :param y_labeled_train: Labeled training labels.
+        :type y_labeled_train: numpy.ndarray
+
+        :param g_labeled_train: Labeled training group labels.
+        :type g_labeled_train: numpy.ndarray
+
+        :param class_weight: Weight associated with each class.
+        :type class_weight: dict or 'balanced', optional
+        """
         coefs, intercepts = [], []
         for i in range(self.n_lin_models):
             coef_, intercept_ = self.train_single_model(alpha, s, C, X_labeled_train, y_labeled_train, g_labeled_train, class_weight)
@@ -152,7 +198,27 @@ class DISPEL(DFR):
     
 
     def hyperparam_selection(self, X_labeled_train, y_labeled_train, g_labeled_train, X_labeled_val, y_labeled_val, g_labeled_val):
+        """
+        Performs hyperparameter selection for the DFR model.
 
+        :param X_labeled_train: Labeled training features.
+        :type X_labeled_train: numpy.ndarray
+
+        :param y_labeled_train: Labeled training labels.
+        :type y_labeled_train: numpy.ndarray
+
+        :param g_labeled_train: Labeled training group labels.
+        :type g_labeled_train: numpy.ndarray
+
+        :param X_labeled_val: Labeled validation features.
+        :type X_labeled_val: numpy.ndarray
+
+        :param y_labeled_val: Labeled validation labels.
+        :type y_labeled_val: numpy.ndarray
+
+        :param g_labeled_val: Labeled validation group labels.
+        :type g_labeled_val: numpy.ndarray
+        """
         best_wg_acc = -1
         if self.verbose:
             print('Searching for best hyperparameters ...')
@@ -175,7 +241,9 @@ class DISPEL(DFR):
             
     
     def train(self):
-       
+       """
+       Last Layer Retraining.
+       """
         if self.verbose:
             print('Encoding data ...')
 

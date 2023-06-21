@@ -12,6 +12,12 @@ class MLP(nn.Module):
         self,
         input_dim: int,
     ):
+        """
+        Initializes the model.
+
+        :param input_dim: Dimensionality of the input.
+        :type input_dim: int
+        """
         seed_randomness(random_module=random, torch_module=torch, numpy_module=np)
         super(MLP, self).__init__()
         self.input_dim = input_dim
@@ -22,6 +28,15 @@ class MLP(nn.Module):
         self.dropout = nn.Dropout(p=0.5)
         
     def forward(self, x):
+        """
+        Forward pass of the model.
+
+        :param x: Input tensor.
+        :type x: torch.Tensor
+
+        :return: Output tensor.
+        :rtype: torch.Tensor
+        """
         x = x.view(-1, self.input_dim)
         x = self.relu(self.fc1(x))
         x = self.dropout(x)

@@ -75,6 +75,12 @@ class GroupBalanceBatchERM(BaseRobustTrain):
             self.sampling_weights.extend([max_group_len / len(self.group_partition[key])] * len(self.group_partition[key]))
         
     def train_epoch(self, epoch: int):
+        """
+        Trains the model for a single epoch with a group balanced batch (in expectation)
+
+        :param epoch: The current epoch number.
+        :type epoch: int
+        """
         self.trainer.sampler.indices = random.choices(
             population=self.base_indices,
             weights=self.sampling_weights, 
