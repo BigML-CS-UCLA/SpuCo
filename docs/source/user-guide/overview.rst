@@ -12,6 +12,10 @@ Experiment with *SpuCo* can be broken into 4 stages:
 - Robust Training or ERM + Last Layer Retraining
 - Evaluation 
 
+.. image:: spuco_overview.png
+   :width: 600
+   :alt: SpuCo Overview
+
 -----------------
 Data Preparation
 -----------------
