@@ -81,6 +81,7 @@ stragies by simply specifiying the indices of the examples (allowing duplicates)
 that it is class-balanced or group-balanced (e.g. Class-Balanced Batch Sampling or Group-Balanced Batch Sampling). 
 
 Currently, we support the following invariant training methods: 
+
 - GroupDRO 
 - Sampling Methods:
 
@@ -115,7 +116,7 @@ Evaluating the success of methods addressing the spurious correlations problem i
 worst group accuracy. 
 
 Since, the number of examples in some groups can be very small in the presence of strong spurious correlations, a dynamically 
-generated test may not contain examples from every group. As a result, SpuCo Datasets create group balanced test sets (split="test") 
+generated test may not contain examples from every group. As a result, SpuCo Datasets create group balanced test sets ``(split="test")`` 
 and the evaluator correctly reports average acccuracy by weighting the accuracy using ``group_weights`` of the ``trainset`` i.e. the fraction of examples of
 the entire dataset in each group. 
 
