@@ -8,12 +8,12 @@ from tqdm import tqdm
 
 from spuco.group_inference.cluster import ClusterAlg
 from spuco.group_inference import Cluster
-from spuco.utils.random_seed import seed_randomness, get_seed
+from spuco.utils.random_seed import seed_randomness
 
 
 class SpareInference(Cluster):
     """
-    Sparse Inference: https://arxiv.org/abs/2305.18761
+    SPARE Inference: https://arxiv.org/abs/2305.18761
     """
     def __init__(
         self,

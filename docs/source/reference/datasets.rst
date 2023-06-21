@@ -26,7 +26,7 @@ Wrappers
 ++++++++++
 
 Group Labeled Dataset Wrapper
--------------------------
+-------------------------------
 
 .. automodule:: spuco.datasets.group_labeled_dataset_wrapper
    :members:
