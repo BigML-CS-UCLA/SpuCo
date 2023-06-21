@@ -15,7 +15,7 @@ from spuco.utils.random_seed import seed_randomness
 
 class SpareTrain(GroupBalanceBatchERM):
     """
-    GroupBalanceBatchERM class for training a model using group balanced sampling.
+    SpareTrain class for training a model using group balanced sampling
     """
     def __init__(
         self,
