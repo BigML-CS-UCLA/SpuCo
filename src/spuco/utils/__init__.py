@@ -4,4 +4,4 @@ from .misc import *
 from .custom_indices_sampler import CustomIndicesSampler
 from .trainer import Trainer 
 from .random_seed import set_seed
-#from .bert_transform import initialize_bert_transform
+from .bert_transform import initialize_bert_transform
