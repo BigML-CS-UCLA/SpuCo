@@ -74,10 +74,13 @@ dataset with group information.
 
 Moreover, we provide a variety of sampling strategies considered in the spurious correlations literature. 
 
-Note: Upsampling and downsampling strategies increase or decrease the number of examples in each group available for the
+**Note**: 
+
+Upsampling and downsampling strategies increase or decrease the number of examples in each group available for the
 the robust training phase to ensure that equal number of examples are seen per group. These strategies do not have
 guarantees at a batch granularity, but the batches will be balanced *in expectation*. Through custom sampling, we allow the user to experiment with other such sampling
-stragies by simply specifiying the indices of the examples (allowing duplicates) to be seen in one epoch. **Batch Sampling** methods differ from the aformentioned sampling methods in that they control the batch and ensure 
+stragies by simply specifiying the indices of the examples (allowing duplicates) to be seen in one epoch. 
+**Batch Sampling** methods differ from the aformentioned sampling methods in that they control the batch and ensure 
 that it is class-balanced or group-balanced (e.g. Class-Balanced Batch Sampling or Group-Balanced Batch Sampling). 
 
 Currently, we support the following invariant training methods: 
