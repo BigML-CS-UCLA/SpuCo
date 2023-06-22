@@ -19,6 +19,7 @@ correlations that may exist in real-world data. SpuCo provides:
 - **SpuCoMNIST**: a controllable synthetic dataset that explores real-world data properties such as spurious feature difficulty, label noise and feature noise. 
 - **SpuCoAnimals**: a large-scale vision dataset curated from ImageNet to explore real-world spurious correlations
 
+Link to Paper: https://arxiv.org/abs/2306.11957
 Link to GitHub: https://github.com/BigML-CS-UCLA/SpuCo
 
 .. note::
