@@ -5,16 +5,16 @@ Overview
 *SpuCo* makes the process of developing and evaluation methods to tackle the spurious correlation problem 
 effortless and reproducible. 
 
-Experiment with *SpuCo* can be broken into 4 stages:
-
-- Data Preparation
-- Group Inference
-- Robust Training or ERM + Last Layer Retraining
-- Evaluation 
-
 .. image:: spuco_overview.png
    :width: 600
    :alt: SpuCo Overview
+
+Experiment with *SpuCo* can be broken into 4 stages:
+
+- Data Preparation
+- Group Inference or Group Labeled Training Data
+- Robust Training or ERM + Last Layer Retraining
+- Evaluation 
 
 -----------------
 Data Preparation
@@ -25,18 +25,14 @@ SpuCo provides 2 custom datasets: *SpuCoMNIST* (a synthetic dataset that enables
 
 Group Information about a dataset in SpuCo is encapsulated in the following 3 attributes: 
 
-- spurious: A list specifying the label of the spurious attribute present in an example. E.g. For Waterbirds, 
-the spurious label of an examples is either ``0 i.e. land background`` or ``1 i.e. water background``.
-- group_partition: Specifies how indices of dataset should be partitioned into groups. Dictionary mapping group label = ``(class_label, spurious_label)`` 
-to list of indices belonging to that group. 
-- group_weights: Specifies the proportion of total data in each group. Dictionary mapping group label = ``(class_label, spurious_label)`` 
-to the fraction of examples belonging to that group. 
+- spurious: A list specifying the label of the spurious attribute present in an example. E.g. For Waterbirds, the spurious label of an examples is either ``0 i.e. land background`` or ``1 i.e. water background``.
+- group_partition: Specifies how indices of dataset should be partitioned into groups. Dictionary mapping group label = ``(class_label, spurious_label)`` to list of indices belonging to that group. 
+- group_weights: Specifies the proportion of total data in each group. Dictionary mapping group label = ``(class_label, spurious_label)`` to the fraction of examples belonging to that group. 
 
 SpuCo Datasets come with these properties set and we provide dataset wrapper classes that allow other datasets to be 
 packaged with group information as needed. 
 
-In particular, SpuCo provides support for all datasets for *Waterbids* and *Civil Comments* provided by *WILDS* through the ``WILDSDatasetWrapper``
-that populates these attributes from a *WILDS* dataset object.
+In particular, SpuCo provides support for all datasets provided by *WILDS* package e.g. *Waterbids* and *Civil Comments* through the ``WILDSDatasetWrapper`` that populates these attributes from a *WILDS* dataset object.
 
 ----------------
 Group Inference 
@@ -74,8 +70,8 @@ dataset with group information.
 
 Moreover, we provide a variety of sampling strategies considered in the spurious correlations literature. 
 
-**Note**: 
-
+.. note::
+    
 Upsampling and downsampling strategies increase or decrease the number of examples in each group available for the
 the robust training phase to ensure that equal number of examples are seen per group. These strategies do not have
 guarantees at a batch granularity, but the batches will be balanced *in expectation*. Through custom sampling, we allow the user to experiment with other such sampling
@@ -132,8 +128,8 @@ Quickstart
 
 Google Colab Notebooks: 
 
-- `Explore Data <https://drive.google.com/file/d/1jwZJ27gTh2t9V3rY6Co-oSIeUvCt3php/view?usp=sharing>`_
-- `SpuCoMNIST GroupDRO <https://drive.google.com/file/d/1LXAwbkIt4nryI6K6OYhv7zo3LRNmBCW0/view?usp=drive_link>`_
-- `SpuCoMNIST EIIL <https://drive.google.com/file/d/1Ut3BCeCV7DFQ2BUF01gqxZwTEJPIh5Cj/view?usp=drive_link>`_
+- `Explore Data <https://colab.research.google.com/drive/1jwZJ27gTh2t9V3rY6Co-oSIeUvCt3php?authuser=1>`_
+- `SpuCoMNIST GroupDRO <https://colab.research.google.com/drive/1LXAwbkIt4nryI6K6OYhv7zo3LRNmBCW0?authuser=1>`_
+- `SpuCoMNIST EIIL <https://colab.research.google.com/drive/1Ut3BCeCV7DFQ2BUF01gqxZwTEJPIh5Cj?authuser=1>`_
 
 `Reference Scripts <https://github.com/BigML-CS-UCLA/SpuCo/tree/master/quickstart>`_
