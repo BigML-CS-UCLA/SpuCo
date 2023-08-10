@@ -215,7 +215,7 @@ class DFR():
             self.class_weight_options = [{c: 1 for c in range(n_class)}]
         
         self.hyperparam_selection(X_labeled_train, y_labeled_train, g_labeled_train, X_labeled_val, y_labeled_val, g_labeled_val)
-        coef, intercept = self.train_multiple_model(self.best_C, X_labeled_train, y_labeled_train, g_labeled_train, self.best_class_weight)
+        coef, intercept = self.train_multiple_model(self.best_C, X_labeled, y_labeled, g_labeled, self.best_class_weight)
         self.linear_model = (self.best_C, coef, intercept, self.scaler)
 
 
