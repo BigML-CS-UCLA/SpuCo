@@ -1,3 +1,4 @@
+import pickle
 import os
 import random
 import tarfile
@@ -44,7 +45,8 @@ class SpuCoBirds(BaseSpuCoDataset):
         label_noise: float = 0.0,
         split: str = TRAIN_SPLIT,
         transform: Optional[Callable] = None,
-        verbose: bool = False
+        verbose: bool = False,
+        return_mask: bool = False
     ):
         """
         """
@@ -65,6 +67,7 @@ class SpuCoBirds(BaseSpuCoDataset):
             transforms.CenterCrop((224, 224)),
             transforms.ToTensor()
         ])
+        self.return_mask = return_mask
         
     def load_data(self) -> SourceData:
         """
@@ -121,6 +124,10 @@ class SpuCoBirds(BaseSpuCoDataset):
         except:
             raise RuntimeError(f"Dataset corrupted, please delete {self.dset_dir} and run again with download=True")
             
+        if self.return_mask:
+            with open('/data/spuco_animals_masks.pkl', 'rb') as f:
+                self.mask_dict = pickle.load(f)
+
         return self.data, list(range(2)), list(range(2))
 
     def download_data(self):
@@ -138,6 +145,19 @@ class SpuCoBirds(BaseSpuCoDataset):
         with tarfile.open(self.filename, "r:gz") as tar:
             # Extract all files to the specified output directory
             tar.extractall(self.root)
+
+    def get_mask(self, index):
+        """
+        Gets the mask for the given index.
+
+        :param index: Index of the item to get.
+        :type index: int
+        :return: The mask.
+        :rtype: torch.Tensor
+        """
+
+        img_id = self.data.X[index].split('/')[-1].split('.')[0]
+        return torch.tensor(self.mask_dict[img_id]).float()
             
     def __getitem__(self, index):
         """
@@ -151,7 +171,14 @@ class SpuCoBirds(BaseSpuCoDataset):
         
         image = self.base_transform(Image.open(self.data.X[index]).convert('RGB'))
         label = self.data.labels[index]
-        if self.transform is None:
-            return image, label
+
+        if self.return_mask:
+            if self.transform is None:
+                return image, label, self.get_mask(index)
+            else:
+                return self.transform(image), label, self.get_mask(index)
         else:
-            return self.transform(image), label
+            if self.transform is None:
+                return image, label
+            else:
+                return self.transform(image), label

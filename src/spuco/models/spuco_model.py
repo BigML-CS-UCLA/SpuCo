@@ -43,3 +43,58 @@ class SpuCoModel(nn.Module):
         :rtype: torch.Tensor
         """
         return self.classifier(self.backbone(x))
+    
+    def get_penultimate_layer(self, x):
+        """
+        Returns the penultimate layer embeddings for the input tensor.
+
+        :param x: Input tensor.
+        :type x: torch.Tensor
+        :return: Penultimate layer embeddings.
+        :rtype: torch.Tensor
+        """
+        return self.backbone(x)
+
+
+    def get_gradcam_mask(self, x):
+        """
+        Computes the GradCAM mask for the input tensor.
+
+        :param x: Input tensor.
+        :type x: torch.Tensor
+        :return: GradCAM mask.
+        :rtype: torch.Tensor
+        """
+        seed_randomness(random_module=random, torch_module=torch, numpy_module=np)
+        
+        # Get penultimate layer embeddings
+        penultimate_layer = self.get_penultimate_layer(x)
+        
+        # Compute gradients of the output w.r.t. the penultimate layer embeddings
+        self.backbone.zero_grad()
+        self.classifier.zero_grad()
+        penultimate_layer.retain_grad()
+        output = self.forward(x)
+        
+        # Compute GradCAM mask for each class
+        masks = []
+        for i in range(output.shape[1]):
+            self.zero_grad()
+            self.classifier.zero_grad()
+            output[:, i].backward(retain_graph=True)
+            mask = torch.mean(penultimate_layer.grad, dim=1)
+            mask = torch.relu(mask)
+            mask = mask / (torch.max(mask) + 1e-8)
+            masks.append(mask)
+        return torch.stack(masks, dim=1)
+    
+        
+    
+
+
+    
+
+    
+        
+
+    

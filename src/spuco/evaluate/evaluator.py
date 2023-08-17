@@ -25,7 +25,8 @@ class Evaluator:
         model: nn.Module,
         sklearn_linear_model: Optional[Tuple[float, float, float, Optional[StandardScaler]]] = None,
         device: torch.device = torch.device("cpu"),
-        verbose: bool = False
+        verbose: bool = False,
+        eval_aiou: bool = False
     ):
         """
         Initializes an instance of the Evaluator class.
@@ -44,7 +45,12 @@ class Evaluator:
         :type device: torch.device, optional
         :param verbose: Whether to print evaluation results. Default is False.
         :type verbose: bool, optional
+        :param eval_aiou: Whether to evaluate the average intersection over union (IoU) for each group. Default is False.
+        :type eval_aiou: bool, optional
         """
+
+        if eval_aiou:
+            assert 'mask_dict' in testset.__dict__.keys(), 'mask_dict not found in testset'
           
         seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
 
@@ -57,6 +63,7 @@ class Evaluator:
         self.accuracies = None
         self.sklearn_linear_model = sklearn_linear_model
         self.n_classes = np.max(testset.labels) + 1
+        self.eval_aiou = eval_aiou
 
         # Create DataLoaders 
 
@@ -79,20 +86,32 @@ class Evaluator:
         """
         self.model.eval()
         self.accuracies = {}
+        self.aiou = {}
         for key in tqdm(sorted(self.group_partition.keys()), "Evaluating group-wise accuracy", ):
             if self.sklearn_linear_model:
                 self.accuracies[key] = self._evaluate_accuracy_sklearn_logreg(self.testloaders[key])
             else:
                 self.accuracies[key] = self._evaluate_accuracy(self.testloaders[key])
+            
+            if self.eval_aiou:
+                self.aiou[key] = self._evaluate_aiou(self.testloaders[key])
+
             if self.verbose:
                 print(f"Group {key} Accuracy: {self.accuracies[key]}")
-        return self.accuracies
+                if self.eval_aiou:
+                    print(f"Average IoU: {np.mean(list(self.aiou.values()))}")
+        
+        if self.eval_aiou:
+            return self.accuracies, self.aiou
+        else:
+            return self.accuracies
     
     def _evaluate_accuracy(self, testloader: DataLoader):
         with torch.no_grad():
             correct = 0
             total = 0    
-            for inputs, labels in testloader:
+            for batch in testloader:
+                inputs, labels = batch[0], batch[1]
                 inputs, labels = inputs.to(self.device), labels.to(self.device)
                 outputs = self.model(inputs)
                 predicted = torch.argmax(outputs, dim=1)
@@ -116,6 +135,49 @@ class Evaluator:
         logreg.intercept_ = intercept
         preds_test = logreg.predict(X_test)
         return (preds_test == y_test).mean()
+
+    def _evaluate_aiou(self, testloader: DataLoader):
+        with torch.no_grad():
+            aious = []
+            for batch in testloader:
+                inputs, labels, masks = batch[0], batch[1], batch[2]
+                inputs, labels, masks = inputs.to(self.device), labels.to(self.device), masks.to(self.device)
+                
+                # get the gradcam mask
+                gradcam_mask = self.model.get_gradcam_mask(inputs, labels)
+                gradcam_mask = gradcam_mask.detach().cpu().numpy()
+                masks = masks.detach().cpu().numpy()
+                for i in range(len(gradcam_mask)):
+                    aious.append(self._compute_aiou(gradcam_mask[i], masks[i]))
+            return np.mean(aious)
+        
+    def _compute_aiou(self, mask1: np.ndarray, mask2: np.ndarray, label: int = 0) -> float:
+        """
+        Computes the intersection over union (IoU) for the given masks adjusted for the given label.
+
+        :param mask1: The first mask.
+        :type mask1: np.ndarray
+        :param mask2: The second mask.
+        :type mask2: np.ndarray
+        :param label: The label to compute the IoU for. Default is 0.
+        :type label: int, optional
+        :return: The Adjusted IoU.
+        :rtype: float
+        """
+
+        # compute the intersection by taking the minimum of the two masks
+        intersection = np.minimum(mask1, mask2)
+        # compute the union by taking the maximum of the two masks
+        union = np.maximum(mask1, mask2)
+
+        # compute the IoU
+        iou = np.sum(intersection[label]) / np.sum(union[label])
+
+        # adjust the IoU by dividing it by the sum of iou of the label and the highest iou of the other labels
+        adjusted_iou = iou / (iou + np.max([np.sum(intersection[i]) / np.sum(union[i]) for i in range(len(union)) if i != label]))
+
+        return adjusted_iou
+
     
     def encode_testset(self, testloader):
 
@@ -124,7 +186,8 @@ class Evaluator:
 
         self.model.eval()
         with torch.no_grad():
-            for inputs, labels in testloader:
+            for batch in testloader:
+                inputs, labels = batch[0], batch[1]
                 inputs, labels = inputs.to(self.device), labels.to(self.device)
                 X_test.append(self.model.backbone(inputs))
                 y_test.append(labels)
