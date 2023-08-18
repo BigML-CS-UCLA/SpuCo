@@ -59,7 +59,10 @@ class SpuCoAnimals(BaseSpuCoDataset):
 
         :param transform: Optional transform to be applied to the data. Defaults to None.
         :type transform: Callable, optional
-
+        
+        :param mask_type: Optionally mask out the spurious or core feature
+        :type mask_type: str, optional
+        
         :param verbose: Whether to print verbose information during dataset initialization. Defaults to False.
         :type verbose: bool, optional
         """
