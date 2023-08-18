@@ -6,8 +6,12 @@ import torch
 import torchvision.transforms as transforms
 from torch.optim import SGD
 from wilds import get_dataset
+from torch.utils.data import Dataset 
+from PIL import Image
+import numpy as np 
 
 from spuco.datasets import WILDSDatasetWrapper
+from spuco.datasets.base_spuco_dataset import MASK_CORE, MASK_SPURIOUS
 from spuco.evaluate import Evaluator
 from spuco.robust_train import ERM
 from spuco.models import model_factory
@@ -25,8 +29,11 @@ parser.add_argument("--lr", type=float, default=1e-3)
 parser.add_argument("--weight_decay", type=float, default=1e-4)
 parser.add_argument("--momentum", type=float, default=0.9)
 parser.add_argument("--pretrained", action="store_true")
+parser.add_argument("--mask-type", type=str, default="", choices=[MASK_CORE, MASK_SPURIOUS, ""])
 
 args = parser.parse_args()
+if args.mask_type == "":
+    args.mask_type = None
 
 device = torch.device(f"cuda:{args.gpu}" if torch.cuda.is_available() else "cpu")
 set_seed(args.seed)
@@ -41,22 +48,90 @@ transform = transforms.Compose([
             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
         ])
 
-# Get the training set
-train_data = dataset.get_subset(
-    "train",
-    transform=transform
-)
+train_data = None
+val_data = None 
+test_data = None 
 
-val_data = dataset.get_subset(
-    "val",
-    transform=transform
-)
+if args.mask_type is None:
+    # Get the training set
+    train_data = dataset.get_subset(
+        "train",
+        transform=transform
+    )
 
-# Get the training set
-test_data = dataset.get_subset(
-    "test",
-    transform=transform
-)
+    val_data = dataset.get_subset(
+        "val",
+        transform=transform
+    )
+
+    # Get the training set
+    test_data = dataset.get_subset(
+        "test",
+        transform=transform
+    )
+else:
+    # Get the training set
+    train_data = dataset.get_subset(
+        "train",
+        transform=None
+    )
+
+    val_data = dataset.get_subset(
+        "val",
+        transform=None
+    )
+
+    # Get the training set
+    test_data = dataset.get_subset(
+        "test",
+        transform=None 
+    )
+
+    class MaskedDataWrapper(Dataset):
+        def __init__(self, data, transforms, filenames):
+            self.data = data 
+            self.transforms = transforms
+            self.filenames = filenames
+            self.mask_type = args.mask_type
+            self.n_classes = data.n_classes
+            self.metadata_fields = data.metadata_fields
+            self.y_array = data.y_array
+            self.metadata_array = data.metadata_array
+        
+        def __getitem__(self, i):
+            image, label, metadata = self.data[i]
+            mask = np.array(Image.open(f"/data/waterbirds_v1.0/segmentations/{self.filenames[i]}").convert('L'))
+            if self.mask_type == MASK_CORE:
+                mask = np.invert(mask)
+            image = np.array(image)
+            try:
+                for i in range(3):
+                    image[:, :, i] *= mask
+            except:
+                print("Error, not masking this image")
+            return self.transforms(Image.fromarray(image)), label, metadata
+        
+        def __len__(self):
+            return len(self.data)
+    import numpy as np 
+
+    split_mask = dataset.split_array == dataset.split_dict["train"]
+    train_split = np.where(split_mask)[0]
+
+    split_mask = dataset.split_array == dataset.split_dict["val"]
+    val_split = np.where(split_mask)[0]
+    
+    split_mask = dataset.split_array == dataset.split_dict["test"]
+    test_split = np.where(split_mask)[0]
+
+    train_filenames = [dataset._input_array[i].replace(".jpg", ".png") for i in train_split]
+    val_filenames = [dataset._input_array[i].replace(".jpg", ".png") for i in val_split]
+    test_filenames = [dataset._input_array[i].replace(".jpg", ".png") for i in test_split]
+
+
+    train_data = MaskedDataWrapper(train_data, transform, train_filenames)
+    val_data = MaskedDataWrapper(val_data, transform, val_filenames)
+    test_data = MaskedDataWrapper(test_data, transform, test_filenames)
 
 trainset = WILDSDatasetWrapper(dataset=train_data, metadata_spurious_label="background", verbose=True)
 valset = WILDSDatasetWrapper(dataset=val_data, metadata_spurious_label="background", verbose=True)
@@ -121,10 +196,13 @@ evaluator = Evaluator(
 )
 evaluator.evaluate()
 
+results["spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
 results["early_stopping_worst_group_accuracy"] = evaluator.worst_group_accuracy[1]
 results["early_stopping_average_accuracy"] = evaluator.average_accuracy
 
 print(results)
+
+print(results["spurious_attribute_prediction"])
 
 if os.path.exists(args.results_csv):
     results_df = pd.read_csv(args.results_csv)
