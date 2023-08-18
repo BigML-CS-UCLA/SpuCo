@@ -8,6 +8,9 @@ TRAIN_SPLIT = "train"
 VAL_SPLIT= "val"
 TEST_SPLIT = "test"
 
+MASK_CORE = "core"
+MASK_SPURIOUS = "spurious"
+
 class SpuriousFeatureDifficulty(Enum):
     """
     Enumeration class for spurious feature difficulty levels.
