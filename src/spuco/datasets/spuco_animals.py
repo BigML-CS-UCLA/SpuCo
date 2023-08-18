@@ -15,7 +15,7 @@ from spuco.datasets import (TRAIN_SPLIT, MASK_CORE, MASK_SPURIOUS,
                             SpuCoBirds, SpuCoDogs)
 from spuco.utils.random_seed import seed_randomness
 
-MASK_URL = "https://ucla.box.com/s/v3tdeoc6zhvhk4hytlxsh2nmql54o740"
+MASK_URL = "https://ucla.box.com/shared/static/ebgwn3rb6es45rubfa2k68zhsam7qeis"
 MASK_FNAME = "spuco_animals_masks.pkl"
 
 class SpuCoAnimals(BaseSpuCoDataset):
