@@ -183,5 +183,5 @@ class SpuCoAnimals(BaseSpuCoDataset):
         response.raise_for_status()
 
         with open(self.mask_fname, "wb") as file:
-            for chunk in tqdm(response.iter_content(chunk_size=1024), total=136800, desc="Downloading Masks for SpuCoAnimals", unit="KB"):
+            for chunk in tqdm(response.iter_content(chunk_size=1024), total=9786292, desc="Downloading Masks for SpuCoAnimals", unit="KB"):
                 file.write(chunk)
