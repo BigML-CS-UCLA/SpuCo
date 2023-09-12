@@ -46,7 +46,7 @@ class DFR():
         :param data_for_scaler: Data used for fitting the sklearn scaler. If not provided, group labeled data will be used.
         :type data_for_scaler: Dataset
         """
-          
+        
         seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
 
         self.group_labeled_set = group_labeled_set
@@ -82,8 +82,9 @@ class DFR():
         :param class_weight: Weight associated with each class.
         :type class_weight: dict or 'balanced', optional
         """
+        group_names = {g for g in g_train}
         group_partition = []
-        for g in range(np.max(g_train)+1):
+        for g in group_names:
             group_partition.append(np.where(g_train==g)[0])
         min_size = np.min([len(g) for g in group_partition])
         X_train_balanced = []
@@ -250,10 +251,9 @@ class DFR():
         logreg.intercept_ = intercept
         
         preds = logreg.predict(X_val)
-        n_groups = np.max(g_val) + 1
-        accs = [(preds == y_val)[g_val == g].mean() for g in range(n_groups)]
+        group_names = {g for g in g_val}
+        accs = [(preds == y_val)[g_val == g].mean() for g in group_names]
         return np.min(accs)
-
 
     def encode_dataset(self, dataset):
         """
