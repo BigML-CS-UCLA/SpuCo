@@ -77,10 +77,34 @@ class DISPEL(DFR):
         self.size_of_mixed = size_of_mixed
 
     def train_single_model(self, alpha, s, C, X_labeled, y_labeled, g_labeled, class_weight):
-        
+        """
+        Trains a single model.
+
+        :param alpha: Trade-off parameter between accuracy and fairness.
+        :type alpha: float
+
+        :param s: Sensitivity parameter for fairness regularization.
+        :type s: float
+
+        :param C: Regularization parameter C for the SVM model.
+        :type C: float
+
+        :param X_labeled: Labeled training features.
+        :type X_labeled: numpy.ndarray
+
+        :param y_labeled: Labeled training labels.
+        :type y_labeled: numpy.ndarray
+
+        :param g_labeled: Labeled training group labels.
+        :type g_labeled: numpy.ndarray
+
+        :param class_weight: Weight associated with each class.
+        :type class_weight: dict or 'balanced', optional
+        """
         # sample the maximal group balanced set from the group labeled data
+        group_names = {g for g in g_labeled}
         group_partition = []
-        for g in range(np.max(g_labeled)+1):
+        for g in group_names:
             group_partition.append(np.where(g_labeled==g)[0])
         min_size = np.min([len(g) for g in group_partition])
         X_balanced = []
@@ -126,10 +150,14 @@ class DISPEL(DFR):
                 X_mixed.append(X_unbalanced[i])
                 y_mixed.append(y_unbalanced[i])
             else:
-                # sample another example in the same class from the balanced dataset
                 y = y_unbalanced[i]
                 idx = np.where(y_balanced == y)[0]
-                j = np.random.choice(idx)
+                if idx.shape[0] == 0:
+                    # randomly sample an example from X_balanced
+                    j = np.random.choice(np.arange(X_balanced.shape[0]))
+                else:
+                    # sample another example in the same class from the balanced dataset
+                    j = np.random.choice(idx)
                 X_mixed.append(X_balanced[j] * s + X_unbalanced[i] * (1 - s))
                 y_mixed.append(y)
         X_mixed = np.array(X_mixed)
@@ -142,7 +170,30 @@ class DISPEL(DFR):
     
 
     def train_multiple_model(self, alpha, s, C, X_labeled_train, y_labeled_train, g_labeled_train, class_weight):
-    
+        """
+        Trains the DFR model.
+
+        :param alpha: Trade-off parameter between accuracy and fairness.
+        :type alpha: float
+
+        :param s: Sensitivity parameter for fairness regularization.
+        :type s: float
+
+        :param C: Regularization parameter C for the SVM model.
+        :type C: float
+
+        :param X_labeled_train: Labeled training features.
+        :type X_labeled_train: numpy.ndarray
+
+        :param y_labeled_train: Labeled training labels.
+        :type y_labeled_train: numpy.ndarray
+
+        :param g_labeled_train: Labeled training group labels.
+        :type g_labeled_train: numpy.ndarray
+
+        :param class_weight: Weight associated with each class.
+        :type class_weight: dict or 'balanced', optional
+        """
         coefs, intercepts = [], []
         for i in range(self.n_lin_models):
             coef_, intercept_ = self.train_single_model(alpha, s, C, X_labeled_train, y_labeled_train, g_labeled_train, class_weight)
@@ -152,7 +203,27 @@ class DISPEL(DFR):
     
 
     def hyperparam_selection(self, X_labeled_train, y_labeled_train, g_labeled_train, X_labeled_val, y_labeled_val, g_labeled_val):
+        """
+        Performs hyperparameter selection for the DFR model.
 
+        :param X_labeled_train: Labeled training features.
+        :type X_labeled_train: numpy.ndarray
+
+        :param y_labeled_train: Labeled training labels.
+        :type y_labeled_train: numpy.ndarray
+
+        :param g_labeled_train: Labeled training group labels.
+        :type g_labeled_train: numpy.ndarray
+
+        :param X_labeled_val: Labeled validation features.
+        :type X_labeled_val: numpy.ndarray
+
+        :param y_labeled_val: Labeled validation labels.
+        :type y_labeled_val: numpy.ndarray
+
+        :param g_labeled_val: Labeled validation group labels.
+        :type g_labeled_val: numpy.ndarray
+        """
         best_wg_acc = -1
         if self.verbose:
             print('Searching for best hyperparameters ...')
@@ -175,7 +246,10 @@ class DISPEL(DFR):
             
     
     def train(self):
-       
+        """
+        Last Layer Retraining.
+        """
+        
         if self.verbose:
             print('Encoding data ...')
 
@@ -205,7 +279,7 @@ class DISPEL(DFR):
             X_labeled = self.scaler.transform(X_labeled)
             if self.group_unlabeled_set:
                 self.X_unlabeled = self.scaler.transform(self.X_unlabeled)
-        
+
         # If validation set is not provided, split labeled data into training and validation data
         # Otherwise, use the given validation set 
         if self.validation_set is None:
@@ -226,11 +300,16 @@ class DISPEL(DFR):
             g_labeled_val = g_labeled_val.detach().cpu().numpy()
             if self.preprocess:
                 X_labeled_val = self.scaler.transform(X_labeled_val)    
-        
+
         if self.class_weight_options is None:
             n_class = np.max(y_labeled_val) + 1
             self.class_weight_options = [{c: 1 for c in range(n_class)}]
 
         self.hyperparam_selection(X_labeled_train, y_labeled_train, g_labeled_train, X_labeled_val, y_labeled_val, g_labeled_val)
-        coef, intercept = self.train_multiple_model(self.best_alpha, self.best_s, self.best_C, X_labeled_train, y_labeled_train, g_labeled_train, self.best_class_weight)
+        if self.validation_set is not None:
+            X_labeled = np.concatenate((X_labeled, X_labeled_val))
+            y_labeled = np.concatenate((y_labeled, y_labeled_val))
+            g_labeled = np.concatenate((g_labeled, g_labeled_val))
+
+        coef, intercept = self.train_multiple_model(self.best_alpha, self.best_s, self.best_C, X_labeled, y_labeled, g_labeled, self.best_class_weight)
         self.linear_model = (self.best_C, coef, intercept, self.scaler)

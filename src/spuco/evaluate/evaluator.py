@@ -111,7 +111,8 @@ class Evaluator:
             X_test = scaler.transform(X_test)
         logreg = LogisticRegression(penalty='l1', C=C, solver="liblinear")
         # the fit is only needed to set up logreg
-        logreg.fit(X_test[: self.n_classes], np.arange(self.n_classes))
+        X_dummy = np.random.rand(self.n_classes, X_test.shape[1])
+        logreg.fit(X_dummy, np.arange(self.n_classes))
         logreg.coef_ = coef
         logreg.intercept_ = intercept
         preds_test = logreg.predict(X_test)
