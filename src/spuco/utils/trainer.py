@@ -115,12 +115,12 @@ class Trainer:
                     self.lr_scheduler.step()
                 self.optimizer.step()
 
-                # TODO: check if step should be called every batch or every epoch
-                if self.lr_scheduler is not None and not isinstance(self.optimizer, optim.AdamW):
-                    self.lr_scheduler.step()
-
                 pbar.set_postfix(loss=loss.item(), accuracy=f"{accuracy}%")
                 average_accuracy += accuracy
+                            
+            if self.lr_scheduler is not None and not isinstance(self.optimizer, optim.AdamW):
+                self.lr_scheduler.step()
+                
             return average_accuracy / len(pbar)
     
     @staticmethod

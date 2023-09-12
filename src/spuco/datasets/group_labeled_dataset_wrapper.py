@@ -15,8 +15,12 @@ class GroupLabeledDatasetWrapper(Dataset):
 
         :param dataset: The underlying dataset.
         :type dataset: torch.utils.data.Dataset
+
         :param group_partition: The group partition dictionary mapping indices to group labels.
         :type group_partition: Dict[Tuple[int, int], int]
+
+        :param subset_indices: Optional list of subset indices to consider from the dataset. Defaults to None.
+        :type subset_indices: Optional[List[int]]
         """
         self.dataset = dataset
         self.group = torch.zeros(len(self.dataset))
@@ -34,7 +38,7 @@ class GroupLabeledDatasetWrapper(Dataset):
         if subset_indices is not None:
             self.indices = subset_indices
         
-    def __getitem__(self, index):
+    def __getitem__(self, index: int):
         """
         Retrieves an item from the dataset.
 

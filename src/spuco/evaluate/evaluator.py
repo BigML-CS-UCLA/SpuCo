@@ -32,16 +32,25 @@ class Evaluator:
 
         :param testset: Dataset object containing the test set.
         :type testset: Dataset
+
         :param group_partition: Dictionary object mapping group keys to a list of indices corresponding to the test samples in that group.
         :type group_partition: Dict[Tuple[int, int], List[int]]
+
         :param group_weights: Dictionary object mapping group keys to their respective weights.
         :type group_weights: Dict[Tuple[int, int], float]
+
         :param batch_size: Batch size for DataLoader.
         :type batch_size: int
+
         :param model: PyTorch model to evaluate.
         :type model: nn.Module
+
+        :param sklearn_linear_model: Tuple representing the coefficients and intercept of the linear model from sklearn. Default is None.
+        :type sklearn_linear_model: Optional[Tuple[float, float, float, Optional[StandardScaler]]], optional
+
         :param device: Device to use for computations. Default is torch.device("cpu").
         :type device: torch.device, optional
+
         :param verbose: Whether to print evaluation results. Default is False.
         :type verbose: bool, optional
         """
@@ -85,7 +94,7 @@ class Evaluator:
             else:
                 self.accuracies[key] = self._evaluate_accuracy(self.testloaders[key])
             if self.verbose:
-                print(f"Group {key} Test Accuracy: {self.accuracies[key]}")
+                print(f"Group {key} Accuracy: {self.accuracies[key]}")
         return self.accuracies
     
     def _evaluate_accuracy(self, testloader: DataLoader):
@@ -101,10 +110,9 @@ class Evaluator:
             return 100 * correct / total
     
     def _evaluate_accuracy_sklearn_logreg(self, testloader: DataLoader):
-
         C, coef, intercept, scaler = self.sklearn_linear_model
 
-        X_test, y_test = self.encode_testset(testloader)
+        X_test, y_test = self._encode_testset(testloader)
         X_test = X_test.detach().cpu().numpy()
         y_test = y_test.detach().cpu().numpy()
         if scaler:
@@ -118,8 +126,7 @@ class Evaluator:
         preds_test = logreg.predict(X_test)
         return (preds_test == y_test).mean()
     
-    def encode_testset(self, testloader):
-
+    def _encode_testset(self, testloader):
         X_test = []
         y_test = []
 
@@ -131,7 +138,7 @@ class Evaluator:
                 y_test.append(labels)
             return torch.cat(X_test), torch.cat(y_test)
         
-    def evaluate_spurious_task(self):
+    def evaluate_spurious_attribute_prediction(self):
         """
         Evaluates accuracy if the task was predicting the spurious attribute.
         """

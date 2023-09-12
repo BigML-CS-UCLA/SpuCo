@@ -1,36 +1,41 @@
+============
 SpuCo
 ============
 
-**SpuCo** is a Python package that provides complex Vision and NLP datasets
-with the *spurious correlations* problem. 
+**SpuCo** is a Python package developed to further research to address *spurious correlations*. 
+Spurious correlations arise when machine learning models learn to exploit *easy* features that are not 
+predictive of class membership but are correlated with a given class in the training data. This leads
+to catastrophically poor performance on the groups of data without such *spurious* features at test time. 
+
+.. image:: intro_fig.png
+   :width: 600
+   :alt: Diagram illustrating the spurious correlations problem
 
 The SpuCo package is designed to help researchers and practitioners evaluate
 the robustness of their machine learning algorithms against spurious
-correlations that may exist in real-world data. The package includes datasets
-that have been artificially modified to introduce spurious correlations
-between features, making it possible to evaluate how well different algorithms
-can identify and handle these spurious correlations.
+correlations that may exist in real-world data. SpuCo provides:
 
-Link to GitHub: https://github.com/sjoshi804/SpuCo/
+- Modular implementations of **current SOTA** to address spurious correlations
+- **SpuCoMNIST**: a controllable synthetic dataset that explores real-world data properties such as spurious feature difficulty, label noise and feature noise. 
+- **SpuCoAnimals**: a large-scale vision dataset curated from ImageNet to explore real-world spurious correlations
+
+Link to Paper: https://arxiv.org/abs/2306.11957
+Link to GitHub: https://github.com/BigML-CS-UCLA/SpuCo
 
 .. note::
 
    This project is under active development.
 
-About Us
---------
-This package is maintained by `Siddharth Joshi <https://sjoshi804.github.io/>`_ and `Yu Yang <https://sites.google.com/g.ucla.edu/yuyang/home>`_ from `Professor Baharan Mirzasoleiman <http://web.cs.ucla.edu/~baharan/group.htm>`_'s lab at **UCLA**.
-
+----------------
 Getting Started
----------------
+----------------
 
 .. toctree::
    :caption: User Guide
    :maxdepth: 2
 
    user-guide/overview
-   user-guide/quickstart
-   user-guide/datasets
+   user-guide/spuco_datasets
 
 .. toctree::
    :caption: API Reference
@@ -38,3 +43,8 @@ Getting Started
    :glob:
 
    reference/*
+
+---------
+About Us
+---------
+This package is maintained by `Siddharth Joshi <https://sjoshi804.github.io/>`_  from the BigML group at UCLA headed by `Professor Baharan Mirzasoleiman <http://web.cs.ucla.edu/~baharan/group.htm>`_.

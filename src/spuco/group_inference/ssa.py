@@ -132,7 +132,8 @@ class SSA(BaseGroupInference):
         """
         trainer = SSATrainer(self, split_num)
         trainer.train()
-
+        if self.verbose:
+            print("Best Validation Accuracy", trainer.best_acc)
         return trainer.best_model
     
     def label_split(self, split_num: int, best_ssa_model: nn.Module) -> np.array:
@@ -258,8 +259,11 @@ class SSATrainer:
 
                 # Validation
                 val_acc = self.validate()
-
                 pbar.set_postfix(loss=loss.item(), val_acc=val_acc)
+                
+                # If perfect validation accuracy, no point training on since we pick best model based on this.
+                if val_acc == 100:
+                    return
     
     
     def train_step(self, unlabeled_train_batch, labeled_train_batch):

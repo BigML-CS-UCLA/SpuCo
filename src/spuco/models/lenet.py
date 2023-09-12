@@ -18,7 +18,10 @@ class LeNet(nn.Module):
     """
     def __init__(self, channel: int):
         """
-        Initializes LeNet
+        Initializes LeNet.
+
+        :param channel: Number of input channels.
+        :type channel: int
         """
         seed_randomness(random_module=random, torch_module=torch, numpy_module=np)
         super(LeNet, self).__init__()
@@ -34,7 +37,16 @@ class LeNet(nn.Module):
         self.fc_2 = nn.Linear(120, 84)
         self.representation_dim = 84
 
-    def forward(self, x):
+    def forward(self, x):       
+        """
+        Forward pass of the LeNet model.
+
+        :param x: Input tensor.
+        :type x: torch.Tensor
+
+        :return: Output tensor.
+        :rtype: torch.Tensor
+        """
         x = self.features(x)
         x = x.view(x.size(0), -1)
         x = F.relu(self.fc_1(x))

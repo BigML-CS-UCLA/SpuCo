@@ -13,6 +13,32 @@ SpuCo MNIST
    :undoc-members:
    :show-inheritance:
 
+SpuCo Animals
+----------------------------------
+
+.. automodule:: spuco.datasets.spuco_animals
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+SpuCo Dogs
+----------------------------------
+
+.. automodule:: spuco.datasets.spuco_dogs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+SpuCo Birds
+----------------------------------
+
+.. automodule:: spuco.datasets.spuco_birds
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 Base Spuco Dataset
 ------------------------------------------
 
@@ -26,7 +52,7 @@ Wrappers
 ++++++++++
 
 Group Labeled Dataset Wrapper
--------------------------
+-------------------------------
 
 .. automodule:: spuco.datasets.group_labeled_dataset_wrapper
    :members:

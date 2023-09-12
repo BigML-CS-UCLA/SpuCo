@@ -1,4 +1,4 @@
-spuco.group\_inference
+spuco.group_inference
 ==============================
 
 Group Inference Methods. 
@@ -20,7 +20,7 @@ Just Train Twice (JTT) Inference
    :show-inheritance:
 
 Environment Inference for Invariance Learning (EIIL)
--------------------------------------------
+------------------------------------------------------
 
 .. automodule:: spuco.group_inference.eiil
    :members:
@@ -40,6 +40,14 @@ Correct-N-Contrast Inference (CNC)
 -------------------------------------------
 
 .. automodule:: spuco.group_inference.cnc_inference
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+SPARE
+-------------------------------------------
+
+.. automodule:: spuco.group_inference.spare_inference
    :members:
    :undoc-members:
    :show-inheritance:

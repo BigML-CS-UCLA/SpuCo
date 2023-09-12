@@ -8,6 +8,9 @@ TRAIN_SPLIT = "train"
 VAL_SPLIT= "val"
 TEST_SPLIT = "test"
 
+MASK_CORE = "core"
+MASK_SPURIOUS = "spurious"
+
 class SpuriousFeatureDifficulty(Enum):
     """
     Enumeration class for spurious feature difficulty levels.
@@ -16,26 +19,26 @@ class SpuriousFeatureDifficulty(Enum):
     of the spurious feature.
 
     Magnitude definition of difficulty:
-        Easy <-> Large Magnitude
+        Large Magnitude <-> Easy
 
-        Medium <-> Medium Magnitude
+        Medium Magnitude <-> Medium
 
-        Hard <-> Small Magnitude
+        Small Magnitude <-> Hard
 
     Variance definition of difficulty:
-        Easy <-> Small Variance
+        Low Variance <-> Easy
 
-        Medium <-> Medium Variance
+        Medium Variance <-> Medium
 
-        Hard <-> Large Variance
+        High Variance <-> Hard
     """
 
-    MAGNITUDE_EASY = "magnitude_easy"
+    MAGNITUDE_LARGE = "magnitude_large"
     MAGNITUDE_MEDIUM = "magnitude_medium"
-    MAGNITUDE_HARD = "magnitude_hard"
-    VARIANCE_EASY = "variance_easy"
+    MAGNITUDE_SMALL = "magnitude_small"
+    VARIANCE_LOW = "variance_low"
     VARIANCE_MEDIUM = "variance_medium"
-    VARIANCE_HARD = "variance_hard"
+    VARIANCE_HIGH = "variance_high"
 
 class SpuriousCorrelationStrength(Enum):
     UNIFORM = "unform"
@@ -52,8 +55,8 @@ class SourceData():
         """
         Initialize the SourceData object.
 
-        Args:
-            data (list of tuple, optional): The input data and labels.
+        :param data: The input data and labels.
+        :type data: List[Tuple]
         """
         self.X = []
         self.labels = []
@@ -79,8 +82,20 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
 
         :param root: Root directory of the dataset.
         :type root: str
-        :type spurious_feature_difficulty: SpuriousFeatureDifficulty
+
+        :param num_classes: Number of classes in the dataset.
+        :type num_classes: int
+
+        :param split: Split of the dataset (e.g., "train", "test", "val"). Defaults to "train".
+        :type split: str, optional
+
+        :param transform: Optional transform to be applied to the data. Defaults to None.
+        :type transform: Callable, optional
+
+        :param verbose: Whether to print verbose information during dataset initialization. Defaults to False.
+        :type verbose: bool, optional
         """
+        
         super().__init__()
         self.root = root 
         self._num_classes = num_classes
@@ -129,47 +144,65 @@ class BaseSpuCoDataset(BaseSpuCoCompatibleDataset, ABC):
     def group_partition(self) -> Dict[Tuple[int, int], List[int]]:
         """
         Dictionary partitioning indices into groups
+
+        :rtype: Dict[Tuple[int, int], List[int]]
         """
-        return self._group_partition 
+        return self._group_partition
+
 
     @property
     def clean_group_partition(self) -> Dict[Tuple[int, int], List[int]]:
         """
         Dictionary partitioning indices into groups based on clean labels
+
+        :rtype: Dict[Tuple[int, int], List[int]]
         """
         if self._clean_group_partition is None:
             return self._group_partition
         else:
-            return self._clean_group_partition 
-     
+            return self._clean_group_partition
+
+
     @property
     def group_weights(self) -> Dict[Tuple[int, int], float]:
         """
         Dictionary containing the fractional weights of each group
+
+        :rtype: Dict[Tuple[int, int], float]
         """
         return self._group_weights
-    
+
+
     @property
     def spurious(self) -> List[int]:
         """
         List containing spurious labels for each example
+
+        :rtype: List[int]
         """
         return self.data.spurious
+
 
     @property
     def labels(self) -> List[int]:
         """
         List containing class labels for each example
+
+        :rtype: List[int]
         """
         return self.data.labels
-    
+
+
     @property
     def num_classes(self) -> int:
         """
         Number of classes
+
+        :rtype: int
         """
         return self._num_classes
-    
+
+        
     def __getitem__(self, index):
         """
         Gets an item from the dataset.

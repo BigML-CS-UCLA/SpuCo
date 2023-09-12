@@ -11,7 +11,7 @@ from tqdm import tqdm
 from spuco.group_inference import BaseGroupInference
 from spuco.utils import (cluster_by_exemplars, convert_labels_to_partition,
                          convert_partition_to_labels, pairwise_similarity)
-from spuco.utils.random_seed import seed_randomness
+from spuco.utils.random_seed import seed_randomness, get_seed
 
 
 class ClusterAlg(Enum):
@@ -29,7 +29,6 @@ class Cluster(BaseGroupInference):
         cluster_alg: ClusterAlg = ClusterAlg.KMEANS,
         num_clusters: int = -1,
         max_clusters: int = -1,
-        random_seed: int = 0,
         device: torch.device = torch.device("cpu"), 
         verbose: bool = False
     ):
@@ -46,8 +45,6 @@ class Cluster(BaseGroupInference):
         :type num_clusters: int, optional
         :param max_clusters: The maximum number of clusters to consider. Defaults to -1.
         :type max_clusters: int, optional
-        :param random_seed: The random seed for reproducibility. Defaults to 0.
-        :type random_seed: int, optional
         :param device: The device to run the clustering on. Defaults to torch.device("cpu").
         :type device: torch.device, optional
         :param verbose: Whether to display progress and logging information. Defaults to False.
@@ -76,7 +73,6 @@ class Cluster(BaseGroupInference):
         self.cluster_alg = cluster_alg
         self.num_clusters = num_clusters 
         self.max_clusters = max_clusters
-        self.random_seed = random_seed
         self.device = device
         self.verbose = verbose
 
@@ -96,10 +92,10 @@ class Cluster(BaseGroupInference):
         cluster_partitions = [] 
         for class_label in tqdm(self.class_partition.keys(), disable=not self.verbose, desc="Clustering class-wise"):
             Z = self.Z[self.class_partition[class_label]]
-            if self.num_clusters < 2:
-                partition = self.silhouette(Z)
+            if self.num_clusters < 0:
+                partition, scores = self.silhouette(Z)
             elif self.cluster_alg == ClusterAlg.KMEANS:
-                _, partition = self.kmeans(Z)
+                _, partition = self.kmeans(Z, num_clusters=self.num_clusters)
             else:
                 similarity_matrix = pairwise_similarity(Z.to(self.device), Z.to(self.device))
                 _, partition = self.kmedoids(Z, similiarity_matrix=similarity_matrix)
@@ -146,7 +142,7 @@ class Cluster(BaseGroupInference):
                     "The average silhouette_score is :", silhouette_scores[-1])
         # Pick best num_clusters
         best_partition_idx = np.argmax(silhouette_scores)
-        return partitions[best_partition_idx]
+        return partitions[best_partition_idx], silhouette_scores[best_partition_idx]
     
     def kmeans(self, Z, num_clusters: int =-1):
         """
@@ -166,7 +162,7 @@ class Cluster(BaseGroupInference):
 
         # K-Means 
         clusterer = KMeans(n_clusters=num_clusters,
-                            random_state=self.random_seed,
+                            random_state=get_seed(),
                             n_init=10)
         cluster_labels = clusterer.fit_predict(Z)
         return cluster_labels, convert_labels_to_partition(cluster_labels.astype(int).tolist())

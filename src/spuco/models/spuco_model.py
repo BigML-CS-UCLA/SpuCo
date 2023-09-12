@@ -28,6 +28,7 @@ class SpuCoModel(nn.Module):
         :param num_classes: The number of output classes.
         :type num_classes: int
         """
+        
         seed_randomness(random_module=random, torch_module=torch, numpy_module=np)
         super().__init__()
         self.backbone = backbone 
