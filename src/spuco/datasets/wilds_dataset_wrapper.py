@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional
 
 from tqdm import tqdm
 from wilds.datasets.wilds_dataset import WILDSDataset
@@ -14,7 +14,8 @@ class WILDSDatasetWrapper(BaseSpuCoCompatibleDataset):
         self,
         dataset: WILDSDataset,
         metadata_spurious_label: str,
-        verbose=False
+        verbose=False,
+        subset_indices: Optional[List[int]] = None
     ):
         """
         Wraps  WILDS Dataset into a Dataset object. 
@@ -56,6 +57,11 @@ class WILDSDatasetWrapper(BaseSpuCoCompatibleDataset):
         self._group_weights = {}
         for group_label in self._group_partition.keys():
             self._group_weights[group_label] = len(self._group_partition[group_label]) / len(self.dataset)
+        
+        # Subset if needed
+        self.indices = range(len(dataset))
+        if subset_indices is not None:
+            self.indices = subset_indices
 
     @property
     def group_partition(self) -> Dict[Tuple[int, int], List[int]]:
@@ -91,7 +97,7 @@ class WILDSDatasetWrapper(BaseSpuCoCompatibleDataset):
         Number of classes
         """
         return self._num_classes
-
+    
     def __getitem__(self, index):
         """
         Retrieves an item from the dataset.
@@ -100,6 +106,7 @@ class WILDSDatasetWrapper(BaseSpuCoCompatibleDataset):
         :type index: int
         :return: The item at the given index.
         """
+        index = self.indices[index]
         source_tuple = self.dataset.__getitem__(index)
         return (source_tuple[0], source_tuple[1])
     
@@ -110,4 +117,4 @@ class WILDSDatasetWrapper(BaseSpuCoCompatibleDataset):
         :return: The length of the dataset.
         :rtype: int
         """
-        return len(self.dataset)
+        return len(self.indices)
