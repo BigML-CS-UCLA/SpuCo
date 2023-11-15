@@ -26,7 +26,7 @@ parser.add_argument("--lr", type=float, default=1e-3)
 parser.add_argument("--weight_decay", type=float, default=1e-4)
 parser.add_argument("--momentum", type=float, default=0.9)
 parser.add_argument("--pretrained", action="store_true")
-parser.add_argument("--mask-type", type=str, default="", choices=[MASK_CORE, MASK_SPURIOUS, ""])
+parser.add_argument("--mask_type", type=str, default="", choices=[MASK_CORE, MASK_SPURIOUS, ""])
 
 args = parser.parse_args()
 
@@ -35,6 +35,7 @@ if args.mask_type == "":
     
 #args.logits_save_dir = os.path.join(args.logits_save_dir, f"lr={args.lr}_wd={args.weight_decay}_seed={args.seed}")
 #os.makedirs(args.logits_save_dir, exist_ok=True)
+print(args)
 
 device = torch.device(f"cuda:{args.gpu}" if torch.cuda.is_available() else "cpu")
 set_seed(args.seed)
