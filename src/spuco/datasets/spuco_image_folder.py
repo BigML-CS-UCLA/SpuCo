@@ -18,9 +18,9 @@ class SpuCoImageFolder(BaseSpuCoDataset):
         For 2 class setting: (note for K classes, each class must have K subfolders, 1 for a spurious 
         corresponding to each class)
         - train
-            - 0
-                - 0-0 (majority)
-                - 0-1
+            - 0 (class idx)
+                - 0 (spurious idx)
+                - 1
             - 1
             ....
         - val
@@ -87,7 +87,7 @@ class SpuCoImageFolder(BaseSpuCoDataset):
         
     def load_data(self) -> SourceData:
         """
-        Loads SpuCoDogs and sets spurious labels, label noise.
+        Loads data from expected image folder structure and sets spurious labels, label noise.
 
         :return: The spurious correlation dataset.
         :rtype: SourceData, List[int], List[int]
@@ -101,7 +101,7 @@ class SpuCoImageFolder(BaseSpuCoDataset):
             
             # Iterate through folder structure, load file names of images and core and spurious labels
             class_dirs = [item for item in os.listdir(self.dset_dir) if os.path.isdir(os.path.join(self.dset_dir, item))]
-            for class_idx, class_dir in tqdm(enumerate(class_dirs), desc="Loading classes", disable=not self.verbose):
+            for class_idx, class_dir in tqdm(enumerate(class_dirs), desc="Loading classes", disable=not self.verbose, total=len(class_dirs)):
                 class_dir = os.path.join(self.dset_dir, class_dir)
                 spurious_dirs = [item for item in os.listdir(class_dir) if os.path.isdir(os.path.join(class_dir, item))]
                 for spurious_idx, spurious_dir in enumerate(spurious_dirs):
@@ -121,7 +121,11 @@ class SpuCoImageFolder(BaseSpuCoDataset):
             raise RuntimeError(f"Dataset corrupted, please fix directory structure.")
             
         return self.data, list(range(self.num_classes)), list(range(self.num_classes))
-
+    
+    def load_image(self, filename: str):
+        image = Image.open(filename).convert("RGB")
+        return image 
+    
     def __getitem__(self, index):
         """
         Gets an item from the dataset.
@@ -132,7 +136,7 @@ class SpuCoImageFolder(BaseSpuCoDataset):
         :rtype: tuple
         """
         
-        image = self.base_transform(Image.open(self.load_image(self.data.X[index])))
+        image = self.base_transform(self.load_image(self.data.X[index]))
         label = self.data.labels[index]
         if self.transform is None:
             return image, label

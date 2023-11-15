@@ -8,3 +8,4 @@ from .spuco_mnist import SpuCoMNIST
 from .spuco_birds import SpuCoBirds
 from .spuco_dogs import SpuCoDogs
 from .spuco_animals import SpuCoAnimals
+from .spuco_image_folder import SpuCoImageFolder
