@@ -12,6 +12,10 @@ from tqdm import tqdm
 from spuco.datasets import (TRAIN_SPLIT, BaseSpuCoDataset, SourceData)
 from spuco.utils.random_seed import seed_randomness
 
+# Constants 
+MAJORITY = "majority"
+MINORITY = "minority"
+
 class SpuCoImageFolder(BaseSpuCoDataset):
     """
         Expects a folder structure of the following type:
@@ -19,8 +23,8 @@ class SpuCoImageFolder(BaseSpuCoDataset):
         corresponding to each class)
         - train
             - 0 (class idx)
-                - 0 (spurious idx)
-                - 1
+                - majority (spurious idx = class_idx)
+                - minority (spurious idx = num_classes)
             - 1
             ....
         - val
@@ -103,8 +107,7 @@ class SpuCoImageFolder(BaseSpuCoDataset):
             class_dirs = [item for item in os.listdir(self.dset_dir) if os.path.isdir(os.path.join(self.dset_dir, item))]
             for class_idx, class_dir in tqdm(enumerate(class_dirs), desc="Loading classes", disable=not self.verbose, total=len(class_dirs)):
                 class_dir = os.path.join(self.dset_dir, class_dir)
-                spurious_dirs = [item for item in os.listdir(class_dir) if os.path.isdir(os.path.join(class_dir, item))]
-                for spurious_idx, spurious_dir in enumerate(spurious_dirs):
+                for spurious_idx, spurious_dir in [(class_idx, MAJORITY), (self.num_classes, MINORITY)]:
                     spurious_dir = os.path.join(class_dir, spurious_dir)
                     for f in os.listdir(spurious_dir):
                         self.data.X.append(os.path.join(spurious_dir, f))
@@ -120,6 +123,9 @@ class SpuCoImageFolder(BaseSpuCoDataset):
         except:
             raise RuntimeError(f"Dataset corrupted, please fix directory structure.")
             
+        # Skip validation 
+        self.skip_group_validation = True 
+        
         return self.data, list(range(self.num_classes)), list(range(self.num_classes))
     
     def load_image(self, filename: str):
