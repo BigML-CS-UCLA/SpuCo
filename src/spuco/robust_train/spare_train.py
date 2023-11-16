@@ -88,4 +88,4 @@ class SpareTrain(GroupBalanceBatchERM):
             k=len(self.trainer.trainset)
         )
 
-        self.trainer.train_epoch(epoch)
+        return self.trainer.train_epoch(epoch)

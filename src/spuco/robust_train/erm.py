@@ -27,7 +27,8 @@ class ERM(BaseRobustTrain):
         lr_scheduler=None,
         max_grad_norm=None,
         val_evaluator: Evaluator = None,
-        verbose=False
+        verbose=False, 
+        use_wandb=False
     ):
         """
         Initializes a ERM instance.
@@ -51,7 +52,7 @@ class ERM(BaseRobustTrain):
         """
         seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
 
-        super().__init__(val_evaluator=val_evaluator, verbose=verbose)
+        super().__init__(val_evaluator=val_evaluator, verbose=verbose, use_wandb=use_wandb)
 
         self.num_epochs = num_epochs
         self.trainer = Trainer(
@@ -63,5 +64,7 @@ class ERM(BaseRobustTrain):
             max_grad_norm=max_grad_norm,
             criterion=criterion,
             verbose=verbose,
-            device=device
+            device=device,
+            name="ERM",
+            use_wandb=use_wandb
         )

@@ -9,6 +9,10 @@ from tqdm import tqdm
 
 from spuco.utils.random_seed import seed_randomness
 
+try:
+    import wandb
+except ImportError:
+    pass
 
 class Trainer:
     def __init__(
@@ -23,7 +27,9 @@ class Trainer:
             forward_pass: Optional[Callable[[Any], Tuple[torch.Tensor, torch.Tensor, torch.Tensor]]] = None,
             sampler: Sampler = None,
             device: torch.device = torch.device("cpu"),
-            verbose: bool = False
+            verbose: bool = False,
+            name: str = "",
+            use_wandb: bool = False
     ) -> None:
         """
         Initializes an instance of the Trainer class.
@@ -60,6 +66,8 @@ class Trainer:
         self.sampler = sampler
         self.verbose = verbose
         self.device = device
+        self.name = name
+        self.use_wandb = use_wandb
         
         if forward_pass is None:
             def forward_pass(self, batch):
@@ -99,9 +107,11 @@ class Trainer:
         :type epoch: int
         """
         self.model.train()
+        batch_idx = 0
         with tqdm(self.trainloader, unit="batch", total=len(self.trainloader), disable=not self.verbose) as pbar:
             pbar.set_description(f"Epoch {epoch}")
             average_accuracy = 0.
+            average_loss = 0.
             for batch in pbar:
                 loss, outputs, labels = self.forward_pass(self, batch)
                 accuracy = Trainer.compute_accuracy(outputs, labels)
@@ -116,12 +126,19 @@ class Trainer:
                 self.optimizer.step()
 
                 pbar.set_postfix(loss=loss.item(), accuracy=f"{accuracy}%")
+                if self.verbose:
+                    print(f"{self.name} | Epoch {epoch} | Loss: {loss.item()} | Accuracy: {accuracy}%")
+                if self.use_wandb:
+                    wandb.log({f"{self.name}_train_loss": loss.item(), f"{self.name}_train_acc": accuracy})
                 average_accuracy += accuracy
+                average_loss += loss.item()
+
+                batch_idx += 1
                             
             if self.lr_scheduler is not None and not isinstance(self.optimizer, optim.AdamW):
                 self.lr_scheduler.step()
                 
-            return average_accuracy / len(pbar)
+            return average_accuracy / len(pbar), average_loss / len(pbar)
     
     @staticmethod
     def compute_accuracy(outputs: torch.Tensor, labels: torch.Tensor) -> float:

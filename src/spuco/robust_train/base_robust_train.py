@@ -3,6 +3,10 @@ from copy import deepcopy
 
 from spuco.evaluate import Evaluator
 
+try:
+    import wandb
+except ImportError:
+    pass
 
 class BaseRobustTrain(ABC):
     """
@@ -12,7 +16,8 @@ class BaseRobustTrain(ABC):
     def __init__(
         self, 
         val_evaluator: Evaluator = None, 
-        verbose: bool = False
+        verbose: bool = False,
+        use_wandb: bool = False
     ):
         """
         Initializes the model trainer.
@@ -27,13 +32,14 @@ class BaseRobustTrain(ABC):
         self._best_wg_acc = -1
         self.verbose = verbose
         self.trainer = None
+        self.use_wandb = use_wandb
         
     def train(self):
         """
         Train for specified number of epochs (and do early stopping if val_evaluator given)
         """
         for epoch in range(self.num_epochs):
-            self.train_epoch(epoch)
+            train_avg_acc, train_avg_loss = self.train_epoch(epoch)
             if self.val_evaluator is not None:
                 self.val_evaluator.evaluate()
                 if self.val_evaluator.worst_group_accuracy[1] > self._best_wg_acc:
@@ -43,6 +49,11 @@ class BaseRobustTrain(ABC):
                 if self.verbose:
                     print('Epoch {}: Val Worst-Group Accuracy: {}'.format(epoch, self.val_evaluator.worst_group_accuracy[1]))
                     print('Best Val Worst-Group Accuracy: {}'.format(self._best_wg_acc))
+
+                if self.use_wandb:
+                    wandb.log({
+                        'train_avg_acc': train_avg_acc, 'train_avg_loss': train_avg_loss,
+                        'val_wg_acc': self.val_evaluator.worst_group_accuracy[1], 'best_val_wg_acc': self._best_wg_acc, 'epoch': epoch})
                 
     def train_epoch(self, epoch: int):
         """
@@ -51,7 +62,7 @@ class BaseRobustTrain(ABC):
         :param epoch: The current epoch number.
         :type epoch: int
         """
-        self.trainer.train_epoch(epoch)
+        return self.trainer.train_epoch(epoch)
         
     @property
     def best_model(self):

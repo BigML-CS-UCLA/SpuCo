@@ -26,7 +26,8 @@ class GroupBalanceBatchERM(BaseRobustTrain):
         num_epochs: int,
         device: torch.device = torch.device("cpu"),
         val_evaluator: Evaluator = None,
-        verbose=False
+        verbose=False,
+        use_wandb=False
     ):
         """
         Initializes GroupBalanceBatchERM.
@@ -64,7 +65,9 @@ class GroupBalanceBatchERM(BaseRobustTrain):
             optimizer=optimizer,
             sampler=CustomIndicesSampler(indices=[]),
             verbose=verbose,
-            device=device
+            device=device,
+            name="GroupBalance",
+            use_wandb=use_wandb
         )
 
         max_group_len = max([len(self.group_partition[key]) for key in self.group_partition.keys()])
@@ -86,4 +89,4 @@ class GroupBalanceBatchERM(BaseRobustTrain):
             weights=self.sampling_weights, 
             k=len(self.trainer.trainset)
         )
-        self.trainer.train_epoch(epoch)
+        return self.trainer.train_epoch(epoch)
