@@ -33,11 +33,12 @@ parser.add_argument("--momentum", type=float, default=0.9)
 parser.add_argument("--pretrained", action="store_true")
 parser.add_argument("--wandb", action="store_true")
 parser.add_argument("--wandb_project", type=str, default="spuco")
+parser.add_argument("--wandb_entity", type=str, default=None)
 parser.add_argument("--wandb_run_name", type=str, default="spuco_sun_erm_gb")
 args = parser.parse_args()
 
 if args.wandb:
-    wandb.init(project=args.wandb_project, name=args.wandb_run_name, config=args)
+    wandb.init(project=args.wandb_project, entity=args.wandb_entity, name=args.wandb_run_name, config=args)
     # remove the stdout_file argument
     del args.stdout_file
     del args.results_csv
