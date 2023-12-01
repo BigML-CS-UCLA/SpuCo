@@ -53,11 +53,19 @@ class BaseRobustTrain(ABC):
                     print('Best Val Worst-Group Accuracy: {}'.format(self._best_wg_acc))
 
                 if self.use_wandb:
-                    wandb.log({
-                        f'{self.trainer.name}_train_avg_acc': train_avg_acc, f'{self.trainer.name}_train_avg_loss': train_avg_loss,
-                        f'{self.trainer.name}_val_wg_acc': self.val_evaluator.worst_group_accuracy[1], f'{self.trainer.name}_best_val_wg_acc': self._best_wg_acc, 
-                        f'{self.trainer.name}_val_avg_acc': self.val_evaluator.average_accuracy, f'{self.trainer.name}_best_val_avg_acc': self._avg_acc_at_best_wg_acc,
-                        'epoch': epoch})
+                    results = {
+                            f'{self.trainer.name}_train_avg_acc': train_avg_acc, f'{self.trainer.name}_train_avg_loss': train_avg_loss,
+                            f'{self.trainer.name}_val_wg_acc': self.val_evaluator.worst_group_accuracy[1], f'{self.trainer.name}_best_val_wg_acc': self._best_wg_acc, 
+                            f'{self.trainer.name}_val_avg_acc': self.val_evaluator.average_accuracy, f'{self.trainer.name}_best_val_avg_acc': self._avg_acc_at_best_wg_acc,
+                            f'{self.trainer.name}_epoch': epoch
+                        }
+                    
+                    for group, acc in self.val_evaluator.accuracies.items():
+                        results[f'{self.trainer.name}_val_acc_{group}'] = acc
+
+                    results[f'{self.trainer.name}_spurious_attribute_prediction'] = self.val_evaluator.evaluate_spurious_attribute_prediction()
+                
+                    wandb.log(results)
                 
     def train_epoch(self, epoch: int):
         """
