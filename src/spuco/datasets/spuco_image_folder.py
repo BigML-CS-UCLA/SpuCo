@@ -23,8 +23,9 @@ class SpuCoImageFolder(BaseSpuCoDataset):
         corresponding to each class)
         - train
             - 0 (class idx)
-                - majority (spurious idx = class_idx)
-                - minority (spurious idx = num_classes)
+                - 0
+                - 1
+                - ...
             - 1
             ....
         - val
@@ -107,7 +108,8 @@ class SpuCoImageFolder(BaseSpuCoDataset):
             class_dirs = [item for item in os.listdir(self.dset_dir) if os.path.isdir(os.path.join(self.dset_dir, item))]
             for class_idx, class_dir in tqdm(enumerate(class_dirs), desc="Loading classes", disable=not self.verbose, total=len(class_dirs)):
                 class_dir = os.path.join(self.dset_dir, class_dir)
-                for spurious_idx, spurious_dir in [(class_idx, MAJORITY), (self.num_classes, MINORITY)]:
+                spurious_dirs = [item for item in os.listdir(class_dir) if os.path.isdir(os.path.join(class_dir, item))]
+                for spurious_idx, spurious_dir in enumerate(spurious_dirs):
                     spurious_dir = os.path.join(class_dir, spurious_dir)
                     for f in os.listdir(spurious_dir):
                         self.data.X.append(os.path.join(spurious_dir, f))
