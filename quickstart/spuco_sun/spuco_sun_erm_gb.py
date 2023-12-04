@@ -134,17 +134,9 @@ group_balance = GroupBalanceBatchERM(
     use_wandb=args.wandb
 )
 
-# send the model training to the background
-erm_thread = threading.Thread(target=erm.train)
-erm_thread.start()
+erm.train()
 
-gb_thread = threading.Thread(target=group_balance.train)
-gb_thread.start()
-
-# wait for the model to finish training
-erm_thread.join()
-gb_thread.join()
-
+group_balance.train()
 
 results = pd.DataFrame(index=[0])
 for model, model_name in zip([erm_model, gb_model], ["erm", "gb"]):
