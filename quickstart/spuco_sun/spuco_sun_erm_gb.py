@@ -25,7 +25,7 @@ parser.add_argument("--root_dir", type=str, default="/data/spuco_image_folder_de
 parser.add_argument("--label_noise", type=float, default=0.0)
 parser.add_argument("--results_csv", type=str, default="results/SpuCoSun.csv")
 parser.add_argument("--stdout_file", type=str, default="spuco_sun_erm_gb.out")
-parser.add_argument("--arch", type=str, default="resnet18", choices=["resnet18", "resnet50"])
+parser.add_argument("--arch", type=str, default="resnet18", choices=["resnet18", "resnet50", "cliprn50"])
 parser.add_argument("--batch_size", type=int, default=128)
 parser.add_argument("--num_epochs", type=int, default=40)
 parser.add_argument("--lr", type=float, default=1e-3)

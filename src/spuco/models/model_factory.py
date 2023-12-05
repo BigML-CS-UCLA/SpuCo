@@ -27,6 +27,7 @@ class SupportedModels(Enum):
     DistilBERT = "distilbert"
     ResNet18 = "resnet18"
     ResNet50 = "resnet50"
+    CLIPRN50 = "cliprn50"
 
 def model_factory(arch: str, input_shape: Tuple[int, int, int], num_classes: int, pretrained: bool = True):
     """
@@ -78,6 +79,10 @@ def model_factory(arch: str, input_shape: Tuple[int, int, int], num_classes: int
             backbone = resnet50(weights=None)
         representation_dim = backbone.fc.in_features
         backbone.fc = Identity()
+    elif arch == SupportedModels.CLIPRN50:
+        import clip
+        backbone = clip.load('RN50', device='cpu')
+        representation_dim = backbone.visual.output_dim
     else:
         raise NotImplemented(f"Model {arch} not supported currently")
     return SpuCoModel(
