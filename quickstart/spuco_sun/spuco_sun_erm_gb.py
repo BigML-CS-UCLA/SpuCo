@@ -204,7 +204,7 @@ core_only_erm.train()
 group_balance.train()
 
 results = pd.DataFrame(index=[0])
-for model, model_name in zip([erm_model, core_only_erm_model, gb_model], ["erm", "core_only_erm", "gb"]):
+for alg, model, model_name in zip([erm, core_only_erm, group_balance], [erm_model, core_only_erm_model, gb_model], ["erm", "core_only_erm", "gb"]):
     evaluator = Evaluator(
         testset=testset,
         group_partition=testset.group_partition,
@@ -224,7 +224,7 @@ for model, model_name in zip([erm_model, core_only_erm_model, gb_model], ["erm",
         group_partition=testset.group_partition,
         group_weights=trainset.group_weights,
         batch_size=args.batch_size,
-        model=erm.best_model,
+        model=alg.best_model,
         device=device,
         verbose=True
     )
@@ -233,6 +233,19 @@ for model, model_name in zip([erm_model, core_only_erm_model, gb_model], ["erm",
 
     results[f"early_stopping_wg_acc_{model_name}"] = evaluator.worst_group_accuracy[1]
     results[f"early_stopping_avg_acc_{model_name}"] = evaluator.average_accuracy
+    
+    evaluator = Evaluator(
+        testset=core_only_testset,
+        group_partition=testset.group_partition,
+        group_weights=trainset.group_weights,
+        batch_size=args.batch_size,
+        model=model,
+        device=device,
+        verbose=True
+    )
+    evaluator.evaluate()
+    results[f"core_only_test_wg_acc_{model_name}"] = evaluator.worst_group_accuracy[1]
+    results[f"core_only_test_avg_acc_{model_name}"] = evaluator.average_accuracy
 
 print(results)
 
