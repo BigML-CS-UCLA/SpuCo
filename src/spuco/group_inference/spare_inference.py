@@ -51,7 +51,7 @@ class SpareInference(Cluster):
         """
         
         seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
-        super().__init__(Z=Z, class_labels=class_labels, cluster_alg=cluster_alg, num_clusters=num_clusters, max_clusters=max_clusters, random_seed=get_seed(), device=device, verbose=verbose)
+        super().__init__(Z=Z, class_labels=class_labels, cluster_alg=cluster_alg, num_clusters=num_clusters, max_clusters=max_clusters, device=device, verbose=verbose)
 
         self.silhouette_threshold = silhoutte_threshold
         self.high_sampling_power = high_sampling_power
