@@ -8,12 +8,13 @@ import pandas as pd
 import torch
 import torchvision.transforms as transforms
 from torch.optim import SGD
+from spuco.datasets.base_spuco_dataset import MASK_SPURIOUS
 
 from spuco.evaluate import Evaluator
 from spuco.robust_train import ERM, GroupBalanceBatchERM
 from spuco.models import model_factory
 from spuco.utils import set_seed
-from spuco.datasets import SpuCoImageFolder
+from spuco.datasets import SpuCoSun
 
 
 # parse the command line arguments
@@ -63,7 +64,10 @@ transform = transforms.Compose([
             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
         ])
 
-trainset = SpuCoImageFolder(
+######
+# ERM #
+######
+trainset = SpuCoSun(
     root=args.root_dir,
     label_noise=args.label_noise,
     split="train",
@@ -71,7 +75,7 @@ trainset = SpuCoImageFolder(
 )
 trainset.initialize()
 
-valset = SpuCoImageFolder(
+valset = SpuCoSun(
     root=args.root_dir,
     label_noise=args.label_noise,
     split="val",
@@ -79,7 +83,7 @@ valset = SpuCoImageFolder(
 )
 valset.initialize()
 
-testset = SpuCoImageFolder(
+testset = SpuCoSun(
     root=args.root_dir,
     label_noise=args.label_noise,
     split="test",
@@ -110,6 +114,65 @@ erm = ERM(
     use_wandb=args.wandb
 )
 
+
+#################
+# CORE ONLY ERM #
+#################
+
+core_only_trainset = SpuCoSun(
+    root=args.root_dir,
+    label_noise=args.label_noise,
+    split="train",
+    mask_type=MASK_SPURIOUS,
+    transform=transform,
+)
+core_only_trainset.initialize()
+
+core_only_valset = SpuCoSun(
+    root=args.root_dir,
+    label_noise=args.label_noise,
+    split="val",
+    mask_type=MASK_SPURIOUS,
+    transform=transform,
+)
+core_only_valset.initialize()
+
+core_only_testset = SpuCoSun(
+    root=args.root_dir,
+    label_noise=args.label_noise,
+    split="test",
+    mask_type=MASK_SPURIOUS,
+    transform=transform,
+)
+core_only_testset.initialize()
+
+# initialize the model and the trainer
+core_only_erm_model = model_factory(args.arch, core_only_trainset[0][0].shape, core_only_trainset.num_classes, pretrained=args.pretrained).to(device)
+core_only_erm_valid_evaluator = Evaluator(
+    testset=core_only_valset,
+    group_partition=core_only_valset.group_partition,
+    group_weights=core_only_valset.group_weights,
+    batch_size=args.batch_size,
+    model=core_only_erm_model,
+    device=device,
+    verbose=True
+)
+core_only_erm = ERM(
+    model=core_only_erm_model,
+    val_evaluator=core_only_erm_valid_evaluator,
+    num_epochs=args.num_epochs,
+    trainset=core_only_trainset,
+    batch_size=args.batch_size,
+    optimizer=SGD(core_only_erm_model.parameters(), lr=args.lr, weight_decay=args.weight_decay, momentum=args.momentum),
+    device=device,
+    verbose=True,
+    use_wandb=args.wandb
+)
+
+###################
+#  Group Balance  #
+###################
+
 gb_model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
 gb_valid_evaluator = Evaluator(
     testset=valset,
@@ -136,10 +199,12 @@ group_balance = GroupBalanceBatchERM(
 
 erm.train()
 
+core_only_erm.train()
+
 group_balance.train()
 
 results = pd.DataFrame(index=[0])
-for model, model_name in zip([erm_model, gb_model], ["erm", "gb"]):
+for model, model_name in zip([erm_model, core_only_erm_model, gb_model], ["erm", "core_only_erm", "gb"]):
     evaluator = Evaluator(
         testset=testset,
         group_partition=testset.group_partition,
