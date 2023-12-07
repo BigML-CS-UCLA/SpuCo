@@ -1,7 +1,6 @@
 import argparse
 import os
 import sys
-import threading
 import wandb
 
 import pandas as pd
@@ -10,7 +9,7 @@ import torchvision.transforms as transforms
 from torch.optim import SGD
 
 from spuco.evaluate import Evaluator
-from spuco.robust_train import ERM, GroupBalanceBatchERM
+from spuco.robust_train import GroupBalanceBatchERM
 from spuco.models import model_factory
 from spuco.utils import set_seed
 from spuco.datasets import SpuCoSun
@@ -22,7 +21,7 @@ parser.add_argument("--gpu", type=int, default=0)
 parser.add_argument("--seed", type=int, default=0)
 parser.add_argument("--root_dir", type=str, default="/data/spuco_image_folder_demo/")
 parser.add_argument("--label_noise", type=float, default=0.0)
-parser.add_argument("--results_csv", type=str, default="results/SpuCoSun.csv")
+parser.add_argument("--results_csv", type=str, default="/data/spucosun/results/SpuCoSun.csv")
 parser.add_argument("--stdout_file", type=str, default="spuco_sun_gb.out")
 parser.add_argument("--arch", type=str, default="resnet18", choices=["resnet18", "resnet50", "cliprn50"])
 parser.add_argument("--batch_size", type=int, default=128)
@@ -158,6 +157,7 @@ if args.wandb:
     results = results.to_dict(orient="records")[0]
     wandb.log(results)
 else:
+    results["alg"] = "gb"
     results["timestamp"] = pd.Timestamp.now()
     results["seed"] = args.seed
     results["pretrained"] = args.pretrained
