@@ -81,7 +81,7 @@ def model_factory(arch: str, input_shape: Tuple[int, int, int], num_classes: int
         backbone.fc = Identity()
     elif arch == SupportedModels.CLIPRN50:
         import clip
-        backbone = clip.load('RN50', device='cpu')
+        backbone, _ = clip.load('RN50', device='cpu')
         representation_dim = backbone.visual.output_dim
     else:
         raise NotImplemented(f"Model {arch} not supported currently")
