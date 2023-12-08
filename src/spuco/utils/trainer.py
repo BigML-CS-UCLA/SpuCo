@@ -157,7 +157,7 @@ class Trainer:
         correct = (predicted == labels).sum().item()
         return 100. * correct / total
     
-    def get_trainset_outputs(self):
+    def get_trainset_outputs(self, features=False):
         """
         Gets output of model on trainset
         """
@@ -174,5 +174,9 @@ class Trainer:
                 outputs = []
                 pbar.set_description("Getting Trainset Outputs")
                 for input, _ in pbar:
-                    outputs.append(self.model(input.to(self.device)))
+                    if features:
+                        outputs.append(self.model(input.to(self.device)))
+                    else:
+                        outputs.append(self.model.backbone(input.to(self.device)))
                 return torch.cat(outputs, dim=0)
+            
