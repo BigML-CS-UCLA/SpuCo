@@ -62,9 +62,6 @@ class SpareInference(Cluster):
 
         :return: The group partition.
         :rtype: Dict[int, List[int]]
-
-        :return: The sampling powers for each group.
-        :rtype: List[int]
         """ 
         # Get class-wise group partitions
         cluster_partitions = [] 
