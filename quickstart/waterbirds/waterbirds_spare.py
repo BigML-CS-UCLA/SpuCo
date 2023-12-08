@@ -112,7 +112,9 @@ spare_infer = SpareInference(
     verbose=True
 )
 
-group_partition, sampling_powers = spare_infer.infer_groups()
+group_partition = spare_infer.infer_groups()
+sampling_powers = spare_infer.sampling_powers 
+
 print("Sampling powers: {}".format(sampling_powers))
 for key in sorted(group_partition.keys()):
     for true_key in sorted(trainset.group_partition.keys()):

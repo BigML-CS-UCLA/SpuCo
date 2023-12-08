@@ -98,7 +98,8 @@ spare_infer = SpareInference(
     verbose=True
 )
 
-group_partition, sampling_powers = spare_infer.infer_groups()
+group_partition = spare_infer.infer_groups()
+sampling_powers = spare_infer.sampling_powers
 
 evaluator = Evaluator(
     testset=trainset,

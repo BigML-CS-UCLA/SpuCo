@@ -68,7 +68,7 @@ class SpareInference(Cluster):
         """ 
         # Get class-wise group partitions
         cluster_partitions = [] 
-        sampling_powers = []
+        self.sampling_powers = []
         for class_label in tqdm(self.class_partition.keys(), disable=not self.verbose, desc="Clustering class-wise"):
             Z = self.Z[self.class_partition[class_label]]
             if self.num_clusters == -1:
@@ -78,12 +78,12 @@ class SpareInference(Cluster):
                 silhouette = silhouette_score(Z, cluster_labels)
             cluster_partitions.append(partition)
             if silhouette < self.silhouette_threshold:
-                sampling_powers.append(self.high_sampling_power)
+                self.sampling_powers.append(self.high_sampling_power)
             else:
-                sampling_powers.append(1)
+                self.sampling_powers.append(1)
 
         # Merge class-wise group partitions into one dictionary
         group_partition = {}
         for class_index, partition in zip(self.class_partition.keys(), cluster_partitions):
             group_partition.update(self.process_cluster_partition(partition, class_index))
-        return group_partition, sampling_powers
+        return group_partition

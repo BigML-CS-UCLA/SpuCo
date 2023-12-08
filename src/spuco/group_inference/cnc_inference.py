@@ -66,6 +66,7 @@ class CorrectNContrastInference(BaseGroupInference):
         :rtype: Dict[Tuple[int, int], List[int]]
         """
         
+        # TODO: Do George for Group Inference
         self.trainer.train(self.num_epochs)
         
         spurious = torch.argmax(self.trainer.get_trainset_outputs(), dim=-1).cpu().tolist()
