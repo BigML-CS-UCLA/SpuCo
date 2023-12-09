@@ -39,6 +39,8 @@ parser.add_argument("--inf_lr", type=float, default=1e-3, choices=[1e-3, 1e-4, 1
 parser.add_argument("--inf_weight_decay", type=float, default=1e-4, choices=[1e-4, 5e-4, 1e-2, 1e-1, 1.0])
 parser.add_argument("--inf_momentum", type=float, default=0.9)
 
+parser.add_argument("--train_num_epochs", type=int, default=5)
+
 parser.add_argument(
     "--train_lr", default=0.0001, type=float)
 parser.add_argument(
@@ -143,7 +145,7 @@ cnc_train = CorrectNContrastTrain(
     accum=args.accum,
     num_pos=17, 
     num_neg=17,
-    num_epochs=50,
+    num_epochs=args.train_num_epochs,
     lambda_ce=args.lambda_ce,
     temp=0.1,
     device=device,
@@ -172,7 +174,7 @@ evaluator = Evaluator(
     testset=testset,
     group_partition=testset.group_partition,
     group_weights=trainset.group_weights,
-    batch_size=args.batch_size,
+    batch_size=64,
     model=cnc_train.best_model,
     device=device,
     verbose=True
