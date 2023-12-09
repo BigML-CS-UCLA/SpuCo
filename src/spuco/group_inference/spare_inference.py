@@ -51,7 +51,7 @@ class SpareInference(Cluster):
         """
         
         seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
-        super().__init__(Z=Z, class_labels=class_labels, cluster_alg=cluster_alg, num_clusters=num_clusters, max_clusters=max_clusters, random_seed=get_seed(), device=device, verbose=verbose)
+        super().__init__(Z=Z, class_labels=class_labels, cluster_alg=cluster_alg, num_clusters=num_clusters, max_clusters=max_clusters, device=device, verbose=verbose)
 
         self.silhouette_threshold = silhoutte_threshold
         self.high_sampling_power = high_sampling_power
@@ -62,13 +62,10 @@ class SpareInference(Cluster):
 
         :return: The group partition.
         :rtype: Dict[int, List[int]]
-
-        :return: The sampling powers for each group.
-        :rtype: List[int]
         """ 
         # Get class-wise group partitions
         cluster_partitions = [] 
-        sampling_powers = []
+        self.sampling_powers = []
         for class_label in tqdm(self.class_partition.keys(), disable=not self.verbose, desc="Clustering class-wise"):
             Z = self.Z[self.class_partition[class_label]]
             if self.num_clusters == -1:
@@ -78,12 +75,12 @@ class SpareInference(Cluster):
                 silhouette = silhouette_score(Z, cluster_labels)
             cluster_partitions.append(partition)
             if silhouette < self.silhouette_threshold:
-                sampling_powers.append(self.high_sampling_power)
+                self.sampling_powers.append(self.high_sampling_power)
             else:
-                sampling_powers.append(1)
+                self.sampling_powers.append(1)
 
         # Merge class-wise group partitions into one dictionary
         group_partition = {}
         for class_index, partition in zip(self.class_partition.keys(), cluster_partitions):
             group_partition.update(self.process_cluster_partition(partition, class_index))
-        return group_partition, sampling_powers
+        return group_partition
