@@ -12,7 +12,7 @@ from spuco.group_inference import SpareInference
 from spuco.utils.random_seed import seed_randomness
 
 
-class GeoergeInference(SpareInference):
+class GeorgeInference(SpareInference):
     """
     George Infernece: https://arxiv.org/abs/2011.12945
     """

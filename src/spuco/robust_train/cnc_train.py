@@ -180,6 +180,7 @@ class CNCTrainer:
         self.sampler = sampler
         self.verbose = verbose
         self.device = device
+        self.name = 'CnC'
         
         if forward_pass is None:
             def forward_pass(self, batch):
