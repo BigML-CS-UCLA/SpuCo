@@ -58,6 +58,8 @@ class DISPEL(DFR):
         :type validation_set: GroupLabeledDatasetWrapper
         :param data_for_scaler: Data used for fitting the sklearn scaler. If not provided, group labeled data will be used.
         :type data_for_scaler: Dataset
+        :param groups_with_spu: In case of missing groups, pass indices of existing groups that share the spurious feature with the missing groups here
+        :type groups_with_spu: list
         """
 
         super().__init__(
