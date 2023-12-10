@@ -24,7 +24,7 @@ parser.add_argument("--results_csv", type=str, default="/data/spucosun/results/g
 parser.add_argument("--stdout_file", type=str, default="spuco_sun_group_dro.out")
 parser.add_argument("--arch", type=str, default="resnet18", choices=["resnet18", "resnet50", "cliprn50"])
 parser.add_argument("--batch_size", type=int, default=128)
-parser.add_argument("--num_epochs", type=int, default=40, choices=[40,80])
+parser.add_argument("--num_epochs", type=int, default=40)
 parser.add_argument("--lr", type=float, default=1e-5, choices=[1e-3, 1e-4, 1e-5])
 parser.add_argument("--weight_decay", type=float, default=1e-1, choices=[1e-4, 5e-4, 1e-2, 1e-1, 1.0])
 parser.add_argument("--momentum", type=float, default=0.9)
@@ -114,8 +114,7 @@ group_dro = GroupDRO(
     batch_size=args.batch_size,
     optimizer=SGD(model.parameters(), lr=args.lr, weight_decay=args.weight_decay, momentum=args.momentum),
     device=device,
-    verbose=True,
-    use_wandb=args.wandb
+    verbose=True
 )
 
 group_dro.train()
