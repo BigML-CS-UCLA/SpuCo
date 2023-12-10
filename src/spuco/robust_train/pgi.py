@@ -79,6 +79,7 @@ class PGI(BaseRobustTrain):
         optimizer: optim.Optimizer,
         num_epochs: int,
         penalty_weight: float = 0.01,
+        rampup_epochs: int = 10,
         device: torch.device = torch.device("cpu"),
         val_evaluator: Evaluator = None,
         verbose=False,
@@ -121,7 +122,7 @@ class PGI(BaseRobustTrain):
         self.num_classes = trainset.dataset.num_classes
         # require the number of groups to be 2
         assert len(self.group_partition) == 2, "PGI requires exactly 2 groups"
-        self.pgi_loss = PGILoss(criterion=nn.CrossEntropyLoss(reduction="none"), num_classes=self.num_classes, penalty_weight=penalty_weight, device=device)
+        self.pgi_loss = PGILoss(criterion=nn.CrossEntropyLoss(reduction="none"), num_classes=self.num_classes, penalty_weight=penalty_weight, rampup_epochs=rampup_epochs, device=device)
         self.trainer = Trainer(
             trainset=trainset,
             model=model,

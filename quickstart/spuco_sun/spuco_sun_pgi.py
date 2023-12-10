@@ -43,6 +43,7 @@ parser.add_argument("--eiil_lr", type=float, default=0.01)
 parser.add_argument("--infer_num_epochs", type=int, default=1)
 
 parser.add_argument("--pgi_penalty_weight", type=float, default=0.01)
+parser.add_argument("--pgi_rampup_epochs", type=int, default=10)
 
 args = parser.parse_args()
 
@@ -151,6 +152,7 @@ pgi = PGI(
     val_evaluator=valid_evaluator,
     num_epochs=args.num_epochs,
     penalty_weight=args.pgi_penalty_weight,
+    rampup_epochs=args.pgi_rampup_epochs,
     trainset=robust_trainset,
     batch_size=args.batch_size,
     optimizer=SGD(model.parameters(), lr=args.gdro_lr, weight_decay=args.gdro_weight_decay, momentum=args.momentum),
@@ -213,6 +215,9 @@ else:
 
     results["eiil_num_steps"] = args.eiil_num_steps
     results["eiil_lr"] = args.eiil_lr
+
+    results["pgi_penalty_weight"] = args.pgi_penalty_weight
+    results["pgi_rampup_epochs"] = args.pgi_rampup_epochs
 
     results
 
