@@ -20,8 +20,8 @@ parser.add_argument("--gpu", type=int, default=0)
 parser.add_argument("--seed", type=int, default=0)
 parser.add_argument("--root_dir", type=str, default="/data/spuco_image_folder_demo/")
 parser.add_argument("--label_noise", type=float, default=0.0)
-parser.add_argument("--results_csv", type=str, default="/data/spucosun/results/group_dro.csv")
-parser.add_argument("--stdout_file", type=str, default="spuco_sun_group_dro.out")
+parser.add_argument("--results_csv", type=str, default="/data/spucosun/results/groupdro.csv")
+parser.add_argument("--stdout_file", type=str, default="spuco_sun_groupdro.out")
 parser.add_argument("--arch", type=str, default="resnet18", choices=["resnet18", "resnet50", "cliprn50"])
 parser.add_argument("--batch_size", type=int, default=128)
 parser.add_argument("--num_epochs", type=int, default=40)
@@ -32,7 +32,7 @@ parser.add_argument("--pretrained", action="store_true")
 parser.add_argument("--wandb", action="store_true")
 parser.add_argument("--wandb_project", type=str, default="spuco")
 parser.add_argument("--wandb_entity", type=str, default=None)
-parser.add_argument("--wandb_run_name", type=str, default="spuco_sun_group_dro")
+parser.add_argument("--wandb_run_name", type=str, default="spuco_sun_groupdro")
 args = parser.parse_args()
 
 if args.wandb:
@@ -96,7 +96,7 @@ robust_trainset = GroupLabeledDatasetWrapper(trainset, trainset.group_partition)
 
 model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
 
-group_dro_valid_evaluator = Evaluator(
+groupdro_valid_evaluator = Evaluator(
     testset=valset,
     group_partition=valset.group_partition,
     group_weights=valset.group_weights,
@@ -106,9 +106,9 @@ group_dro_valid_evaluator = Evaluator(
     verbose=True
 )
 
-group_dro = GroupDRO(
+groupdro = GroupDRO(
     model=model,
-    val_evaluator=group_dro_valid_evaluator,
+    val_evaluator=groupdro_valid_evaluator,
     num_epochs=args.num_epochs,
     trainset=robust_trainset,
     batch_size=args.batch_size,
@@ -117,7 +117,7 @@ group_dro = GroupDRO(
     verbose=True
 )
 
-group_dro.train()
+groupdro.train()
 
 results = pd.DataFrame(index=[0])
 
@@ -140,7 +140,7 @@ evaluator = Evaluator(
     group_partition=testset.group_partition,
     group_weights=trainset.group_weights,
     batch_size=args.batch_size,
-    model=group_dro.best_model,
+    model=groupdro.best_model,
     device=device,
     verbose=True
 )
