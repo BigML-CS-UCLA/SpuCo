@@ -12,8 +12,7 @@ from spuco.evaluate import Evaluator
 from spuco.robust_train import GroupDRO
 from spuco.models import model_factory
 from spuco.utils import set_seed
-from spuco.datasets import SpuCoSun
-from spuco.datasets import GroupLabeledDatasetWrapper
+from spuco.datasets import SpuCoSun, GroupLabeledDatasetWrapper
 
 # parse the command line arguments
 parser = argparse.ArgumentParser()
