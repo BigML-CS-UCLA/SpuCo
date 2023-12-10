@@ -22,6 +22,7 @@ class PGILoss(nn.Module):
         num_classes: int,
         criterion: Callable[[torch.tensor, torch.tensor], torch.tensor],
         penalty_weight: float = 0.01,
+        rampup_epochs: int = 10,
         device: torch.device = torch.device("cpu"),
     ):
         """
@@ -39,6 +40,8 @@ class PGILoss(nn.Module):
         self.num_classes = num_classes
         self.device = device
         self.penalty_weight = penalty_weight
+        self.rampup_epochs = rampup_epochs
+        self.current_epoch = 0
 
     def forward(self, outputs, labels, groups):
         """
@@ -59,7 +62,7 @@ class PGILoss(nn.Module):
             kl_divergence = nn.functional.kl_div(group_0_probs.mean(dim=0), group_1_probs.mean(dim=0), reduction="batchmean")
 
         # compute the final loss as the sum of the loss and the KL divergence
-        loss = loss.mean() + self.penalty_weight * kl_divergence
+        loss = loss.mean() + kl_divergence * self.penalty_weight * min(self.current_epoch / self.rampup_epochs, 1.0)
         
         return loss
 
@@ -150,4 +153,5 @@ class PGI(BaseRobustTrain):
             weights=self.sampling_weights, 
             k=len(self.trainer.trainset)
         )
+        self.pgi_loss.current_epoch = epoch
         return self.trainer.train_epoch(epoch)
