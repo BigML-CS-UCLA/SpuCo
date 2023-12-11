@@ -145,7 +145,7 @@ evaluator.evaluate()
 robust_trainset = GroupLabeledDatasetWrapper(trainset, group_partition)
 
 val_evaluator = Evaluator(
-    testset=testset,
+    testset=valset,
     group_partition=testset.group_partition,
     group_weights=trainset.group_weights,
     batch_size=args.batch_size,
@@ -178,7 +178,7 @@ jtt_train.train()
 results = pd.DataFrame(index=[0])
 
 evaluator = Evaluator(
-    testset=testset,
+    testset=valset,
     group_partition=testset.group_partition,
     group_weights=trainset.group_weights,
     batch_size=args.batch_size,
@@ -192,7 +192,7 @@ results[f"wg_acc"] = evaluator.worst_group_accuracy[1]
 results[f"avg_acc"] = evaluator.average_accuracy
 
 evaluator = Evaluator(
-    testset=testset,
+    testset=valset,
     group_partition=testset.group_partition,
     group_weights=trainset.group_weights,
     batch_size=args.batch_size,

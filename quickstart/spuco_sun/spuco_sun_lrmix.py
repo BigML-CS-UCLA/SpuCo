@@ -134,7 +134,7 @@ lrmix.train()
 results = pd.DataFrame(index=[0])
 
 evaluator = Evaluator(
-    testset=testset,
+    testset=valset,
     group_partition=testset.group_partition,
     group_weights=trainset.group_weights,
     batch_size=64,
