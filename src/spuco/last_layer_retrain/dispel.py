@@ -20,6 +20,7 @@ class DISPEL(DFR):
         labeled_valset_size: float = 0.5,
         C_range: List[float] = [1., 0.7, 0.3, 0.1, 0.07, 0.03, 0.01],
         s_range: List[float] = [1.0, 0.9, 0.8, 0.7],
+        groups_with_spu: Optional[List[int]] = None,
         class_weight_options: Optional[List[Dict]] = None,
         validation_set: Optional[GroupLabeledDatasetWrapper] = None,
         alpha_range : List[float] = [1.0],
@@ -57,6 +58,8 @@ class DISPEL(DFR):
         :type validation_set: GroupLabeledDatasetWrapper
         :param data_for_scaler: Data used for fitting the sklearn scaler. If not provided, group labeled data will be used.
         :type data_for_scaler: Dataset
+        :param groups_with_spu: In case of missing groups, pass indices of existing groups that share the spurious feature with the missing groups here
+        :type groups_with_spu: list
         """
 
         super().__init__(
@@ -75,6 +78,7 @@ class DISPEL(DFR):
         self.s_range = s_range
         self.group_unlabeled_set = group_unlabeled_set
         self.size_of_mixed = size_of_mixed
+        self.groups_with_spu = groups_with_spu
 
     def train_single_model(self, alpha, s, C, X_labeled, y_labeled, g_labeled, class_weight):
         """
@@ -102,7 +106,11 @@ class DISPEL(DFR):
         :type class_weight: dict or 'balanced', optional
         """
         # sample the maximal group balanced set from the group labeled data
-        group_names = {g for g in g_labeled}
+
+        if self.groups_with_spu:
+            group_names = {g for g in g_labeled if g in self.groups_with_spu}
+        else:
+            group_names = {g for g in g_labeled}
         group_partition = []
         for g in group_names:
             group_partition.append(np.where(g_labeled==g)[0])
