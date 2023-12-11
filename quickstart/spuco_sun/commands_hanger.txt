@@ -1,0 +1,2 @@
+guild run jtt.py lr=‘[1e-3, 1e-4, 1e-5]’ weight_decay=‘[1e-4, 5e-4, 1e-2, 1e-1, 1.0]’
+guild run groupdro.py lr=‘[1e-3, 1e-4, 1e-5]’ weight_decay=‘[1e-4, 5e-4, 1e-2, 1e-1, 1.0]’

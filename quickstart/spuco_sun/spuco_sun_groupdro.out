@@ -1,0 +1,580 @@
+Namespace(gpu=0, seed=0, root_dir='/data/spucosun/3.0', label_noise=0.0, results_csv='/data/spucosun/results/group_dro.csv', stdout_file='spuco_sun_group_dro.out', arch='resnet18', batch_size=128, num_epochs=2, lr=1e-05, weight_decay=0.1, momentum=0.9, pretrained=False, wandb=False, wandb_project='spuco', wandb_entity=None, wandb_run_name='spuco_sun_group_dro')
+ | Epoch 0 | Loss: 1.4093232154846191 | Accuracy: 32.03125%
+ | Epoch 0 | Loss: 1.42424738407135 | Accuracy: 21.875%
+ | Epoch 0 | Loss: 1.4361262321472168 | Accuracy: 19.53125%
+ | Epoch 0 | Loss: 1.407315731048584 | Accuracy: 32.8125%
+ | Epoch 0 | Loss: 1.4241125583648682 | Accuracy: 20.3125%
+ | Epoch 0 | Loss: 1.4286038875579834 | Accuracy: 21.875%
+ | Epoch 0 | Loss: 1.4367696046829224 | Accuracy: 17.1875%
+ | Epoch 0 | Loss: 1.412376880645752 | Accuracy: 25.0%
+ | Epoch 0 | Loss: 1.4145665168762207 | Accuracy: 29.6875%
+ | Epoch 0 | Loss: 1.406274676322937 | Accuracy: 28.90625%
+ | Epoch 0 | Loss: 1.4407188892364502 | Accuracy: 28.125%
+ | Epoch 0 | Loss: 1.456799030303955 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.4292676448822021 | Accuracy: 24.21875%
+ | Epoch 0 | Loss: 1.4319301843643188 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.4376499652862549 | Accuracy: 23.4375%
+ | Epoch 0 | Loss: 1.4169236421585083 | Accuracy: 29.6875%
+ | Epoch 0 | Loss: 1.436353087425232 | Accuracy: 22.65625%
+ | Epoch 0 | Loss: 1.4348052740097046 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.4213075637817383 | Accuracy: 19.53125%
+ | Epoch 0 | Loss: 1.4170475006103516 | Accuracy: 21.09375%
+ | Epoch 0 | Loss: 1.4465153217315674 | Accuracy: 21.09375%
+ | Epoch 0 | Loss: 1.4404935836791992 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.4470701217651367 | Accuracy: 28.125%
+ | Epoch 0 | Loss: 1.41416597366333 | Accuracy: 21.875%
+ | Epoch 0 | Loss: 1.4222500324249268 | Accuracy: 22.65625%
+ | Epoch 0 | Loss: 1.4461135864257812 | Accuracy: 25.78125%
+ | Epoch 0 | Loss: 1.4169508218765259 | Accuracy: 33.59375%
+ | Epoch 0 | Loss: 1.4138877391815186 | Accuracy: 22.65625%
+ | Epoch 0 | Loss: 1.4124424457550049 | Accuracy: 25.78125%
+ | Epoch 0 | Loss: 1.4294908046722412 | Accuracy: 24.21875%
+ | Epoch 0 | Loss: 1.4276096820831299 | Accuracy: 21.09375%
+ | Epoch 0 | Loss: 1.4329458475112915 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.4296317100524902 | Accuracy: 22.65625%
+ | Epoch 0 | Loss: 1.4219619035720825 | Accuracy: 25.0%
+ | Epoch 0 | Loss: 1.4061459302902222 | Accuracy: 18.75%
+ | Epoch 0 | Loss: 1.409505844116211 | Accuracy: 21.875%
+ | Epoch 0 | Loss: 1.4197449684143066 | Accuracy: 30.46875%
+ | Epoch 0 | Loss: 1.4121286869049072 | Accuracy: 24.21875%
+ | Epoch 0 | Loss: 1.4175117015838623 | Accuracy: 20.3125%
+ | Epoch 0 | Loss: 1.4086475372314453 | Accuracy: 30.46875%
+ | Epoch 0 | Loss: 1.4068293571472168 | Accuracy: 22.65625%
+ | Epoch 0 | Loss: 1.4128998517990112 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.4091684818267822 | Accuracy: 25.0%
+ | Epoch 0 | Loss: 1.4159760475158691 | Accuracy: 21.875%
+ | Epoch 0 | Loss: 1.4275814294815063 | Accuracy: 30.46875%
+ | Epoch 0 | Loss: 1.4093096256256104 | Accuracy: 17.1875%
+ | Epoch 0 | Loss: 1.4152991771697998 | Accuracy: 22.65625%
+ | Epoch 0 | Loss: 1.4172948598861694 | Accuracy: 24.21875%
+ | Epoch 0 | Loss: 1.4154773950576782 | Accuracy: 24.21875%
+ | Epoch 0 | Loss: 1.4024385213851929 | Accuracy: 23.4375%
+ | Epoch 0 | Loss: 1.4222135543823242 | Accuracy: 28.90625%
+ | Epoch 0 | Loss: 1.4251341819763184 | Accuracy: 28.90625%
+ | Epoch 0 | Loss: 1.4149749279022217 | Accuracy: 30.46875%
+ | Epoch 0 | Loss: 1.405526876449585 | Accuracy: 28.90625%
+ | Epoch 0 | Loss: 1.4177837371826172 | Accuracy: 28.125%
+ | Epoch 0 | Loss: 1.4061558246612549 | Accuracy: 25.0%
+ | Epoch 0 | Loss: 1.421262264251709 | Accuracy: 23.4375%
+ | Epoch 0 | Loss: 1.3885072469711304 | Accuracy: 26.5625%
+ | Epoch 0 | Loss: 1.4129136800765991 | Accuracy: 32.03125%
+ | Epoch 0 | Loss: 1.427541732788086 | Accuracy: 24.21875%
+ | Epoch 0 | Loss: 1.426330327987671 | Accuracy: 21.875%
+ | Epoch 0 | Loss: 1.4122333526611328 | Accuracy: 20.3125%
+ | Epoch 0 | Loss: 1.4075934886932373 | Accuracy: 24.21875%
+ | Epoch 0 | Loss: 1.422179937362671 | Accuracy: 22.65625%
+ | Epoch 0 | Loss: 1.4249329566955566 | Accuracy: 32.03125%
+ | Epoch 0 | Loss: 1.3968193531036377 | Accuracy: 32.8125%
+ | Epoch 0 | Loss: 1.400193214416504 | Accuracy: 33.59375%
+ | Epoch 0 | Loss: 1.4071407318115234 | Accuracy: 21.09375%
+ | Epoch 0 | Loss: 1.4089407920837402 | Accuracy: 20.3125%
+ | Epoch 0 | Loss: 1.4225330352783203 | Accuracy: 25.0%
+ | Epoch 0 | Loss: 1.4266281127929688 | Accuracy: 23.4375%
+ | Epoch 0 | Loss: 1.407480239868164 | Accuracy: 23.4375%
+ | Epoch 0 | Loss: 1.4142931699752808 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.3998916149139404 | Accuracy: 28.90625%
+ | Epoch 0 | Loss: 1.3992910385131836 | Accuracy: 19.53125%
+ | Epoch 0 | Loss: 1.4227633476257324 | Accuracy: 28.90625%
+ | Epoch 0 | Loss: 1.3998204469680786 | Accuracy: 21.875%
+ | Epoch 0 | Loss: 1.3995585441589355 | Accuracy: 33.59375%
+ | Epoch 0 | Loss: 1.4040522575378418 | Accuracy: 21.09375%
+ | Epoch 0 | Loss: 1.4187262058258057 | Accuracy: 20.3125%
+ | Epoch 0 | Loss: 1.410893440246582 | Accuracy: 28.90625%
+ | Epoch 0 | Loss: 1.3992012739181519 | Accuracy: 31.25%
+ | Epoch 0 | Loss: 1.3996928930282593 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.400575876235962 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.3777689933776855 | Accuracy: 28.90625%
+ | Epoch 0 | Loss: 1.4014992713928223 | Accuracy: 29.6875%
+ | Epoch 0 | Loss: 1.3944175243377686 | Accuracy: 29.6875%
+ | Epoch 0 | Loss: 1.4080075025558472 | Accuracy: 28.125%
+ | Epoch 0 | Loss: 1.385730266571045 | Accuracy: 28.125%
+ | Epoch 0 | Loss: 1.3960034847259521 | Accuracy: 31.25%
+ | Epoch 0 | Loss: 1.4059875011444092 | Accuracy: 26.5625%
+ | Epoch 0 | Loss: 1.403041958808899 | Accuracy: 22.65625%
+ | Epoch 0 | Loss: 1.398885726928711 | Accuracy: 26.5625%
+ | Epoch 0 | Loss: 1.376903772354126 | Accuracy: 32.03125%
+ | Epoch 0 | Loss: 1.3982250690460205 | Accuracy: 29.6875%
+ | Epoch 0 | Loss: 1.3981486558914185 | Accuracy: 25.78125%
+ | Epoch 0 | Loss: 1.401239275932312 | Accuracy: 26.5625%
+ | Epoch 0 | Loss: 1.4027585983276367 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.3997321128845215 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.3848761320114136 | Accuracy: 33.59375%
+ | Epoch 0 | Loss: 1.3902733325958252 | Accuracy: 28.90625%
+ | Epoch 0 | Loss: 1.3882105350494385 | Accuracy: 33.59375%
+ | Epoch 0 | Loss: 1.383296012878418 | Accuracy: 28.125%
+ | Epoch 0 | Loss: 1.3712483644485474 | Accuracy: 28.90625%
+ | Epoch 0 | Loss: 1.3859196901321411 | Accuracy: 25.0%
+ | Epoch 0 | Loss: 1.3991942405700684 | Accuracy: 31.25%
+ | Epoch 0 | Loss: 1.405118703842163 | Accuracy: 25.78125%
+ | Epoch 0 | Loss: 1.3782198429107666 | Accuracy: 35.15625%
+ | Epoch 0 | Loss: 1.3959946632385254 | Accuracy: 25.78125%
+ | Epoch 0 | Loss: 1.3803503513336182 | Accuracy: 32.8125%
+ | Epoch 0 | Loss: 1.3898118734359741 | Accuracy: 35.9375%
+ | Epoch 0 | Loss: 1.3851736783981323 | Accuracy: 30.46875%
+ | Epoch 0 | Loss: 1.3967580795288086 | Accuracy: 25.0%
+ | Epoch 0 | Loss: 1.3790597915649414 | Accuracy: 26.5625%
+ | Epoch 0 | Loss: 1.3876316547393799 | Accuracy: 28.90625%
+ | Epoch 0 | Loss: 1.3970098495483398 | Accuracy: 26.5625%
+ | Epoch 0 | Loss: 1.3960199356079102 | Accuracy: 30.46875%
+ | Epoch 0 | Loss: 1.3845261335372925 | Accuracy: 31.25%
+ | Epoch 0 | Loss: 1.380389928817749 | Accuracy: 36.71875%
+ | Epoch 0 | Loss: 1.3924920558929443 | Accuracy: 29.6875%
+ | Epoch 0 | Loss: 1.3879426717758179 | Accuracy: 28.90625%
+ | Epoch 0 | Loss: 1.3685402870178223 | Accuracy: 33.59375%
+ | Epoch 0 | Loss: 1.3856230974197388 | Accuracy: 26.5625%
+ | Epoch 0 | Loss: 1.3738830089569092 | Accuracy: 28.125%
+ | Epoch 0 | Loss: 1.366764783859253 | Accuracy: 32.03125%
+ | Epoch 0 | Loss: 1.3971242904663086 | Accuracy: 26.5625%
+ | Epoch 0 | Loss: 1.3854559659957886 | Accuracy: 30.46875%
+ | Epoch 0 | Loss: 1.3682360649108887 | Accuracy: 33.59375%
+ | Epoch 0 | Loss: 1.3658686876296997 | Accuracy: 35.15625%
+ | Epoch 0 | Loss: 1.3880125284194946 | Accuracy: 32.03125%
+ | Epoch 0 | Loss: 1.3845100402832031 | Accuracy: 26.5625%
+ | Epoch 0 | Loss: 1.3605990409851074 | Accuracy: 39.0625%
+ | Epoch 0 | Loss: 1.3813133239746094 | Accuracy: 24.21875%
+ | Epoch 0 | Loss: 1.3812720775604248 | Accuracy: 30.46875%
+ | Epoch 0 | Loss: 1.3853747844696045 | Accuracy: 28.90625%
+ | Epoch 0 | Loss: 1.382948875427246 | Accuracy: 30.46875%
+ | Epoch 0 | Loss: 1.3570334911346436 | Accuracy: 35.15625%
+ | Epoch 0 | Loss: 1.380721092224121 | Accuracy: 28.125%
+ | Epoch 0 | Loss: 1.3592162132263184 | Accuracy: 38.28125%
+ | Epoch 0 | Loss: 1.3808009624481201 | Accuracy: 32.8125%
+ | Epoch 0 | Loss: 1.3728969097137451 | Accuracy: 30.46875%
+ | Epoch 0 | Loss: 1.3676382303237915 | Accuracy: 34.375%
+ | Epoch 0 | Loss: 1.3729124069213867 | Accuracy: 32.03125%
+ | Epoch 0 | Loss: 1.3804054260253906 | Accuracy: 25.78125%
+ | Epoch 0 | Loss: 1.3744771480560303 | Accuracy: 28.90625%
+ | Epoch 0 | Loss: 1.3839082717895508 | Accuracy: 29.6875%
+ | Epoch 0 | Loss: 1.3792787790298462 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.3686292171478271 | Accuracy: 30.46875%
+ | Epoch 0 | Loss: 1.3874638080596924 | Accuracy: 30.46875%
+ | Epoch 0 | Loss: 1.3717368841171265 | Accuracy: 28.90625%
+ | Epoch 0 | Loss: 1.3620027303695679 | Accuracy: 30.46875%
+ | Epoch 0 | Loss: 1.375420093536377 | Accuracy: 31.25%
+ | Epoch 0 | Loss: 1.3779913187026978 | Accuracy: 31.25%
+ | Epoch 0 | Loss: 1.3739256858825684 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.3871046304702759 | Accuracy: 23.4375%
+ | Epoch 0 | Loss: 1.378061056137085 | Accuracy: 33.59375%
+ | Epoch 0 | Loss: 1.377599835395813 | Accuracy: 25.78125%
+ | Epoch 0 | Loss: 1.3917782306671143 | Accuracy: 28.125%
+ | Epoch 0 | Loss: 1.3806884288787842 | Accuracy: 28.125%
+ | Epoch 0 | Loss: 1.3664605617523193 | Accuracy: 30.46875%
+ | Epoch 0 | Loss: 1.3724703788757324 | Accuracy: 29.6875%
+ | Epoch 0 | Loss: 1.3757026195526123 | Accuracy: 24.21875%
+ | Epoch 0 | Loss: 1.3565269708633423 | Accuracy: 32.8125%
+ | Epoch 0 | Loss: 1.373594880104065 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.3812751770019531 | Accuracy: 30.46875%
+ | Epoch 0 | Loss: 1.3661102056503296 | Accuracy: 30.46875%
+ | Epoch 0 | Loss: 1.3651888370513916 | Accuracy: 25.0%
+ | Epoch 0 | Loss: 1.3836090564727783 | Accuracy: 25.78125%
+ | Epoch 0 | Loss: 1.3766306638717651 | Accuracy: 25.78125%
+ | Epoch 0 | Loss: 1.354839563369751 | Accuracy: 28.90625%
+ | Epoch 0 | Loss: 1.3613786697387695 | Accuracy: 29.6875%
+ | Epoch 0 | Loss: 1.36885666847229 | Accuracy: 18.75%
+ | Epoch 0 | Loss: 1.3613622188568115 | Accuracy: 30.46875%
+ | Epoch 0 | Loss: 1.3761743307113647 | Accuracy: 24.21875%
+ | Epoch 0 | Loss: 1.36020028591156 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.373861312866211 | Accuracy: 25.78125%
+ | Epoch 0 | Loss: 1.367072343826294 | Accuracy: 28.125%
+ | Epoch 0 | Loss: 1.3536880016326904 | Accuracy: 28.125%
+ | Epoch 0 | Loss: 1.3748741149902344 | Accuracy: 25.0%
+ | Epoch 0 | Loss: 1.3564335107803345 | Accuracy: 32.03125%
+ | Epoch 0 | Loss: 1.341944694519043 | Accuracy: 31.25%
+ | Epoch 0 | Loss: 1.3672921657562256 | Accuracy: 29.6875%
+ | Epoch 0 | Loss: 1.3726128339767456 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.3566970825195312 | Accuracy: 36.71875%
+ | Epoch 0 | Loss: 1.3682916164398193 | Accuracy: 26.5625%
+ | Epoch 0 | Loss: 1.3477964401245117 | Accuracy: 28.125%
+ | Epoch 0 | Loss: 1.357799768447876 | Accuracy: 28.125%
+ | Epoch 0 | Loss: 1.3755979537963867 | Accuracy: 21.875%
+ | Epoch 0 | Loss: 1.3663115501403809 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.371030330657959 | Accuracy: 21.09375%
+ | Epoch 0 | Loss: 1.382461667060852 | Accuracy: 16.40625%
+ | Epoch 0 | Loss: 1.380088210105896 | Accuracy: 28.90625%
+ | Epoch 0 | Loss: 1.3758885860443115 | Accuracy: 26.5625%
+ | Epoch 0 | Loss: 1.3679931163787842 | Accuracy: 23.4375%
+ | Epoch 0 | Loss: 1.3607532978057861 | Accuracy: 28.125%
+ | Epoch 0 | Loss: 1.3695365190505981 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.3711216449737549 | Accuracy: 35.15625%
+ | Epoch 0 | Loss: 1.3734105825424194 | Accuracy: 35.15625%
+ | Epoch 0 | Loss: 1.3624725341796875 | Accuracy: 35.9375%
+ | Epoch 0 | Loss: 1.3784544467926025 | Accuracy: 22.65625%
+ | Epoch 0 | Loss: 1.369075894355774 | Accuracy: 25.78125%
+ | Epoch 0 | Loss: 1.3562947511672974 | Accuracy: 23.4375%
+ | Epoch 0 | Loss: 1.3611341714859009 | Accuracy: 22.65625%
+ | Epoch 0 | Loss: 1.3623347282409668 | Accuracy: 32.03125%
+ | Epoch 0 | Loss: 1.372593879699707 | Accuracy: 28.125%
+ | Epoch 0 | Loss: 1.3727383613586426 | Accuracy: 28.125%
+ | Epoch 0 | Loss: 1.3612463474273682 | Accuracy: 28.90625%
+ | Epoch 0 | Loss: 1.3478703498840332 | Accuracy: 31.25%
+ | Epoch 0 | Loss: 1.3814553022384644 | Accuracy: 22.65625%
+ | Epoch 0 | Loss: 1.3713879585266113 | Accuracy: 28.125%
+ | Epoch 0 | Loss: 1.3581053018569946 | Accuracy: 28.90625%
+ | Epoch 0 | Loss: 1.378089427947998 | Accuracy: 23.4375%
+ | Epoch 0 | Loss: 1.3628675937652588 | Accuracy: 29.6875%
+ | Epoch 0 | Loss: 1.3713164329528809 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.3537150621414185 | Accuracy: 32.8125%
+ | Epoch 0 | Loss: 1.361175775527954 | Accuracy: 30.46875%
+ | Epoch 0 | Loss: 1.378371000289917 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.3625447750091553 | Accuracy: 28.125%
+ | Epoch 0 | Loss: 1.353581428527832 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.362555980682373 | Accuracy: 28.125%
+ | Epoch 0 | Loss: 1.3618545532226562 | Accuracy: 34.375%
+ | Epoch 0 | Loss: 1.3867783546447754 | Accuracy: 21.875%
+ | Epoch 0 | Loss: 1.3603700399398804 | Accuracy: 28.90625%
+ | Epoch 0 | Loss: 1.3760584592819214 | Accuracy: 26.5625%
+ | Epoch 0 | Loss: 1.3593862056732178 | Accuracy: 22.65625%
+ | Epoch 0 | Loss: 1.3617767095565796 | Accuracy: 25.0%
+ | Epoch 0 | Loss: 1.3625850677490234 | Accuracy: 30.46875%
+ | Epoch 0 | Loss: 1.3594970703125 | Accuracy: 26.5625%
+ | Epoch 0 | Loss: 1.363396406173706 | Accuracy: 26.5625%
+ | Epoch 0 | Loss: 1.3614528179168701 | Accuracy: 28.125%
+ | Epoch 0 | Loss: 1.3845776319503784 | Accuracy: 21.875%
+ | Epoch 0 | Loss: 1.367495059967041 | Accuracy: 24.21875%
+ | Epoch 0 | Loss: 1.362561583518982 | Accuracy: 29.6875%
+ | Epoch 0 | Loss: 1.3502581119537354 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.354552984237671 | Accuracy: 28.90625%
+ | Epoch 0 | Loss: 1.3761193752288818 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.3672502040863037 | Accuracy: 31.25%
+ | Epoch 0 | Loss: 1.3656898736953735 | Accuracy: 32.03125%
+ | Epoch 0 | Loss: 1.3625121116638184 | Accuracy: 22.65625%
+ | Epoch 0 | Loss: 1.36161470413208 | Accuracy: 23.4375%
+ | Epoch 0 | Loss: 1.3767248392105103 | Accuracy: 25.0%
+ | Epoch 0 | Loss: 1.3675025701522827 | Accuracy: 28.125%
+ | Epoch 0 | Loss: 1.3674908876419067 | Accuracy: 21.09375%
+ | Epoch 0 | Loss: 1.3572018146514893 | Accuracy: 32.8125%
+ | Epoch 0 | Loss: 1.355643630027771 | Accuracy: 31.25%
+ | Epoch 0 | Loss: 1.3369187116622925 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.3669190406799316 | Accuracy: 32.03125%
+ | Epoch 0 | Loss: 1.3632595539093018 | Accuracy: 26.5625%
+ | Epoch 0 | Loss: 1.3461848497390747 | Accuracy: 29.6875%
+ | Epoch 0 | Loss: 1.3663311004638672 | Accuracy: 35.9375%
+ | Epoch 0 | Loss: 1.3543356657028198 | Accuracy: 40.625%
+ | Epoch 0 | Loss: 1.3484253883361816 | Accuracy: 27.34375%
+ | Epoch 0 | Loss: 1.3609508275985718 | Accuracy: 30.46875%
+ | Epoch 0 | Loss: 1.3543939590454102 | Accuracy: 35.18518518518518%
+Group (0, 0) Accuracy: 17.0
+Group (0, 1) Accuracy: 33.333333333333336
+Group (0, 2) Accuracy: 33.333333333333336
+Group (0, 3) Accuracy: 33.333333333333336
+Group (1, 0) Accuracy: 33.333333333333336
+Group (1, 1) Accuracy: 8.5
+Group (1, 2) Accuracy: 0.0
+Group (1, 3) Accuracy: 0.0
+Group (2, 0) Accuracy: 100.0
+Group (2, 1) Accuracy: 66.66666666666667
+Group (2, 2) Accuracy: 76.5
+Group (2, 3) Accuracy: 66.66666666666667
+Group (3, 0) Accuracy: 0.0
+Group (3, 1) Accuracy: 0.0
+Group (3, 2) Accuracy: 0.0
+Group (3, 3) Accuracy: 1.75
+Epoch 0:  Val Worst-Group Accuracy: 0.0
+Best Val Worst-Group Accuracy: 0.0
+ | Epoch 1 | Loss: 1.3609890937805176 | Accuracy: 30.46875%
+ | Epoch 1 | Loss: 1.358277440071106 | Accuracy: 22.65625%
+ | Epoch 1 | Loss: 1.3822715282440186 | Accuracy: 24.21875%
+ | Epoch 1 | Loss: 1.3791415691375732 | Accuracy: 25.78125%
+ | Epoch 1 | Loss: 1.3783247470855713 | Accuracy: 38.28125%
+ | Epoch 1 | Loss: 1.3771910667419434 | Accuracy: 26.5625%
+ | Epoch 1 | Loss: 1.3602147102355957 | Accuracy: 26.5625%
+ | Epoch 1 | Loss: 1.3647927045822144 | Accuracy: 26.5625%
+ | Epoch 1 | Loss: 1.362536907196045 | Accuracy: 28.90625%
+ | Epoch 1 | Loss: 1.367765188217163 | Accuracy: 27.34375%
+ | Epoch 1 | Loss: 1.372947096824646 | Accuracy: 22.65625%
+ | Epoch 1 | Loss: 1.3662099838256836 | Accuracy: 27.34375%
+ | Epoch 1 | Loss: 1.369100570678711 | Accuracy: 23.4375%
+ | Epoch 1 | Loss: 1.3653521537780762 | Accuracy: 33.59375%
+ | Epoch 1 | Loss: 1.3548834323883057 | Accuracy: 29.6875%
+ | Epoch 1 | Loss: 1.381829857826233 | Accuracy: 25.0%
+ | Epoch 1 | Loss: 1.3692681789398193 | Accuracy: 25.78125%
+ | Epoch 1 | Loss: 1.3839497566223145 | Accuracy: 25.78125%
+ | Epoch 1 | Loss: 1.3881356716156006 | Accuracy: 21.09375%
+ | Epoch 1 | Loss: 1.350235939025879 | Accuracy: 30.46875%
+ | Epoch 1 | Loss: 1.3604726791381836 | Accuracy: 32.8125%
+ | Epoch 1 | Loss: 1.3787899017333984 | Accuracy: 21.09375%
+ | Epoch 1 | Loss: 1.365167260169983 | Accuracy: 26.5625%
+ | Epoch 1 | Loss: 1.355499267578125 | Accuracy: 29.6875%
+ | Epoch 1 | Loss: 1.3550341129302979 | Accuracy: 26.5625%
+ | Epoch 1 | Loss: 1.3711706399917603 | Accuracy: 28.125%
+ | Epoch 1 | Loss: 1.3693960905075073 | Accuracy: 18.75%
+ | Epoch 1 | Loss: 1.362415075302124 | Accuracy: 29.6875%
+ | Epoch 1 | Loss: 1.3596374988555908 | Accuracy: 38.28125%
+ | Epoch 1 | Loss: 1.3651034832000732 | Accuracy: 31.25%
+ | Epoch 1 | Loss: 1.36131751537323 | Accuracy: 31.25%
+ | Epoch 1 | Loss: 1.3639912605285645 | Accuracy: 25.0%
+ | Epoch 1 | Loss: 1.3695621490478516 | Accuracy: 25.78125%
+ | Epoch 1 | Loss: 1.3712570667266846 | Accuracy: 24.21875%
+ | Epoch 1 | Loss: 1.3547768592834473 | Accuracy: 33.59375%
+ | Epoch 1 | Loss: 1.3747570514678955 | Accuracy: 25.78125%
+ | Epoch 1 | Loss: 1.3511613607406616 | Accuracy: 36.71875%
+ | Epoch 1 | Loss: 1.3691387176513672 | Accuracy: 26.5625%
+ | Epoch 1 | Loss: 1.364057183265686 | Accuracy: 23.4375%
+ | Epoch 1 | Loss: 1.367890477180481 | Accuracy: 25.78125%
+ | Epoch 1 | Loss: 1.3716415166854858 | Accuracy: 28.125%
+ | Epoch 1 | Loss: 1.3708770275115967 | Accuracy: 28.90625%
+ | Epoch 1 | Loss: 1.3629605770111084 | Accuracy: 39.0625%
+ | Epoch 1 | Loss: 1.3572940826416016 | Accuracy: 33.59375%
+ | Epoch 1 | Loss: 1.3839750289916992 | Accuracy: 28.125%
+ | Epoch 1 | Loss: 1.3699082136154175 | Accuracy: 29.6875%
+ | Epoch 1 | Loss: 1.3679217100143433 | Accuracy: 32.03125%
+ | Epoch 1 | Loss: 1.3574106693267822 | Accuracy: 32.03125%
+ | Epoch 1 | Loss: 1.3575611114501953 | Accuracy: 34.375%
+ | Epoch 1 | Loss: 1.3619202375411987 | Accuracy: 27.34375%
+ | Epoch 1 | Loss: 1.36086106300354 | Accuracy: 27.34375%
+ | Epoch 1 | Loss: 1.360002040863037 | Accuracy: 35.9375%
+ | Epoch 1 | Loss: 1.3650665283203125 | Accuracy: 29.6875%
+ | Epoch 1 | Loss: 1.3452322483062744 | Accuracy: 32.8125%
+ | Epoch 1 | Loss: 1.35862135887146 | Accuracy: 28.125%
+ | Epoch 1 | Loss: 1.340645432472229 | Accuracy: 39.84375%
+ | Epoch 1 | Loss: 1.3464316129684448 | Accuracy: 42.96875%
+ | Epoch 1 | Loss: 1.36797034740448 | Accuracy: 29.6875%
+ | Epoch 1 | Loss: 1.3429229259490967 | Accuracy: 25.0%
+ | Epoch 1 | Loss: 1.3683407306671143 | Accuracy: 21.875%
+ | Epoch 1 | Loss: 1.3660968542099 | Accuracy: 32.8125%
+ | Epoch 1 | Loss: 1.3675236701965332 | Accuracy: 25.78125%
+ | Epoch 1 | Loss: 1.3469419479370117 | Accuracy: 37.5%
+ | Epoch 1 | Loss: 1.3706815242767334 | Accuracy: 25.0%
+ | Epoch 1 | Loss: 1.3679842948913574 | Accuracy: 33.59375%
+ | Epoch 1 | Loss: 1.3696335554122925 | Accuracy: 23.4375%
+ | Epoch 1 | Loss: 1.3664026260375977 | Accuracy: 31.25%
+ | Epoch 1 | Loss: 1.3644168376922607 | Accuracy: 32.03125%
+ | Epoch 1 | Loss: 1.3601981401443481 | Accuracy: 34.375%
+ | Epoch 1 | Loss: 1.364335060119629 | Accuracy: 31.25%
+ | Epoch 1 | Loss: 1.3376402854919434 | Accuracy: 32.03125%
+ | Epoch 1 | Loss: 1.3646388053894043 | Accuracy: 32.03125%
+ | Epoch 1 | Loss: 1.3540877103805542 | Accuracy: 27.34375%
+ | Epoch 1 | Loss: 1.3837790489196777 | Accuracy: 29.6875%
+ | Epoch 1 | Loss: 1.3658299446105957 | Accuracy: 23.4375%
+ | Epoch 1 | Loss: 1.359405755996704 | Accuracy: 32.03125%
+ | Epoch 1 | Loss: 1.3434338569641113 | Accuracy: 31.25%
+ | Epoch 1 | Loss: 1.3740617036819458 | Accuracy: 25.78125%
+ | Epoch 1 | Loss: 1.361084222793579 | Accuracy: 27.34375%
+ | Epoch 1 | Loss: 1.3534812927246094 | Accuracy: 28.125%
+ | Epoch 1 | Loss: 1.3628134727478027 | Accuracy: 36.71875%
+ | Epoch 1 | Loss: 1.36149263381958 | Accuracy: 28.125%
+ | Epoch 1 | Loss: 1.3491835594177246 | Accuracy: 35.9375%
+ | Epoch 1 | Loss: 1.3550267219543457 | Accuracy: 28.90625%
+ | Epoch 1 | Loss: 1.3559553623199463 | Accuracy: 33.59375%
+ | Epoch 1 | Loss: 1.3780193328857422 | Accuracy: 21.875%
+ | Epoch 1 | Loss: 1.3586714267730713 | Accuracy: 29.6875%
+ | Epoch 1 | Loss: 1.3664953708648682 | Accuracy: 25.0%
+ | Epoch 1 | Loss: 1.366587519645691 | Accuracy: 18.75%
+ | Epoch 1 | Loss: 1.3577200174331665 | Accuracy: 32.03125%
+ | Epoch 1 | Loss: 1.353977918624878 | Accuracy: 28.90625%
+ | Epoch 1 | Loss: 1.3612897396087646 | Accuracy: 29.6875%
+ | Epoch 1 | Loss: 1.365932583808899 | Accuracy: 25.78125%
+ | Epoch 1 | Loss: 1.3654594421386719 | Accuracy: 29.6875%
+ | Epoch 1 | Loss: 1.3763947486877441 | Accuracy: 35.9375%
+ | Epoch 1 | Loss: 1.3551194667816162 | Accuracy: 36.71875%
+ | Epoch 1 | Loss: 1.3459503650665283 | Accuracy: 39.84375%
+ | Epoch 1 | Loss: 1.3637073040008545 | Accuracy: 35.15625%
+ | Epoch 1 | Loss: 1.3546264171600342 | Accuracy: 25.0%
+ | Epoch 1 | Loss: 1.3469858169555664 | Accuracy: 36.71875%
+ | Epoch 1 | Loss: 1.3760857582092285 | Accuracy: 30.46875%
+ | Epoch 1 | Loss: 1.3797037601470947 | Accuracy: 33.59375%
+ | Epoch 1 | Loss: 1.367166519165039 | Accuracy: 29.6875%
+ | Epoch 1 | Loss: 1.3504325151443481 | Accuracy: 35.9375%
+ | Epoch 1 | Loss: 1.3601162433624268 | Accuracy: 38.28125%
+ | Epoch 1 | Loss: 1.3455381393432617 | Accuracy: 32.8125%
+ | Epoch 1 | Loss: 1.3573282957077026 | Accuracy: 36.71875%
+ | Epoch 1 | Loss: 1.3470425605773926 | Accuracy: 35.9375%
+ | Epoch 1 | Loss: 1.361967921257019 | Accuracy: 30.46875%
+ | Epoch 1 | Loss: 1.3723117113113403 | Accuracy: 33.59375%
+ | Epoch 1 | Loss: 1.3493106365203857 | Accuracy: 36.71875%
+ | Epoch 1 | Loss: 1.360976219177246 | Accuracy: 27.34375%
+ | Epoch 1 | Loss: 1.3699061870574951 | Accuracy: 25.78125%
+ | Epoch 1 | Loss: 1.3615814447402954 | Accuracy: 28.90625%
+ | Epoch 1 | Loss: 1.3759498596191406 | Accuracy: 31.25%
+ | Epoch 1 | Loss: 1.3496081829071045 | Accuracy: 33.59375%
+ | Epoch 1 | Loss: 1.3536683320999146 | Accuracy: 27.34375%
+ | Epoch 1 | Loss: 1.3656954765319824 | Accuracy: 32.03125%
+ | Epoch 1 | Loss: 1.3474345207214355 | Accuracy: 36.71875%
+ | Epoch 1 | Loss: 1.359560251235962 | Accuracy: 39.84375%
+ | Epoch 1 | Loss: 1.3678457736968994 | Accuracy: 25.78125%
+ | Epoch 1 | Loss: 1.3477908372879028 | Accuracy: 38.28125%
+ | Epoch 1 | Loss: 1.3430988788604736 | Accuracy: 31.25%
+ | Epoch 1 | Loss: 1.3594447374343872 | Accuracy: 38.28125%
+ | Epoch 1 | Loss: 1.3572156429290771 | Accuracy: 33.59375%
+ | Epoch 1 | Loss: 1.3618834018707275 | Accuracy: 29.6875%
+ | Epoch 1 | Loss: 1.366676688194275 | Accuracy: 32.8125%
+ | Epoch 1 | Loss: 1.358426570892334 | Accuracy: 31.25%
+ | Epoch 1 | Loss: 1.3686652183532715 | Accuracy: 32.03125%
+ | Epoch 1 | Loss: 1.3709516525268555 | Accuracy: 28.125%
+ | Epoch 1 | Loss: 1.3521440029144287 | Accuracy: 32.03125%
+ | Epoch 1 | Loss: 1.3415091037750244 | Accuracy: 41.40625%
+ | Epoch 1 | Loss: 1.3500609397888184 | Accuracy: 35.9375%
+ | Epoch 1 | Loss: 1.361659049987793 | Accuracy: 35.9375%
+ | Epoch 1 | Loss: 1.3665645122528076 | Accuracy: 30.46875%
+ | Epoch 1 | Loss: 1.3613835573196411 | Accuracy: 26.5625%
+ | Epoch 1 | Loss: 1.3661718368530273 | Accuracy: 26.5625%
+ | Epoch 1 | Loss: 1.356154203414917 | Accuracy: 32.03125%
+ | Epoch 1 | Loss: 1.350573182106018 | Accuracy: 35.9375%
+ | Epoch 1 | Loss: 1.3703417778015137 | Accuracy: 35.15625%
+ | Epoch 1 | Loss: 1.356946349143982 | Accuracy: 36.71875%
+ | Epoch 1 | Loss: 1.3693203926086426 | Accuracy: 21.875%
+ | Epoch 1 | Loss: 1.3383129835128784 | Accuracy: 39.84375%
+ | Epoch 1 | Loss: 1.3550922870635986 | Accuracy: 34.375%
+ | Epoch 1 | Loss: 1.3581486940383911 | Accuracy: 40.625%
+ | Epoch 1 | Loss: 1.366099238395691 | Accuracy: 31.25%
+ | Epoch 1 | Loss: 1.365983009338379 | Accuracy: 31.25%
+ | Epoch 1 | Loss: 1.3598072528839111 | Accuracy: 32.8125%
+ | Epoch 1 | Loss: 1.3500803709030151 | Accuracy: 29.6875%
+ | Epoch 1 | Loss: 1.3605674505233765 | Accuracy: 27.34375%
+ | Epoch 1 | Loss: 1.337700605392456 | Accuracy: 42.1875%
+ | Epoch 1 | Loss: 1.3626008033752441 | Accuracy: 29.6875%
+ | Epoch 1 | Loss: 1.347822904586792 | Accuracy: 35.9375%
+ | Epoch 1 | Loss: 1.3475817441940308 | Accuracy: 38.28125%
+ | Epoch 1 | Loss: 1.3738749027252197 | Accuracy: 25.0%
+ | Epoch 1 | Loss: 1.3679635524749756 | Accuracy: 35.15625%
+ | Epoch 1 | Loss: 1.360102891921997 | Accuracy: 33.59375%
+ | Epoch 1 | Loss: 1.3644903898239136 | Accuracy: 28.90625%
+ | Epoch 1 | Loss: 1.3592188358306885 | Accuracy: 32.03125%
+ | Epoch 1 | Loss: 1.358764886856079 | Accuracy: 35.15625%
+ | Epoch 1 | Loss: 1.3476539850234985 | Accuracy: 36.71875%
+ | Epoch 1 | Loss: 1.3639698028564453 | Accuracy: 31.25%
+ | Epoch 1 | Loss: 1.35347580909729 | Accuracy: 33.59375%
+ | Epoch 1 | Loss: 1.3650527000427246 | Accuracy: 28.90625%
+ | Epoch 1 | Loss: 1.3411097526550293 | Accuracy: 39.84375%
+ | Epoch 1 | Loss: 1.3772406578063965 | Accuracy: 31.25%
+ | Epoch 1 | Loss: 1.3432345390319824 | Accuracy: 39.84375%
+ | Epoch 1 | Loss: 1.3498005867004395 | Accuracy: 36.71875%
+ | Epoch 1 | Loss: 1.359202265739441 | Accuracy: 32.03125%
+ | Epoch 1 | Loss: 1.3545756340026855 | Accuracy: 37.5%
+ | Epoch 1 | Loss: 1.3580365180969238 | Accuracy: 37.5%
+ | Epoch 1 | Loss: 1.3591029644012451 | Accuracy: 28.90625%
+ | Epoch 1 | Loss: 1.341713547706604 | Accuracy: 39.84375%
+ | Epoch 1 | Loss: 1.3544647693634033 | Accuracy: 35.9375%
+ | Epoch 1 | Loss: 1.3533951044082642 | Accuracy: 33.59375%
+ | Epoch 1 | Loss: 1.3522052764892578 | Accuracy: 29.6875%
+ | Epoch 1 | Loss: 1.373929738998413 | Accuracy: 32.8125%
+ | Epoch 1 | Loss: 1.3474161624908447 | Accuracy: 35.15625%
+ | Epoch 1 | Loss: 1.3488597869873047 | Accuracy: 35.9375%
+ | Epoch 1 | Loss: 1.3555597066879272 | Accuracy: 28.125%
+ | Epoch 1 | Loss: 1.3653761148452759 | Accuracy: 32.03125%
+ | Epoch 1 | Loss: 1.3436758518218994 | Accuracy: 44.53125%
+ | Epoch 1 | Loss: 1.360703945159912 | Accuracy: 26.5625%
+ | Epoch 1 | Loss: 1.357260823249817 | Accuracy: 32.03125%
+ | Epoch 1 | Loss: 1.3345239162445068 | Accuracy: 42.1875%
+ | Epoch 1 | Loss: 1.3776578903198242 | Accuracy: 25.78125%
+ | Epoch 1 | Loss: 1.3527250289916992 | Accuracy: 37.5%
+ | Epoch 1 | Loss: 1.3717372417449951 | Accuracy: 25.0%
+ | Epoch 1 | Loss: 1.3560893535614014 | Accuracy: 34.375%
+ | Epoch 1 | Loss: 1.358191728591919 | Accuracy: 36.71875%
+ | Epoch 1 | Loss: 1.3668214082717896 | Accuracy: 28.125%
+ | Epoch 1 | Loss: 1.3476152420043945 | Accuracy: 38.28125%
+ | Epoch 1 | Loss: 1.353061318397522 | Accuracy: 35.9375%
+ | Epoch 1 | Loss: 1.349657416343689 | Accuracy: 31.25%
+ | Epoch 1 | Loss: 1.3578660488128662 | Accuracy: 28.90625%
+ | Epoch 1 | Loss: 1.357642412185669 | Accuracy: 30.46875%
+ | Epoch 1 | Loss: 1.3700282573699951 | Accuracy: 32.03125%
+ | Epoch 1 | Loss: 1.3462176322937012 | Accuracy: 32.8125%
+ | Epoch 1 | Loss: 1.3542433977127075 | Accuracy: 35.9375%
+ | Epoch 1 | Loss: 1.3441157341003418 | Accuracy: 34.375%
+ | Epoch 1 | Loss: 1.3492004871368408 | Accuracy: 39.84375%
+ | Epoch 1 | Loss: 1.3472450971603394 | Accuracy: 39.0625%
+ | Epoch 1 | Loss: 1.3663601875305176 | Accuracy: 29.6875%
+ | Epoch 1 | Loss: 1.3559261560440063 | Accuracy: 32.03125%
+ | Epoch 1 | Loss: 1.3592416048049927 | Accuracy: 35.15625%
+ | Epoch 1 | Loss: 1.347726583480835 | Accuracy: 41.40625%
+ | Epoch 1 | Loss: 1.3551548719406128 | Accuracy: 37.5%
+ | Epoch 1 | Loss: 1.3442273139953613 | Accuracy: 31.25%
+ | Epoch 1 | Loss: 1.3567944765090942 | Accuracy: 33.59375%
+ | Epoch 1 | Loss: 1.3557708263397217 | Accuracy: 42.96875%
+ | Epoch 1 | Loss: 1.3653497695922852 | Accuracy: 37.5%
+ | Epoch 1 | Loss: 1.3621771335601807 | Accuracy: 32.03125%
+ | Epoch 1 | Loss: 1.3507027626037598 | Accuracy: 33.59375%
+ | Epoch 1 | Loss: 1.3601691722869873 | Accuracy: 35.15625%
+ | Epoch 1 | Loss: 1.3701796531677246 | Accuracy: 25.0%
+ | Epoch 1 | Loss: 1.3422166109085083 | Accuracy: 45.3125%
+ | Epoch 1 | Loss: 1.3548012971878052 | Accuracy: 37.5%
+ | Epoch 1 | Loss: 1.3588298559188843 | Accuracy: 37.5%
+ | Epoch 1 | Loss: 1.3442821502685547 | Accuracy: 39.0625%
+ | Epoch 1 | Loss: 1.342392921447754 | Accuracy: 38.28125%
+ | Epoch 1 | Loss: 1.3547227382659912 | Accuracy: 39.84375%
+ | Epoch 1 | Loss: 1.3471218347549438 | Accuracy: 35.15625%
+ | Epoch 1 | Loss: 1.3496136665344238 | Accuracy: 34.375%
+ | Epoch 1 | Loss: 1.3543283939361572 | Accuracy: 30.46875%
+ | Epoch 1 | Loss: 1.3650732040405273 | Accuracy: 31.25%
+ | Epoch 1 | Loss: 1.3460509777069092 | Accuracy: 40.625%
+ | Epoch 1 | Loss: 1.3416650295257568 | Accuracy: 35.15625%
+ | Epoch 1 | Loss: 1.3742759227752686 | Accuracy: 25.78125%
+ | Epoch 1 | Loss: 1.359281301498413 | Accuracy: 33.59375%
+ | Epoch 1 | Loss: 1.3552178144454956 | Accuracy: 36.71875%
+ | Epoch 1 | Loss: 1.3511035442352295 | Accuracy: 41.40625%
+ | Epoch 1 | Loss: 1.3569386005401611 | Accuracy: 32.03125%
+ | Epoch 1 | Loss: 1.3445366621017456 | Accuracy: 35.9375%
+ | Epoch 1 | Loss: 1.357487678527832 | Accuracy: 42.1875%
+ | Epoch 1 | Loss: 1.3605351448059082 | Accuracy: 25.78125%
+ | Epoch 1 | Loss: 1.3466817140579224 | Accuracy: 35.15625%
+ | Epoch 1 | Loss: 1.3460896015167236 | Accuracy: 39.84375%
+ | Epoch 1 | Loss: 1.3574773073196411 | Accuracy: 30.46875%
+ | Epoch 1 | Loss: 1.3573341369628906 | Accuracy: 31.25%
+ | Epoch 1 | Loss: 1.3489129543304443 | Accuracy: 32.8125%
+ | Epoch 1 | Loss: 1.3496692180633545 | Accuracy: 40.625%
+ | Epoch 1 | Loss: 1.3404645919799805 | Accuracy: 37.5%
+ | Epoch 1 | Loss: 1.3631410598754883 | Accuracy: 28.90625%
+ | Epoch 1 | Loss: 1.3469938039779663 | Accuracy: 44.53125%
+ | Epoch 1 | Loss: 1.3420836925506592 | Accuracy: 44.53125%
+ | Epoch 1 | Loss: 1.360386610031128 | Accuracy: 35.15625%
+ | Epoch 1 | Loss: 1.3459351062774658 | Accuracy: 42.96875%
+ | Epoch 1 | Loss: 1.3403096199035645 | Accuracy: 42.1875%
+ | Epoch 1 | Loss: 1.3385918140411377 | Accuracy: 39.0625%
+ | Epoch 1 | Loss: 1.3434419631958008 | Accuracy: 43.75%
+ | Epoch 1 | Loss: 1.3365830183029175 | Accuracy: 46.09375%
+ | Epoch 1 | Loss: 1.3327250480651855 | Accuracy: 46.875%
+ | Epoch 1 | Loss: 1.3350062370300293 | Accuracy: 41.40625%
+ | Epoch 1 | Loss: 1.3496928215026855 | Accuracy: 38.888888888888886%
+Group (0, 0) Accuracy: 26.0
+Group (0, 1) Accuracy: 33.333333333333336
+Group (0, 2) Accuracy: 33.333333333333336
+Group (0, 3) Accuracy: 100.0
+Group (1, 0) Accuracy: 66.66666666666667
+Group (1, 1) Accuracy: 48.75
+Group (1, 2) Accuracy: 33.333333333333336
+Group (1, 3) Accuracy: 100.0
+Group (2, 0) Accuracy: 33.333333333333336
+Group (2, 1) Accuracy: 33.333333333333336
+Group (2, 2) Accuracy: 26.75
+Group (2, 3) Accuracy: 33.333333333333336
+Group (3, 0) Accuracy: 0.0
+Group (3, 1) Accuracy: 0.0
+Group (3, 2) Accuracy: 0.0
+Group (3, 3) Accuracy: 28.5
+Epoch 1:  Val Worst-Group Accuracy: 0.0
+Best Val Worst-Group Accuracy: 0.0
+Group (0, 0) Accuracy: 27.2
+Group (0, 1) Accuracy: 19.047619047619047
+Group (0, 2) Accuracy: 26.19047619047619
+Group (0, 3) Accuracy: 36.904761904761905
+Group (1, 0) Accuracy: 53.57142857142857
+Group (1, 1) Accuracy: 44.4
+Group (1, 2) Accuracy: 45.23809523809524
+Group (1, 3) Accuracy: 47.61904761904762
+Group (2, 0) Accuracy: 23.80952380952381
+Group (2, 1) Accuracy: 21.428571428571427
+Group (2, 2) Accuracy: 28.4
+Group (2, 3) Accuracy: 25.0
+Group (3, 0) Accuracy: 17.857142857142858
+Group (3, 1) Accuracy: 25.0
+Group (3, 2) Accuracy: 19.047619047619047
+Group (3, 3) Accuracy: 26.0
+Group (0, 0) Accuracy: 18.8
+Group (0, 1) Accuracy: 19.047619047619047
+Group (0, 2) Accuracy: 17.857142857142858
+Group (0, 3) Accuracy: 20.238095238095237
+Group (1, 0) Accuracy: 3.5714285714285716
+Group (1, 1) Accuracy: 4.8
+Group (1, 2) Accuracy: 3.5714285714285716
+Group (1, 3) Accuracy: 4.761904761904762
+Group (2, 0) Accuracy: 77.38095238095238
+Group (2, 1) Accuracy: 82.14285714285714
+Group (2, 2) Accuracy: 80.4
+Group (2, 3) Accuracy: 77.38095238095238
+Group (3, 0) Accuracy: 1.1904761904761905
+Group (3, 1) Accuracy: 0.0
+Group (3, 2) Accuracy: 1.1904761904761905
+Group (3, 3) Accuracy: 0.8
+      wg_acc    avg_acc  spurious_attribute_prediction  early_stopping_wg_acc  early_stopping_avg_acc
+0  17.857143  31.478188                      25.697211                    0.0               26.192345
+Results saved to /data/spucosun/results/group_dro.csv
