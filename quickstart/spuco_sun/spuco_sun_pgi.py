@@ -204,23 +204,9 @@ if args.wandb:
 else:
     results["alg"] = "pgi"
     results["timestamp"] = pd.Timestamp.now()
-    results["seed"] = args.seed
-    results["pretrained"] = args.pretrained
-    results["lr"] = args.gdro_lr
-    results["weight_decay"] = args.gdro_weight_decay
-    results["momentum"] = args.momentum
-    results["num_epochs"] = args.num_epochs
-    results["batch_size"] = args.batch_size
-
-    results["infer_lr"] = args.erm_lr
-    results["infer_weight_decay"] = args.erm_weight_decay
-    results["infer_num_epochs"] = args.infer_num_epochs
-
-    results["eiil_num_steps"] = args.eiil_num_steps
-    results["eiil_lr"] = args.eiil_lr
-
-    results["pgi_penalty_weight"] = args.pgi_penalty_weight
-    results["pgi_rampup_epochs"] = args.pgi_rampup_epochs
+    args_dict = vars(args)
+    for key in args_dict.keys():
+        results[key] = args_dict[key]
 
     results
 

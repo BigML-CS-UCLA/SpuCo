@@ -218,20 +218,9 @@ if args.wandb:
 else:
     results["alg"] = "spare"
     results["timestamp"] = pd.Timestamp.now()
-    results["seed"] = args.seed
-    results["pretrained"] = args.pretrained
-    results["lr"] = args.lr
-    results["weight_decay"] = args.weight_decay
-    results["momentum"] = args.momentum
-    results["num_epochs"] = args.num_epochs
-    results["batch_size"] = args.batch_size
-
-    results["infer_lr"] = args.erm_lr
-    results["infer_weight_decay"] = args.erm_weight_decay
-    results["infer_num_epochs"] = args.infer_num_epochs
-
-    results["high_sampling_power"] = args.high_sampling_power
-    results["num_clusters"] = args.num_clusters
+    args_dict = vars(args)
+    for key in args_dict.keys():
+        results[key] = args_dict[key]
 
     results
 

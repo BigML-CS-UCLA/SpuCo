@@ -191,15 +191,9 @@ if args.wandb:
 else:
     results["alg"] = "erm"
     results["timestamp"] = pd.Timestamp.now()
-    results["seed"] = args.seed
-    results["pretrained"] = args.pretrained
-    results["inf_lr"] = args.inf_lr
-    results["inf_weight_decay"] = args.inf_weight_decay
-    results["lr"] = args.lr
-    results["weight_decay"] = args.weight_decay
-    results["momentum"] = args.momentum
-    results["num_epochs"] = args.num_epochs
-    results["batch_size"] = args.batch_size
+    args_dict = vars(args)
+    for key in args_dict.keys():
+        results[key] = args_dict[key]
 
 
     if os.path.exists(args.results_csv):
