@@ -126,7 +126,7 @@ results = pd.DataFrame(index=[0])
 
 evaluator = Evaluator(
     testset=valset,
-    group_partition=testset.group_partition,
+    group_partition=valset.group_partition,
     group_weights=trainset.group_weights,
     batch_size=64,
     model=model,
@@ -140,7 +140,7 @@ results[f"avg_acc"] = evaluator.average_accuracy
 
 evaluator = Evaluator(
     testset=valset,
-    group_partition=testset.group_partition,
+    group_partition=valset.group_partition,
     group_weights=trainset.group_weights,
     batch_size=args.batch_size,
     model=groupdro.best_model,

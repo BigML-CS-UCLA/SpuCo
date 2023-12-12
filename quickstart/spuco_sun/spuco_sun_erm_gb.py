@@ -239,7 +239,7 @@ for alg, model, model_name in zip([erm, core_only_erm, group_balance], [erm_mode
     
     evaluator = Evaluator(
         testset=core_only_testset,
-        group_partition=testset.group_partition,
+        group_partition=valset.group_partition,
         group_weights=trainset.group_weights,
         batch_size=args.batch_size,
         model=model,
