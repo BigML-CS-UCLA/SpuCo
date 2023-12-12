@@ -14,7 +14,7 @@ guild run spuco_sun_gb.py root_dir=/data/spucosun/3.0 arch='[cliprn50]' lr='[1e-
 
 # GDRO
 
-guild run spuco_sun_groupdro.py root_dir=/data/spucosun/3.0 lr='[1e-3, 1e-4, 1e-5]' weight_decay='[1e-4, 5e-4, 1e-2, 1e-1, 1.0]' num_epochs='[40,80]'arch=resnet50 pretrained=True --stage-trials
+guild run spuco_sun_groupdro.py root_dir=/data/spucosun/3.0 lr='[1e-3, 1e-4, 1e-5]' weight_decay='[1e-4, 5e-4, 1e-2, 1e-1, 1.0]' num_epochs='[40,80]' arch=resnet50 pretrained=True --stage-trials
 
 # SSA 
 
