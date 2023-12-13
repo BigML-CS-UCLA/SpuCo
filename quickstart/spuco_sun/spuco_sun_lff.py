@@ -143,10 +143,24 @@ evaluator = Evaluator(
     verbose=True
 )
 evaluator.evaluate()
+results["val_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
+results[f"val_wg_acc"] = evaluator.worst_group_accuracy[1]
+results[f"val_avg_acc"] = evaluator.average_accuracy
 
-results[f"wg_acc"] = evaluator.worst_group_accuracy[1]
-results[f"avg_acc"] = evaluator.average_accuracy
-results["spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
+evaluator = Evaluator(
+    testset=testset,
+    group_partition=testset.group_partition,
+    group_weights=trainset.group_weights,
+    batch_size=args.batch_size,
+    model=debias_model,
+    device=device,
+    verbose=True
+)
+evaluator.evaluate()
+results["test_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
+results[f"test_wg_acc"] = evaluator.worst_group_accuracy[1]
+results[f"test_avg_acc"] = evaluator.average_accuracy
+
 
 print(results)
 

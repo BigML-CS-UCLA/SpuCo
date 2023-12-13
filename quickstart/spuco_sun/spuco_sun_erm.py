@@ -129,9 +129,9 @@ evaluator = Evaluator(
     verbose=True
 )
 evaluator.evaluate()
-
-results[f"wg_acc"] = evaluator.worst_group_accuracy[1]
-results[f"avg_acc"] = evaluator.average_accuracy
+results["test_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
+results[f"test_wg_acc"] = evaluator.worst_group_accuracy[1]
+results[f"test_avg_acc"] = evaluator.average_accuracy
 
 evaluator = Evaluator(
     testset=testset,
@@ -143,10 +143,9 @@ evaluator = Evaluator(
     verbose=True
 )
 evaluator.evaluate()
-results["spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
-
-results[f"early_stopping_wg_acc"] = evaluator.worst_group_accuracy[1]
-results[f"early_stopping_avg_acc"] = evaluator.average_accuracy
+results["test_early_stopping_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
+results[f"test_early_stopping_wg_acc"] = evaluator.worst_group_accuracy[1]
+results[f"test_early_stopping_avg_acc"] = evaluator.average_accuracy
 
 print(results)
 

@@ -163,7 +163,7 @@ results = pd.DataFrame(index=[0])
 
 evaluator = Evaluator(
     testset=valset,
-    group_partition=ValueErrorset.group_partition,
+    group_partition=valset.group_partition,
     group_weights=trainset.group_weights,
     batch_size=args.batch_size,
     model=model,
@@ -171,9 +171,24 @@ evaluator = Evaluator(
     verbose=True
 )
 evaluator.evaluate()
+results["val_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
+results[f"val_wg_acc"] = evaluator.worst_group_accuracy[1]
+results[f"val_avg_acc"] = evaluator.average_accuracy
 
-results[f"wg_acc"] = evaluator.worst_group_accuracy[1]
-results[f"avg_acc"] = evaluator.average_accuracy
+evaluator = Evaluator(
+    testset=testset,
+    group_partition=testset.group_partition,
+    group_weights=trainset.group_weights,
+    batch_size=args.batch_size,
+    model=model,
+    device=device,
+    verbose=True
+)
+evaluator.evaluate()
+results["test_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
+results[f"test_wg_acc"] = evaluator.worst_group_accuracy[1]
+results[f"test_avg_acc"] = evaluator.average_accuracy
+
 
 evaluator = Evaluator(
     testset=valset,
@@ -185,10 +200,23 @@ evaluator = Evaluator(
     verbose=True
 )
 evaluator.evaluate()
-results["spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
+results["val_early_stopping_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
+results[f"val_early_stopping_wg_acc"] = evaluator.worst_group_accuracy[1]
+results[f"val_early_stopping_avg_acc"] = evaluator.average_accuracy
 
-results[f"early_stopping_wg_acc"] = evaluator.worst_group_accuracy[1]
-results[f"early_stopping_avg_acc"] = evaluator.average_accuracy
+evaluator = Evaluator(
+    testset=testset,
+    group_partition=testset.group_partition,
+    group_weights=trainset.group_weights,
+    batch_size=args.batch_size,
+    model=group_dro.best_model,
+    device=device,
+    verbose=True
+)
+evaluator.evaluate()
+results["test_early_stopping_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
+results[f"test_early_stopping_wg_acc"] = evaluator.worst_group_accuracy[1]
+results[f"test_early_stopping_avg_acc"] = evaluator.average_accuracy
 
 print(results)
 
@@ -199,22 +227,9 @@ if args.wandb:
 else:
     results["alg"] = "eiil"
     results["timestamp"] = pd.Timestamp.now()
-    results["seed"] = args.seed
-    results["pretrained"] = args.pretrained
-    results["lr"] = args.gdro_lr
-    results["weight_decay"] = args.gdro_weight_decay
-    results["momentum"] = args.momentum
-    results["num_epochs"] = args.num_epochs
-    results["batch_size"] = args.batch_size
-
-    results["infer_lr"] = args.erm_lr
-    results["infer_weight_decay"] = args.erm_weight_decay
-    results["infer_num_epochs"] = args.infer_num_epochs
-
-    results["eiil_num_steps"] = args.eiil_num_steps
-    results["eiil_lr"] = args.eiil_lr
-
-    results
+    args_dict = vars(args)
+    for key in args_dict.keys():
+        results[key] = args_dict[key]
 
     if os.path.exists(args.results_csv):
         results_df = pd.read_csv(args.results_csv)
