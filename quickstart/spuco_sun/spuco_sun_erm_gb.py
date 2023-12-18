@@ -1,3 +1,4 @@
+from datetime import datetime
 import argparse
 import os
 import sys
@@ -45,6 +46,8 @@ if args.wandb:
     del args.results_csv
 else:
     # check if the stdout file already exists, and if want to overwrite it
+    DT_STRING = "".join(str(datetime.now()).split())
+    args.stdout_file = f"{DT_STRING}-{args.stdout_file}"
     if os.path.exists(args.stdout_file):
         print(f"stdout file {args.stdout_file} already exists, overwrite? (y/n)")
         response = input()
@@ -236,7 +239,7 @@ for alg, model, model_name in zip([erm, core_only_erm, group_balance], [erm_mode
     
     evaluator = Evaluator(
         testset=core_only_testset,
-        group_partition=testset.group_partition,
+        group_partition=valset.group_partition,
         group_weights=trainset.group_weights,
         batch_size=args.batch_size,
         model=model,

@@ -1,3 +1,4 @@
+from datetime import datetime
 import argparse
 import os
 import sys
@@ -130,6 +131,22 @@ dfr.train()
 results = pd.DataFrame(index=[0])
 
 evaluator = Evaluator(
+    testset=valset,
+    group_partition=valset.group_partition,
+    group_weights=trainset.group_weights,
+    batch_size=64,
+    model=model,
+    sklearn_linear_model=dfr.linear_model,
+    device=device,
+    verbose=True
+    )
+evaluator.evaluate()
+
+results["val_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
+results[f"val_wg_acc"] = evaluator.worst_group_accuracy[1]
+results[f"val_avg_acc"] = evaluator.average_accuracy
+
+evaluator = Evaluator(
     testset=testset,
     group_partition=testset.group_partition,
     group_weights=trainset.group_weights,
@@ -141,9 +158,9 @@ evaluator = Evaluator(
     )
 evaluator.evaluate()
 
-results["spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
-results[f"wg_acc"] = evaluator.worst_group_accuracy[1]
-results[f"avg_acc"] = evaluator.average_accuracy
+results["test_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
+results[f"test_wg_acc"] = evaluator.worst_group_accuracy[1]
+results[f"test_avg_acc"] = evaluator.average_accuracy
 
 print(results)
 
@@ -154,13 +171,9 @@ if args.wandb:
 else:
     results["alg"] = "erm"
     results["timestamp"] = pd.Timestamp.now()
-    results["seed"] = args.seed
-    results["pretrained"] = args.pretrained
-    results["lr"] = args.lr
-    results["weight_decay"] = args.weight_decay
-    results["momentum"] = args.momentum
-    results["num_epochs"] = args.num_epochs
-    results["batch_size"] = args.batch_size
+    args_dict = vars(args)
+    for key in args_dict.keys():
+        results[key] = args_dict[key]
 
     if os.path.exists(args.results_csv):
         results_df = pd.read_csv(args.results_csv)

@@ -1,3 +1,4 @@
+from datetime import datetime
 import argparse
 import os
 import sys
@@ -51,6 +52,8 @@ if args.wandb:
     del args.results_csv
 else:
     # check if the stdout file already exists, and if want to overwrite it
+    DT_STRING = "".join(str(datetime.now()).split())
+    args.stdout_file = f"{DT_STRING}-{args.stdout_file}"
     if os.path.exists(args.stdout_file):
         print(f"stdout file {args.stdout_file} already exists, overwrite? (y/n)")
         response = input()
@@ -159,6 +162,20 @@ group_dro.train()
 results = pd.DataFrame(index=[0])
 
 evaluator = Evaluator(
+    testset=valset,
+    group_partition=valset.group_partition,
+    group_weights=trainset.group_weights,
+    batch_size=args.batch_size,
+    model=model,
+    device=device,
+    verbose=True
+)
+evaluator.evaluate()
+results["val_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
+results[f"val_wg_acc"] = evaluator.worst_group_accuracy[1]
+results[f"val_avg_acc"] = evaluator.average_accuracy
+
+evaluator = Evaluator(
     testset=testset,
     group_partition=testset.group_partition,
     group_weights=trainset.group_weights,
@@ -168,9 +185,24 @@ evaluator = Evaluator(
     verbose=True
 )
 evaluator.evaluate()
+results["test_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
+results[f"test_wg_acc"] = evaluator.worst_group_accuracy[1]
+results[f"test_avg_acc"] = evaluator.average_accuracy
 
-results[f"wg_acc"] = evaluator.worst_group_accuracy[1]
-results[f"avg_acc"] = evaluator.average_accuracy
+
+evaluator = Evaluator(
+    testset=valset,
+    group_partition=valset.group_partition,
+    group_weights=trainset.group_weights,
+    batch_size=args.batch_size,
+    model=group_dro.best_model,
+    device=device,
+    verbose=True
+)
+evaluator.evaluate()
+results["val_early_stopping_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
+results[f"val_early_stopping_wg_acc"] = evaluator.worst_group_accuracy[1]
+results[f"val_early_stopping_avg_acc"] = evaluator.average_accuracy
 
 evaluator = Evaluator(
     testset=testset,
@@ -182,10 +214,9 @@ evaluator = Evaluator(
     verbose=True
 )
 evaluator.evaluate()
-results["spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
-
-results[f"early_stopping_wg_acc"] = evaluator.worst_group_accuracy[1]
-results[f"early_stopping_avg_acc"] = evaluator.average_accuracy
+results["test_early_stopping_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
+results[f"test_early_stopping_wg_acc"] = evaluator.worst_group_accuracy[1]
+results[f"test_early_stopping_avg_acc"] = evaluator.average_accuracy
 
 print(results)
 
@@ -196,22 +227,9 @@ if args.wandb:
 else:
     results["alg"] = "eiil"
     results["timestamp"] = pd.Timestamp.now()
-    results["seed"] = args.seed
-    results["pretrained"] = args.pretrained
-    results["lr"] = args.gdro_lr
-    results["weight_decay"] = args.gdro_weight_decay
-    results["momentum"] = args.momentum
-    results["num_epochs"] = args.num_epochs
-    results["batch_size"] = args.batch_size
-
-    results["infer_lr"] = args.erm_lr
-    results["infer_weight_decay"] = args.erm_weight_decay
-    results["infer_num_epochs"] = args.infer_num_epochs
-
-    results["eiil_num_steps"] = args.eiil_num_steps
-    results["eiil_lr"] = args.eiil_lr
-
-    results
+    args_dict = vars(args)
+    for key in args_dict.keys():
+        results[key] = args_dict[key]
 
     if os.path.exists(args.results_csv):
         results_df = pd.read_csv(args.results_csv)

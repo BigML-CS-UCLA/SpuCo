@@ -1,3 +1,4 @@
+from datetime import datetime
 import argparse
 import os
 import sys
@@ -43,6 +44,8 @@ if args.wandb:
     del args.results_csv
 else:
     # check if the stdout file already exists, and if want to overwrite it
+    DT_STRING = "".join(str(datetime.now()).split())
+    args.stdout_file = f"{DT_STRING}-{args.stdout_file}"
     if os.path.exists(args.stdout_file):
         print(f"stdout file {args.stdout_file} already exists, overwrite? (y/n)")
         response = input()
@@ -126,9 +129,9 @@ evaluator = Evaluator(
     verbose=True
 )
 evaluator.evaluate()
-
-results[f"wg_acc"] = evaluator.worst_group_accuracy[1]
-results[f"avg_acc"] = evaluator.average_accuracy
+results["test_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
+results[f"test_wg_acc"] = evaluator.worst_group_accuracy[1]
+results[f"test_avg_acc"] = evaluator.average_accuracy
 
 evaluator = Evaluator(
     testset=testset,
@@ -140,10 +143,9 @@ evaluator = Evaluator(
     verbose=True
 )
 evaluator.evaluate()
-results["spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
-
-results[f"early_stopping_wg_acc"] = evaluator.worst_group_accuracy[1]
-results[f"early_stopping_avg_acc"] = evaluator.average_accuracy
+results["test_early_stopping_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
+results[f"test_early_stopping_wg_acc"] = evaluator.worst_group_accuracy[1]
+results[f"test_early_stopping_avg_acc"] = evaluator.average_accuracy
 
 print(results)
 
@@ -154,13 +156,9 @@ if args.wandb:
 else:
     results["alg"] = "erm"
     results["timestamp"] = pd.Timestamp.now()
-    results["seed"] = args.seed
-    results["pretrained"] = args.pretrained
-    results["lr"] = args.lr
-    results["weight_decay"] = args.weight_decay
-    results["momentum"] = args.momentum
-    results["num_epochs"] = args.num_epochs
-    results["batch_size"] = args.batch_size
+    args_dict = vars(args)
+    for key in args_dict.keys():
+        results[key] = args_dict[key]
 
     if os.path.exists(args.results_csv):
         results_df = pd.read_csv(args.results_csv)

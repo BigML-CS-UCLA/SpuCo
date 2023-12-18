@@ -1,0 +1,1 @@
+Namespace(gpu=0, seed=0, root_dir='/data/spucosun/3.0', label_noise=0.0, results_csv='/data/spucosun/results/erm.csv', stdout_file='spuco_sun_erm.out', arch='resnet18', batch_size=128, num_epochs=40, lr=0.001, weight_decay=0.0001, momentum=0.9, pretrained=False, wandb=False, wandb_project='spuco', wandb_entity=None, wandb_run_name='spuco_sun_erm')

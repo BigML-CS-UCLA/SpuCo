@@ -11,8 +11,8 @@ from torch.optim import SGD
 
 from spuco.datasets import GroupLabeledDatasetWrapper, SpuCoSun
 from spuco.evaluate import Evaluator
-from spuco.group_inference import SpareInference
-from spuco.robust_train import SpareTrain
+from spuco.group_inference import EIIL
+from spuco.robust_train import PGI
 from spuco.models import model_factory
 from spuco.utils import Trainer, set_seed
 
@@ -23,25 +23,28 @@ parser.add_argument("--gpu", type=int, default=0)
 parser.add_argument("--seed", type=int, default=0)
 parser.add_argument("--root_dir", type=str, default="/data/spucosun/4.0/")
 parser.add_argument("--label_noise", type=float, default=0.0)
-parser.add_argument("--results_csv", type=str, default="/data/spucosun/results/spare.csv")
-parser.add_argument("--stdout_file", type=str, default="spuco_sun_spare.out")
+parser.add_argument("--results_csv", type=str, default="/data/spucosun/results/pgi.csv")
+parser.add_argument("--stdout_file", type=str, default="spuco_sun_pgi.out")
 parser.add_argument("--arch", type=str, default="resnet18", choices=["resnet18", "resnet50", "cliprn50"])
 parser.add_argument("--batch_size", type=int, default=128)
 parser.add_argument("--num_epochs", type=int, default=40)
 parser.add_argument("--erm_lr", type=float, default=1e-3)
 parser.add_argument("--erm_weight_decay", type=float, default=1e-4)
-parser.add_argument("--lr", type=float, default=1e-4)
-parser.add_argument("--weight_decay", type=float, default=0.1)
+parser.add_argument("--gdro_lr", type=float, default=1e-3)
+parser.add_argument("--gdro_weight_decay", type=float, default=1e-4)
 parser.add_argument("--momentum", type=float, default=0.9)
 parser.add_argument("--pretrained", action="store_true")
 parser.add_argument("--wandb", action="store_true")
 parser.add_argument("--wandb_project", type=str, default="spuco")
 parser.add_argument("--wandb_entity", type=str, default=None)
-parser.add_argument("--wandb_run_name", type=str, default="spuco_sun_spare")
+parser.add_argument("--wandb_run_name", type=str, default="spuco_sun_pgi")
 
+parser.add_argument("--eiil_num_steps", type=int, default=20000)
+parser.add_argument("--eiil_lr", type=float, default=0.01)
 parser.add_argument("--infer_num_epochs", type=int, default=1)
-parser.add_argument("--num_clusters", type=int, default=5, choices=[2, 5])
-parser.add_argument("--high_sampling_power", type=int, default=2)
+
+parser.add_argument("--pgi_penalty_weight", type=float, default=0.01)
+parser.add_argument("--pgi_rampup_epochs", type=int, default=10)
 
 args = parser.parse_args()
 
@@ -110,18 +113,16 @@ trainer = Trainer(
 trainer.train(num_epochs=args.infer_num_epochs)
 
 logits = trainer.get_trainset_outputs()
-predictions = torch.nn.functional.softmax(logits, dim=1)
-spare_infer = SpareInference(
-    Z=predictions,
+eiil = EIIL(
+    logits=logits,
     class_labels=trainset.labels,
-    num_clusters=args.num_clusters,
+    num_steps=args.eiil_num_steps,
+    lr=args.eiil_lr,
     device=device,
-    high_sampling_power=args.high_sampling_power,
     verbose=True
 )
 
-group_partition = spare_infer.infer_groups()
-sampling_powers = spare_infer.sampling_powers
+group_partition = eiil.infer_groups()
 
 for key in sorted(group_partition.keys()):
     print(key, len(group_partition[key]))
@@ -149,34 +150,19 @@ valid_evaluator = Evaluator(
     device=device,
     verbose=True
 )
-train_transform = transforms.Compose([
-    transforms.ToPILImage(),
-    transforms.RandomHorizontalFlip(),
-    transforms.ToTensor(),
-    transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
-])
-
-trainset = SpuCoSun(
-    root=args.root_dir,
-    label_noise=args.label_noise,
-    split="train",
-    transform=transform,
-)
-trainset.initialize()
-
-spare_train = SpareTrain(
+pgi = PGI(
     model=model,
-    num_epochs=args.num_epochs,
-    trainset=trainset,
-    group_partition=group_partition,
-    sampling_powers=sampling_powers,
-    batch_size=args.batch_size,
-    optimizer=SGD(model.parameters(), lr=args.lr, weight_decay=args.weight_decay, momentum=args.momentum),
-    device=device,
     val_evaluator=valid_evaluator,
+    num_epochs=args.num_epochs,
+    penalty_weight=args.pgi_penalty_weight,
+    rampup_epochs=args.pgi_rampup_epochs,
+    trainset=robust_trainset,
+    batch_size=args.batch_size,
+    optimizer=SGD(model.parameters(), lr=args.gdro_lr, weight_decay=args.gdro_weight_decay, momentum=args.momentum),
+    device=device,
     verbose=True
 )
-spare_train.train()
+pgi.train()
 
 results = pd.DataFrame(index=[0])
 
@@ -213,7 +199,7 @@ evaluator = Evaluator(
     group_partition=valset.group_partition,
     group_weights=trainset.group_weights,
     batch_size=args.batch_size,
-    model=spare_train.best_model,
+    model=pgi.best_model,
     device=device,
     verbose=True
 )
@@ -227,7 +213,7 @@ evaluator = Evaluator(
     group_partition=testset.group_partition,
     group_weights=trainset.group_weights,
     batch_size=args.batch_size,
-    model=spare_train.best_model,
+    model=pgi.best_model,
     device=device,
     verbose=True
 )
@@ -243,7 +229,7 @@ if args.wandb:
     results = results.to_dict(orient="records")[0]
     wandb.log(results)
 else:
-    results["alg"] = "spare"
+    results["alg"] = "pgi"
     results["timestamp"] = pd.Timestamp.now()
     args_dict = vars(args)
     for key in args_dict.keys():
