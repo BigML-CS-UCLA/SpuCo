@@ -11,9 +11,15 @@ class BaseSpuCoCompatibleDataset(Dataset):
     def __init__(self):
         super().__init__()
 
+    def initialize(self):
+        """
+        Dummy method to ensure compatibility with other spuco datasets
+        """
+        return 
+    
     @property
     @abstractmethod
-    def group_partition(self) -> Dict[Tuple[int, int], List[int]]:
+    def group_partition(self) -> Dict[Tuple[int, any], List[int]]:
         """
         Dictionary partitioning indices into groups
         """
@@ -21,7 +27,7 @@ class BaseSpuCoCompatibleDataset(Dataset):
     
     @property
     @abstractmethod
-    def group_weights(self) -> Dict[Tuple[int, int], float]:
+    def group_weights(self) -> Dict[Tuple[int, any], float]:
         """
         Dictionary containing the fractional weights of each group
         """
@@ -29,7 +35,7 @@ class BaseSpuCoCompatibleDataset(Dataset):
     
     @property
     @abstractmethod
-    def spurious(self) -> List[int]:
+    def spurious(self) -> List[any]:
         """
         List containing spurious labels for each example
         """
