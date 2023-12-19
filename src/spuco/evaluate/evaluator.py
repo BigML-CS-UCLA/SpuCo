@@ -81,11 +81,11 @@ class Evaluator:
         
         # SpuriousTarget Dataloader
         core_labels = []
-        spurious = torch.zeros(len(testset))
+        spurious = []
         for key in self.group_partition.keys():
-            for i in self.group_partition[key]:
-                spurious[i] = key[1]
+            for _ in self.group_partition[key]:
                 core_labels.append(key[0])
+                spurious.append(key[1])
         spurious_dataset = SpuriousTargetDatasetWrapper(dataset=testset, spurious_labels=spurious, num_classes=np.max(core_labels) + 1)
         self.spurious_dataloader = DataLoader(spurious_dataset, batch_size=batch_size, num_workers=4, pin_memory=True)
 

@@ -12,6 +12,11 @@ class UrbanCarsSpuriousLabel(Enum):
     BOTH = "both"
     BG = "bg"
     CO_OCCUR = "co_occur"
+    BOTH_FLAT = "both_flat" 
+    # BOTH_FLAT 
+    # this returns both spurious feature, but instead of tuple
+    # (0,0) -> 0 (0,1) -> 1 (1,0) -> 2 (1,1) -> 3
+
     
 class UrbanCars(BaseSpuCoCompatibleDataset):
     obj_name_list = [
@@ -28,6 +33,13 @@ class UrbanCars(BaseSpuCoCompatibleDataset):
         "urban",
         "country",
     ]
+    
+    spurious_flat_mapping = {
+        (0,0): 0,
+        (0,1): 1,
+        (1,0): 2,
+        (1,1): 3
+    }
 
     def __init__(
         self,
@@ -69,7 +81,7 @@ class UrbanCars(BaseSpuCoCompatibleDataset):
             root, ratio_combination_folder_name, split
         )
 
-        self._img_fpath_list = []
+        self.data = []
         self._obj_bg_co_occur_obj_label_list = []
 
         for obj_id, obj_name in enumerate(self.obj_name_list):
@@ -84,7 +96,7 @@ class UrbanCars(BaseSpuCoCompatibleDataset):
                     assert os.path.exists(dir_path)
 
                     img_fpath_list = glob.glob(os.path.join(dir_path, "*.jpg"))
-                    self._img_fpath_list += img_fpath_list
+                    self.data += img_fpath_list
 
                     self._obj_bg_co_occur_obj_label_list += [
                         (obj_id, bg_id, co_occur_obj_id)
@@ -94,22 +106,26 @@ class UrbanCars(BaseSpuCoCompatibleDataset):
         self._labels = [x[0] for x in self._obj_bg_co_occur_obj_label_list]
         self._num_classes = len(set(self._labels))
         self._both_spurious = [tuple(x[1:]) for x in self._obj_bg_co_occur_obj_label_list]
+        self._both_spurious_flat = [self.spurious_flat_mapping[x] for x in self._both_spurious]
         self._bg_spurious = [x[0] for x in self._both_spurious]
         self._co_occur_spurious = [x[1] for x in self._both_spurious]
         
         # Create group partitions
         self._both_group_partition = {}
+        self._both_flat_group_partition = {}
         self._bg_group_partition = {}
         self._co_occur_group_partition = {}
         for label in self._labels:
             for spurious_label in self._both_spurious:
                 self._both_group_partition[(label, spurious_label)] = []
+                self._both_flat_group_partition[self.spurious_flat_mapping[(label, spurious_label)]] = []
                 self._bg_group_partition[(label, spurious_label[0])] = []
                 self._co_occur_group_partition[(label, spurious_label[1])] = []
-        for i in tqdm(range(len(self._img_fpath_list)), desc="Creating group partitions", disable=not(self.verbose)):
+        for i in tqdm(range(len(self.data)), desc="Creating group partitions", disable=not(self.verbose)):
             label = self._labels[i]
             spurious_label = self._both_spurious[i]
             self._both_group_partition[(label, spurious_label)].append(i)
+            self._both_flat_group_partition[self.spurious_flat_mapping[(label, spurious_label)]].append(i)
             self._bg_group_partition[(label, spurious_label[0])].append(i)
             self._co_occur_group_partition[(label, spurious_label[1])].append(i)
 
@@ -118,7 +134,8 @@ class UrbanCars(BaseSpuCoCompatibleDataset):
         self._both_group_weights = self._compute_group_weights(self._both_group_partition)
         self._bg_group_weights = self._compute_group_weights(self._bg_group_partition)
         self._co_occur_group_weights = self._compute_group_weights(self._co_occur_group_partition)
-
+        self._both_flat_group_weights =  self._compute_group_weights(self._both_flat_group_partition)
+        
         self.base_transform = transforms.Compose([
             transforms.ToTensor()
         ])
@@ -129,7 +146,7 @@ class UrbanCars(BaseSpuCoCompatibleDataset):
     def _compute_group_weights(self, group_partition):
         group_weights = {}
         for group_label in group_partition.keys():
-            group_weights[group_label] = len(group_partition[group_label]) / len(self._img_fpath_list)
+            group_weights[group_label] = len(group_partition[group_label]) / len(self.data)
         return group_weights
      
     @property           
@@ -139,6 +156,8 @@ class UrbanCars(BaseSpuCoCompatibleDataset):
         """
         if self._spurious_label_type == UrbanCarsSpuriousLabel.BOTH:
             return self._both_group_partition 
+        elif self._spurious_label_type == UrbanCarsSpuriousLabel.BOTH_FLAT:
+            return self._both_flat_group_partition 
         elif self._spurious_label_type == UrbanCarsSpuriousLabel.BG:
             return self._bg_group_partition
         elif self._spurious_label_type == UrbanCarsSpuriousLabel.CO_OCCUR:
@@ -152,6 +171,8 @@ class UrbanCars(BaseSpuCoCompatibleDataset):
         """
         if self._spurious_label_type == UrbanCarsSpuriousLabel.BOTH:
             return self._both_group_weights
+        elif self._spurious_label_type == UrbanCarsSpuriousLabel.BOTH_FLAT:
+            return self._both_flat_group_weights
         elif self._spurious_label_type == UrbanCarsSpuriousLabel.BG:
             return self._bg_group_weights
         elif self._spurious_label_type == UrbanCarsSpuriousLabel.CO_OCCUR:
@@ -166,36 +187,11 @@ class UrbanCars(BaseSpuCoCompatibleDataset):
         """
         if self._spurious_label_type == UrbanCarsSpuriousLabel.BOTH:
             return self._both_spurious
+        elif self._spurious_label_type == UrbanCarsSpuriousLabel.BOTH_FLAT:
+            return self._both_spurious_flat
         elif self._spurious_label_type == UrbanCarsSpuriousLabel.BG:
             return self._bg_spurious
         elif self._spurious_label_type == UrbanCarsSpuriousLabel.CO_OCCUR:
             return self._co_occur_spurious
         else:
             raise ValueError("Invalid spurious feature type")
-
-    @property
-    def labels(self) -> List[int]:
-        """
-        List containing class labels for each example
-        """
-        return self._labels
-    
-    @property
-    def num_classes(self) -> int:
-        """
-        Number of classes
-        """
-        return self._num_classes
-    
-    def __len__(self):
-        return len(self._img_fpath_list)
-
-    def __getitem__(self, index):
-        img_fpath = self._img_fpath_list[index]
-        label = self._labels[index]
-
-        img = Image.open(img_fpath)
-        img = self.base_transform(img.convert("RGB"))
-        if self.transform is not None:
-            img = self.transform(img)
-        return img, label

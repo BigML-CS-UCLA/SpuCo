@@ -1,6 +1,8 @@
 from torch.utils.data import Dataset 
 from typing import List, Optional
 
+import torch 
+
 class SpuriousTargetDatasetWrapper(Dataset):
     """
     Wrapper class that takes a Dataset and the spurious labels of the data
@@ -44,7 +46,7 @@ class SpuriousTargetDatasetWrapper(Dataset):
         :rtype: Tuple[Any, int]
         """
         index = self.idx[index]
-        return (self.dataset.__getitem__(index)[0], self.spurious_labels[index])
+        return (self.dataset.__getitem__(index)[0], torch.tensor(self.spurious_labels[index]))
     
     def __len__(self):
         """

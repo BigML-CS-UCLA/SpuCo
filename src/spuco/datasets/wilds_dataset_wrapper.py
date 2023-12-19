@@ -62,41 +62,6 @@ class WILDSDatasetWrapper(BaseSpuCoCompatibleDataset):
         self.indices = range(len(dataset))
         if subset_indices is not None:
             self.indices = subset_indices
-
-    @property
-    def group_partition(self) -> Dict[Tuple[int, int], List[int]]:
-        """
-        Dictionary partitioning indices into groups
-        """
-        return self._group_partition 
-    
-    @property
-    def group_weights(self) -> Dict[Tuple[int, int], float]:
-        """
-        Dictionary containing the fractional weights of each group
-        """
-        return self._group_weights
-    
-    @property
-    def spurious(self) -> List[int]:
-        """
-        List containing spurious labels for each example
-        """
-        return self._spurious
-
-    @property
-    def labels(self) -> List[int]:
-        """
-        List containing class labels for each example
-        """
-        return self._labels
-    
-    @property
-    def num_classes(self) -> int:
-        """
-        Number of classes
-        """
-        return self._num_classes
     
     def __getitem__(self, index):
         """
