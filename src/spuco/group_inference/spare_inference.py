@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 from spuco.group_inference.cluster import ClusterAlg
 from spuco.group_inference import Cluster
-from spuco.utils.random_seed import seed_randomness, get_seed
+from spuco.utils.random_seed import seed_randomness
 
 
 class SpareInference(Cluster):
