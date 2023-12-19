@@ -12,3 +12,4 @@ from .spuco_animals import SpuCoAnimals
 from .spuco_image_folder import SpuCoImageFolder
 from .spuco_sun import SpuCoSun
 from .urban_cars import UrbanCars, UrbanCarsSpuriousLabel
+from .bffhq import bFFHQ
