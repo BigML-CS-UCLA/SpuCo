@@ -26,7 +26,7 @@ class bFFHQ(BaseSpuCoCompatibleDataset):
             for folder in ["align", "conflict"]:
                 for label in ["0", "1"]:
                     dir_path = os.path.join(root, "0.5pct", folder, label)
-                    for filename in tqdm(os.listdir(dir_path), desc=f"Loading {label} bias-{folder}ing examples", disable=not self.verbose):
+                    for filename in tqdm(os.listdir(dir_path), desc=f"Loading class {label} bias-{folder}ing examples", disable=not self.verbose):
                         filepath = os.path.join(dir_path, filename)
                         if not os.path.isfile(filepath):
                             continue
@@ -52,12 +52,12 @@ class bFFHQ(BaseSpuCoCompatibleDataset):
                 self._labels.append(label)
                 self._spurious.append(spurious)
             
-        self.group_partition = {(0,0): [], (0,1): [], (1,0): [], (1,1): []}    
+        self._group_partition = {(0,0): [], (0,1): [], (1,0): [], (1,1): []}    
         for i in tqdm(range(len(self.data)), desc="Initializing group partition", disable=not self.verbose):
-            self.group_partition[(self._labels[i], self._spurious[i])].append(i)
-        self.group_weights = {}
+            self._group_partition[(self._labels[i], self._spurious[i])].append(i)
+        self._group_weights = {}
         for key in self.group_partition.keys():
-            self.group_weights[key] = len(self.group_partition[key]) / len(self.data)
+            self._group_weights[key] = len(self.group_partition[key]) / len(self.data)
             
         self._num_classes = 2 
         
