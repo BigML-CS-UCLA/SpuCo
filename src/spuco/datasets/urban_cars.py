@@ -118,14 +118,14 @@ class UrbanCars(BaseSpuCoCompatibleDataset):
         for label in self._labels:
             for spurious_label in self._both_spurious:
                 self._both_group_partition[(label, spurious_label)] = []
-                self._both_flat_group_partition[self.spurious_flat_mapping[(label, spurious_label)]] = []
+                self._both_flat_group_partition[(label, self.spurious_flat_mapping[spurious_label])] = []
                 self._bg_group_partition[(label, spurious_label[0])] = []
                 self._co_occur_group_partition[(label, spurious_label[1])] = []
         for i in tqdm(range(len(self.data)), desc="Creating group partitions", disable=not(self.verbose)):
             label = self._labels[i]
             spurious_label = self._both_spurious[i]
             self._both_group_partition[(label, spurious_label)].append(i)
-            self._both_flat_group_partition[self.spurious_flat_mapping[(label, spurious_label)]].append(i)
+            self._both_flat_group_partition[(label, self.spurious_flat_mapping[spurious_label])].append(i)
             self._bg_group_partition[(label, spurious_label[0])].append(i)
             self._co_occur_group_partition[(label, spurious_label[1])].append(i)
 
