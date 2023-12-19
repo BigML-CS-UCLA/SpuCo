@@ -69,7 +69,7 @@ class UrbanCars(BaseSpuCoCompatibleDataset):
             root, ratio_combination_folder_name, split
         )
 
-        self._img_fpath_list = []
+        self.data = []
         self._obj_bg_co_occur_obj_label_list = []
 
         for obj_id, obj_name in enumerate(self.obj_name_list):
@@ -84,7 +84,7 @@ class UrbanCars(BaseSpuCoCompatibleDataset):
                     assert os.path.exists(dir_path)
 
                     img_fpath_list = glob.glob(os.path.join(dir_path, "*.jpg"))
-                    self._img_fpath_list += img_fpath_list
+                    self.data += img_fpath_list
 
                     self._obj_bg_co_occur_obj_label_list += [
                         (obj_id, bg_id, co_occur_obj_id)
@@ -106,7 +106,7 @@ class UrbanCars(BaseSpuCoCompatibleDataset):
                 self._both_group_partition[(label, spurious_label)] = []
                 self._bg_group_partition[(label, spurious_label[0])] = []
                 self._co_occur_group_partition[(label, spurious_label[1])] = []
-        for i in tqdm(range(len(self._img_fpath_list)), desc="Creating group partitions", disable=not(self.verbose)):
+        for i in tqdm(range(len(self.data)), desc="Creating group partitions", disable=not(self.verbose)):
             label = self._labels[i]
             spurious_label = self._both_spurious[i]
             self._both_group_partition[(label, spurious_label)].append(i)
@@ -129,7 +129,7 @@ class UrbanCars(BaseSpuCoCompatibleDataset):
     def _compute_group_weights(self, group_partition):
         group_weights = {}
         for group_label in group_partition.keys():
-            group_weights[group_label] = len(group_partition[group_label]) / len(self._img_fpath_list)
+            group_weights[group_label] = len(group_partition[group_label]) / len(self.data)
         return group_weights
      
     @property           
@@ -172,30 +172,3 @@ class UrbanCars(BaseSpuCoCompatibleDataset):
             return self._co_occur_spurious
         else:
             raise ValueError("Invalid spurious feature type")
-
-    @property
-    def labels(self) -> List[int]:
-        """
-        List containing class labels for each example
-        """
-        return self._labels
-    
-    @property
-    def num_classes(self) -> int:
-        """
-        Number of classes
-        """
-        return self._num_classes
-    
-    def __len__(self):
-        return len(self._img_fpath_list)
-
-    def __getitem__(self, index):
-        img_fpath = self._img_fpath_list[index]
-        label = self._labels[index]
-
-        img = Image.open(img_fpath)
-        img = self.base_transform(img.convert("RGB"))
-        if self.transform is not None:
-            img = self.transform(img)
-        return img, label
