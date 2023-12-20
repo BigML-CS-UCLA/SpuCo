@@ -128,7 +128,7 @@ class Evaluator:
         logreg.coef_ = coef
         logreg.intercept_ = intercept
         preds_test = logreg.predict(X_test)
-        return (preds_test == y_test).mean()
+        return (preds_test == y_test).mean() * 100
     
     def _encode_testset(self, testloader):
         X_test = []
