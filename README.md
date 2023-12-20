@@ -20,7 +20,7 @@ The SpuCo package is designed to help researchers and practitioners evaluate the
 
 Refer to quickstart for scripts and notebooks to get started with *SpuCo*
 
-Google Colab Notebooks: 
+Google Colab Notebooks:
 
 - [Explore Data](https://colab.research.google.com/drive/1jwZJ27gTh2t9V3rY6Co-oSIeUvCt3php?authuser=1>)
 - [SpuCoMNIST GroupDRO](https://colab.research.google.com/drive/1LXAwbkIt4nryI6K6OYhv7zo3LRNmBCW0?authuser=1>)

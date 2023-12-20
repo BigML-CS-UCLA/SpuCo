@@ -1,29 +1,29 @@
 import random
 from sklearn.preprocessing import StandardScaler
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import torch
+from tqdm import tqdm
 import umap 
 
 from spuco.group_inference.cluster import ClusterAlg
-from spuco.group_inference import SpareInference
+from spuco.group_inference import Cluster
+from spuco.group_inference.george_utils.cluster import OverclusterModel
 from spuco.utils.random_seed import seed_randomness
 
 
-class GeorgeInference(SpareInference):
+class GeorgeInference(Cluster):
     """
-    George Infernece: https://arxiv.org/abs/2011.12945
+    George Inference: https://arxiv.org/abs/2011.12945
     """
     def __init__(
         self,
         Z: torch.Tensor,
         class_labels: Optional[List[int]] = None,
-        cluster_alg: ClusterAlg = ClusterAlg.KMEANS,
-        num_clusters: int = -1,
+        cluster_alg: ClusterAlg = ClusterAlg.GMM,
         max_clusters: int = -1,
-        silhoutte_threshold: float = 0.9,
         umap_n_components: int = 2,
         umap_n_neighbors: int = 10,
         device: torch.device = torch.device("cpu"), 
@@ -59,21 +59,22 @@ class GeorgeInference(SpareInference):
             Z=Z,
             class_labels=class_labels,
             cluster_alg=cluster_alg,
-            num_clusters=num_clusters,
+            num_clusters=-1,
             max_clusters=max_clusters,
-            silhoutte_threshold=silhoutte_threshold,
             device=device,
             verbose=verbose
         )
+        if self.cluster_alg == ClusterAlg.KMEDOIDS:
+            raise NotImplementedError("George doesn't support k-medoids clustering.")
         self.umap_n_components = umap_n_components
         self.umap_n_neighbors = umap_n_neighbors
     
-    def infer_groups(self) -> Dict[int, List[int]]:
+    def infer_groups(self) -> Dict[Tuple[int,int], List[int]]:
         """
         Infers the group partition based on the clustering results.
 
         :return: The group partition.
-        :rtype: Dict[int, List[int]]
+        :rtype: Dict[Tuple[int,int], List[int]]
         """ 
         
         # UMAP 
@@ -81,5 +82,17 @@ class GeorgeInference(SpareInference):
         scaled_Z = scaler.fit_transform(self.Z)
         umap_model = umap.UMAP(n_components=self.umap_n_components, n_neighbors=self.umap_n_neighbors)
         self.Z = umap_model.fit_transform(scaled_Z)
-
-        return super().group_partition()
+        
+        cluster_partitions = {}
+        for class_label in tqdm(self.class_partition.keys(), disable=not self.verbose, desc="Clustering class-wise"):
+            Z = self.Z[self.class_partition[class_label]]
+            overcluster = OverclusterModel(self.cluster_alg.value, max_k=self.max_clusters)
+            overcluster.fit(Z)
+            cluster_partitions.append(self.convert_labels_to_partition(overcluster.predict(Z)))
+            
+        # Merge class-wise group partitions into one dictionary
+        group_partition = {}
+        for class_index, partition in zip(self.class_partition.keys(), cluster_partitions):
+            group_partition.update(self.process_cluster_partition(partition, class_index))
+        
+        return group_partition

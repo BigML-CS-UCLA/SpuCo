@@ -1,5 +1,5 @@
 import random
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import torch
@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 from spuco.group_inference.cluster import ClusterAlg
 from spuco.group_inference import Cluster
-from spuco.utils.random_seed import seed_randomness, get_seed
+from spuco.utils.random_seed import seed_randomness
 
 
 class SpareInference(Cluster):
@@ -53,15 +53,17 @@ class SpareInference(Cluster):
         seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
         super().__init__(Z=Z, class_labels=class_labels, cluster_alg=cluster_alg, num_clusters=num_clusters, max_clusters=max_clusters, device=device, verbose=verbose)
 
+        if self.cluster_alg == ClusterAlg.GMM:
+            raise NotImplementedError("SPARE doesn't support GMM clustering currently")
         self.silhouette_threshold = silhoutte_threshold
         self.high_sampling_power = high_sampling_power
     
-    def infer_groups(self) -> Dict[int, List[int]]:
+    def infer_groups(self) -> Dict[Tuple[int,int], List[int]]:
         """
         Infers the group partition based on the clustering results.
 
         :return: The group partition.
-        :rtype: Dict[int, List[int]]
+        :rtype: Dict[Tuple[int,int], List[int]]
         """ 
         # Get class-wise group partitions
         cluster_partitions = [] 

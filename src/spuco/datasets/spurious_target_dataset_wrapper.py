@@ -46,7 +46,11 @@ class SpuriousTargetDatasetWrapper(Dataset):
         :rtype: Tuple[Any, int]
         """
         index = self.idx[index]
-        return (self.dataset.__getitem__(index)[0], torch.tensor(self.spurious_labels[index]))
+        try:
+            return (self.dataset.__getitem__(index)[0], torch.tensor(self.spurious_labels[index]))
+        except:
+            raise ValueError("Spurious attribute prediction not supported with non-int spurious labels")
+        
     
     def __len__(self):
         """
