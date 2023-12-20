@@ -14,11 +14,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from typing import Tuple, Optional
 
-try:
-    import wandb
-except ImportError:
-    pass
-
 class Evaluator:
     def __init__(
         self,
@@ -29,8 +24,7 @@ class Evaluator:
         model: nn.Module,
         sklearn_linear_model: Optional[Tuple[float, float, float, Optional[StandardScaler]]] = None,
         device: torch.device = torch.device("cpu"),
-        verbose: bool = False,
-        use_wandb: bool = False
+        verbose: bool = False
     ):
         """
         Initializes an instance of the Evaluator class.
