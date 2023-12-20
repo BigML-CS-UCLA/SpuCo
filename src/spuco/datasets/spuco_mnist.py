@@ -128,7 +128,7 @@ class SpuCoMNIST(BaseSpuCoDataset):
                 indices=config[VAL_SPLIT]
             )
 
-        self.data = SourceData(self.mnist)
+        self.data = SourceData(self.mnist, verbose=self.verbose)
         
         # Validate Classes
         assert SpuCoMNIST.validate_classes(self.classes), "Classes should be disjoint and only contain elements 0<= label <= 9"
