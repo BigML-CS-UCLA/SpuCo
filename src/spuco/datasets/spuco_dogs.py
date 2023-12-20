@@ -103,7 +103,7 @@ class SpuCoDogs(BaseSpuCoDataset):
             os.remove(self.filename)
             
         try:
-            self.data = SourceData()
+            self.data = SourceData(verbose=False)
             
             # Small Dogs - Indoor
             small_dogs_indoor = os.listdir(os.path.join(self.dset_dir, f"{SMALL_DOGS}/{INDOOR}"))

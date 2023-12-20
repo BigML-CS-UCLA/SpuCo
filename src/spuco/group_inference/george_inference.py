@@ -82,4 +82,4 @@ class GeorgeInference(SpareInference):
         umap_model = umap.UMAP(n_components=self.umap_n_components, n_neighbors=self.umap_n_neighbors)
         self.Z = umap_model.fit_transform(scaled_Z)
 
-        return super().group_partition()
+        return super().infer_groups()

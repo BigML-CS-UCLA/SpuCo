@@ -102,7 +102,7 @@ class SpuCoImageFolder(BaseSpuCoDataset):
         if not os.path.exists(self.dset_dir):
             raise RuntimeError(f"Dataset not found {self.dset_dir}")
         try:
-            self.data = SourceData()
+            self.data = SourceData(verbose=False)
             
             # Iterate through folder structure, load file names of images and core and spurious labels
             class_dirs = [item for item in os.listdir(self.dset_dir) if os.path.isdir(os.path.join(self.dset_dir, item))]
