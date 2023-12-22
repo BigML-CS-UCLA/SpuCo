@@ -175,8 +175,8 @@ class Trainer:
                 pbar.set_description("Getting Trainset Outputs")
                 for input, _ in pbar:
                     if features:
-                        outputs.append(self.model(input.to(self.device)))
-                    else:
                         outputs.append(self.model.backbone(input.to(self.device)))
+                    else:
+                        outputs.append(self.model(input.to(self.device)))
                 return torch.cat(outputs, dim=0)
             
