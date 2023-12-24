@@ -40,8 +40,8 @@ class GroupEvaluator:
 
         if self.verbose:
             print("Inverting partitions")
-        self.inferred_group_labels = GroupEvaluator.invert_group_partition(inferred_group_partition)
-        self.true_group_labels = GroupEvaluator.invert_group_partition(true_group_partition)
+        self.inferred_group_labels = GroupEvaluator.invert_group_partition(self.inferred_group_partition)
+        self.true_group_labels = GroupEvaluator.invert_group_partition(self.true_group_partition)
     
     @staticmethod
     def invert_group_partition(group_partition: Dict):

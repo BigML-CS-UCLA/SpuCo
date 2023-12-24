@@ -77,10 +77,11 @@ class Cluster(BaseGroupInference):
         self.device = device
         self.verbose = verbose
 
-        # Prcluessing Z
+        # Processing Z
         self.Z = Z
         if cluster_alg == ClusterAlg.KMEANS:
-            self.Z = self.Z.detach().cpu().numpy()
+            if type(self.Z) == torch.tensor:
+                self.Z = self.Z.detach().cpu().numpy()
 
     def infer_groups(self) -> Dict[Tuple[int,int], List[int]]:
         """
