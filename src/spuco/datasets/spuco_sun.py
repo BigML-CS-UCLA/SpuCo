@@ -5,7 +5,7 @@ import random
 import numpy as np
 import torch
 
-from spuco.datasets import (TRAIN_SPLIT, SpuCoImageFolder, SourceData)
+from spuco.datasets import (TRAIN_SPLIT, SpuCoImageFolder)
 from spuco.datasets.base_spuco_dataset import MASK_SPURIOUS
 from spuco.utils.random_seed import seed_randomness
 

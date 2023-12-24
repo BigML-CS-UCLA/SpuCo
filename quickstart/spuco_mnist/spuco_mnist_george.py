@@ -82,7 +82,6 @@ george_infer = GeorgeInference(
     class_labels=trainset.labels,
     device=device,
     max_clusters=5,
-
     verbose=True
 )
 group_partition = george_infer.infer_groups()
