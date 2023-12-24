@@ -8,6 +8,7 @@ from torch.utils.data import DataLoader, Dataset, Sampler
 from tqdm import tqdm
 
 from spuco.utils.random_seed import seed_randomness
+from spuco.utils.misc import get_model_outputs
 
 try:
     import wandb
@@ -161,22 +162,5 @@ class Trainer:
         """
         Gets output of model on trainset
         """
-        with torch.no_grad():
-            self.model.eval()
-            eval_trainloader = DataLoader(
-                dataset=self.trainset,
-                batch_size=self.batch_size,
-                shuffle=False,
-                num_workers=4, 
-                pin_memory=True
-            )
-            with tqdm(eval_trainloader, unit="batch", total=len(self.trainloader), disable=not self.verbose) as pbar:
-                outputs = []
-                pbar.set_description("Getting Trainset Outputs")
-                for input, _ in pbar:
-                    if features:
-                        outputs.append(self.model.backbone(input.to(self.device)))
-                    else:
-                        outputs.append(self.model(input.to(self.device)))
-                return torch.cat(outputs, dim=0)
+        return get_model_outputs(self.model, self.trainset, self.device, features, self.verbose)
             

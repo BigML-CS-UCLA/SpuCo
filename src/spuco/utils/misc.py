@@ -4,6 +4,7 @@ import numpy as np
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
+from tqdm import tqdm
 
 
 def convert_labels_to_partition(labels: List[int]) -> Dict[int, List[int]]:
@@ -97,3 +98,26 @@ def get_group_ratios(indices: List[int], group_partition: Dict[Tuple[int, int], 
     for key in group_partition.keys():
         group_ratio[key] = len([i for i in indices if i in group_partition[key]]) / len(group_partition[key])
     return group_ratio
+
+def get_model_outputs(model, dataset, device=torch.device("cpu"), features=False, verbose=False):
+    """
+    Gets output of model on a dataset
+    """
+    with torch.no_grad():
+        model.eval()
+        eval_trainloader = DataLoader(
+            dataset=dataset,
+            batch_size=64,
+            shuffle=False,
+            num_workers=4, 
+            pin_memory=True
+        )
+        with tqdm(eval_trainloader, unit="batch", total=len(eval_trainloader), disable=not verbose) as pbar:
+            outputs = []
+            pbar.set_description("Getting model outputs")
+            for input, _ in pbar:
+                if features:
+                    outputs.append(model.backbone(input.to(device)))
+                else:
+                    outputs.append(model(input.to(device)))
+            return torch.cat(outputs, dim=0)
