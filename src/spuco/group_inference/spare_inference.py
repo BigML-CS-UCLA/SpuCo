@@ -17,7 +17,7 @@ class SpareInference(Cluster):
     """
     def __init__(
         self,
-        Z: torch.Tensor,
+        logits: torch.Tensor,
         class_labels: Optional[List[int]] = None,
         cluster_alg: ClusterAlg = ClusterAlg.KMEANS,
         num_clusters: int = -1,
@@ -30,8 +30,8 @@ class SpareInference(Cluster):
         """
         Initializes Spare Inference.
 
-        :param Z: The output of the network.
-        :type Z: torch.Tensor
+        :param logits: The output of the network.
+        :type logits: torch.Tensor
         :param class_labels: Optional list of class labels for class-wise clustering. Defaults to None.
         :type class_labels: Optional[List[int]], optional
         :param cluster_alg: The clustering algorithm to use. Defaults to ClusterAlg.KMEANS.
@@ -51,7 +51,7 @@ class SpareInference(Cluster):
         """
         
         seed_randomness(torch_module=torch, numpy_module=np, random_module=random)
-        super().__init__(Z=Z, class_labels=class_labels, cluster_alg=cluster_alg, num_clusters=num_clusters, max_clusters=max_clusters, device=device, verbose=verbose)
+        super().__init__(Z=logits, class_labels=class_labels, cluster_alg=cluster_alg, num_clusters=num_clusters, max_clusters=max_clusters, device=device, verbose=verbose)
 
         if self.cluster_alg == ClusterAlg.GMM:
             raise NotImplementedError("SPARE doesn't support GMM clustering currently")
