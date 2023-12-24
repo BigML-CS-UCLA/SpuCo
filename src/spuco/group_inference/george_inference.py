@@ -84,6 +84,8 @@ class GeorgeInference(Cluster):
         scaled_Z = scaler.fit_transform(self.Z)
         umap_model = umap.UMAP(n_components=self.umap_n_components, n_neighbors=self.umap_n_neighbors)
         self.Z = umap_model.fit_transform(scaled_Z)
+
+        return super().infer_groups()
         
         cluster_partitions = []
         for class_label in tqdm(self.class_partition.keys(), disable=not self.verbose, desc="Clustering class-wise"):

@@ -19,6 +19,10 @@ class bFFHQ(BaseSpuCoCompatibleDataset):
         self._labels = []
         self.transform = transform 
         
+        # Process valid split
+        if split == "val":
+            split == "valid"
+            
         # Load dataset
         if split == "train":
             if self.verbose:
@@ -35,9 +39,8 @@ class bFFHQ(BaseSpuCoCompatibleDataset):
                         if folder == "align":
                             self._spurious.append(int(label))
                         else:
-                            self._spurious.append(1 - int(label))
-                                
-        else:
+                            self._spurious.append(1 - int(label))                 
+        elif split != "valid" or split != "test":
             dir_path = os.path.join(root, split)
             for filename in tqdm(os.listdir(dir_path), desc="Loading dataset", disable=not self.verbose):
                 filepath = os.path.join(dir_path, filename)
@@ -45,13 +48,15 @@ class bFFHQ(BaseSpuCoCompatibleDataset):
                     continue 
                 
                 split_filename = filename.split("_")
-                label = split_filename[1]
-                spurious = split_filename[2]
+                label = int(split_filename[1])
+                spurious = int(split_filename[2].split(".")[0])
 
                 self.data.append(filepath)
                 self._labels.append(label)
                 self._spurious.append(spurious)
-            
+        else:
+            raise ValueError("Invalid split: choose one of train, test, val")
+        
         self._group_partition = {(0,0): [], (0,1): [], (1,0): [], (1,1): []}    
         for i in tqdm(range(len(self.data)), desc="Initializing group partition", disable=not self.verbose):
             self._group_partition[(self._labels[i], self._spurious[i])].append(i)
