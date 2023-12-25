@@ -80,7 +80,7 @@ class Cluster(BaseGroupInference):
         # Processing Z
         self.Z = Z
         if cluster_alg == ClusterAlg.KMEANS:
-            if type(self.Z) == torch.tensor:
+            if type(self.Z) == torch.Tensor:
                 self.Z = self.Z.detach().cpu().numpy()
 
     def infer_groups(self) -> Dict[Tuple[int,int], List[int]]:
