@@ -14,7 +14,6 @@ from spuco.utils import Trainer
 from spuco.utils.random_seed import seed_randomness
 
 class EMA:
-    
     def __init__(self, label, alpha=0.7):
         self.label = label
         self.alpha = alpha
