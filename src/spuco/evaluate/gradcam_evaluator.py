@@ -34,7 +34,7 @@ class GradCamEvaluator:
         
     def evaluate(self):
         target_layers = [self.model.backbone.layer4[-1]]
-        cam = GradCAM(model=self.model.backbone, target_layers=target_layers, use_cuda=True)
+        cam = GradCAM(model=self.model.backbone, target_layers=target_layers)
         scores = []
         for i in tqdm(range(len(self.dataset)), desc="Computing IoU between gradcam and mask", disable=not self.verbose):
             targets = [ClassifierOutputTarget(self.pred_labels[i])]
