@@ -38,7 +38,7 @@ class GradCamEvaluator:
         scores = []
         for i in tqdm(range(len(self.dataset)), desc="Computing IoU between gradcam and mask", disabled=not self.verbose):
             targets = [ClassifierOutputTarget(self.pred_labels[i])]
-            predicted_mask = cam(input_tensor=self.dataset[i].to(self.device), targets=targets)
+            predicted_mask = cam(input_tensor=self.dataset[i][0].to(self.device), targets=targets)
             scores.append(GradCamEvaluator.compute_iou(predicted_mask, self.masks[i]))
         return np.mean(scores)
 
