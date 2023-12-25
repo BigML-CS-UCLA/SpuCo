@@ -9,3 +9,4 @@ from .upsample_erm import UpSampleERM
 from .downsample_erm import DownSampleERM
 from .spare_train import SpareTrain
 from .pgi import PGI, PGILoss
+from .pde import PDE
