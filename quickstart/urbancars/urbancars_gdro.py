@@ -101,7 +101,7 @@ def main(args):
     evaluator = Evaluator(
         testset=valset,
         group_partition=valset.group_partition,
-        group_weights=trainset.group_weights,
+        group_weights=group_weights,
         batch_size=args.batch_size,
         model=model,
         device=device,
@@ -127,7 +127,7 @@ def main(args):
     evaluator = Evaluator(
         testset=valset,
         group_partition=valset.group_partition,
-        group_weights=trainset.group_weights,
+        group_weights=group_weights,
         batch_size=args.batch_size,
         model=group_dro.best_model,
         device=device,
