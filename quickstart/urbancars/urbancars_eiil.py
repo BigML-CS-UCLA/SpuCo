@@ -230,7 +230,7 @@ if __name__ == '__main__':
     parser.add_argument("--root_dir", type=str)
     parser.add_argument("--spurious_label_type", type=UrbanCarsSpuriousLabel, choices=list(UrbanCarsSpuriousLabel), default=UrbanCarsSpuriousLabel.BOTH)
     parser.add_argument("--label_noise", type=float, default=0.0)
-    parser.add_argument("--results_csv", type=str, default="results/eiil.csv")
+    parser.add_argument("--results_csv", type=str, default="results/urbancars_eiil.csv")
     parser.add_argument("--stdout_file", type=str, default="urbancars_eiil.out")
     parser.add_argument("--arch", type=str, default="resnet50", choices=["resnet18", "resnet50", "cliprn50"])
     parser.add_argument("--batch_size", type=int, default=128)

@@ -9,12 +9,11 @@ import torch
 import torchvision.transforms as transforms
 from torch.optim import SGD
 
-from spuco.evaluate import Evaluator
-from spuco.group_inference import SpareInference
-from spuco.robust_train import SpareTrain
-from spuco.models import model_factory
-from spuco.utils import Trainer, set_seed
 from spuco.datasets import UrbanCars, UrbanCarsSpuriousLabel
+from spuco.evaluate import Evaluator
+from spuco.robust_train import ERM
+from spuco.models import model_factory
+from spuco.utils import set_seed
 
 
 def main(args):
@@ -58,45 +57,6 @@ def main(args):
     testset=UrbanCars(root=args.root_dir, split="test", spurious_label_type=UrbanCarsSpuriousLabel.BOTH, verbose=True, transform=transform)
     testset.initialize()
 
-    model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
-
-    trainer = Trainer(
-        trainset=trainset,
-        model=model,
-        batch_size=args.batch_size,
-        optimizer=SGD(model.parameters(), lr=args.erm_lr, weight_decay=args.erm_weight_decay, momentum=args.momentum),
-        device=device,
-        verbose=True
-    )
-    trainer.train(num_epochs=args.infer_num_epochs)
-
-    logits = trainer.get_trainset_outputs()
-    predictions = torch.nn.functional.softmax(logits, dim=1).cpu()
-    spare_infer = SpareInference(
-        logits=predictions,
-        class_labels=trainset.labels,
-        num_clusters=args.num_clusters,
-        device=device,
-        high_sampling_power=args.high_sampling_power,
-        verbose=True
-    )
-
-    group_partition = spare_infer.infer_groups()
-    sampling_powers = spare_infer.sampling_powers
-
-    for key in sorted(group_partition.keys()):
-        print(key, len(group_partition[key]))
-    evaluator = Evaluator(
-        testset=trainset,
-        group_partition=group_partition,
-        group_weights=trainset.group_weights,
-        batch_size=args.batch_size,
-        model=model,
-        device=device,
-        verbose=True
-    )
-    evaluator.evaluate()
-
     # initialize the model and the trainer
     model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
     
@@ -122,19 +82,19 @@ def main(args):
         verbose=True
     )
 
-    spare_train = SpareTrain(
+    erm = ERM(
         model=model,
+        val_evaluator=valid_evaluator,
         num_epochs=args.num_epochs,
         trainset=trainset,
-        group_partition=group_partition,
-        sampling_powers=sampling_powers,
         batch_size=args.batch_size,
-        optimizer=SGD(model.parameters(), lr=args.lr, weight_decay=args.weight_decay, momentum=args.momentum),
+        optimizer=SGD(model.parameters(), lr=args.erm_lr, weight_decay=args.erm_weight_decay, momentum=args.momentum),
         device=device,
-        val_evaluator=valid_evaluator,
-        verbose=True
+        verbose=True,
+        use_wandb=args.wandb
     )
-    spare_train.train()
+
+    erm.train()
 
     results = pd.DataFrame(index=[0])
 
@@ -169,7 +129,7 @@ def main(args):
         group_partition=valset.group_partition,
         group_weights=trainset.group_weights,
         batch_size=args.batch_size,
-        model=spare_train.best_model,
+        model=erm.best_model,
         device=device,
         verbose=True
     )
@@ -182,7 +142,7 @@ def main(args):
         group_partition=testset.group_partition,
         group_weights=trainset.group_weights,
         batch_size=args.batch_size,
-        model=spare_train.best_model,
+        model=erm.best_model,
         device=device,
         verbose=True
     )
@@ -197,7 +157,7 @@ def main(args):
         results = results.to_dict(orient="records")[0]
         wandb.log(results)
     else:
-        results["alg"] = "spare"
+        results["alg"] = "erm"
         results["timestamp"] = pd.Timestamp.now()
         args_dict = vars(args)
         for key in args_dict.keys():
@@ -231,25 +191,19 @@ if __name__ == '__main__':
     parser.add_argument("--root_dir", type=str)
     parser.add_argument("--spurious_label_type", type=UrbanCarsSpuriousLabel, choices=list(UrbanCarsSpuriousLabel), default=UrbanCarsSpuriousLabel.BOTH)
     parser.add_argument("--label_noise", type=float, default=0.0)
-    parser.add_argument("--results_csv", type=str, default="results/urbancars_spare.csv")
-    parser.add_argument("--stdout_file", type=str, default="urbancars_spare.out")
+    parser.add_argument("--results_csv", type=str, default="results/urbancars_erm.csv")
+    parser.add_argument("--stdout_file", type=str, default="urbancars_erm.out")
     parser.add_argument("--arch", type=str, default="resnet50", choices=["resnet18", "resnet50", "cliprn50"])
     parser.add_argument("--batch_size", type=int, default=128)
     parser.add_argument("--num_epochs", type=int, default=300)
     parser.add_argument("--erm_lr", type=float, default=1e-3)
     parser.add_argument("--erm_weight_decay", type=float, default=1e-4)
-    parser.add_argument("--lr", type=float, default=1e-4)
-    parser.add_argument("--weight_decay", type=float, default=0.1)
     parser.add_argument("--momentum", type=float, default=0.9)
     parser.add_argument("--pretrained", action="store_true")
     parser.add_argument("--wandb", action="store_true")
     parser.add_argument("--wandb_project", type=str, default="spuco")
     parser.add_argument("--wandb_entity", type=str, default=None)
-    parser.add_argument("--wandb_run_name", type=str, default="urbancars_spare")
-
-    parser.add_argument("--infer_num_epochs", type=int, default=-1)
-    parser.add_argument("--num_clusters", type=int, default=4, choices=[2, 4])
-    parser.add_argument("--high_sampling_power", type=int, default=1)
+    parser.add_argument("--wandb_run_name", type=str, default="urbancars_erm")
 
     args = parser.parse_args()
     main(args)
