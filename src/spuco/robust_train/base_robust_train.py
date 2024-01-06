@@ -63,7 +63,8 @@ class BaseRobustTrain(ABC):
                     for group, acc in self.val_evaluator.accuracies.items():
                         results[f'{self.trainer.name}_val_acc_{group}'] = acc
 
-                    results[f'{self.trainer.name}_spurious_attribute_prediction'] = self.val_evaluator.evaluate_spurious_attribute_prediction()
+                    if hasattr(self.val_evaluator, 'spurious_attribute_prediction'):
+                        results[f'{self.trainer.name}_spurious_attribute_prediction'] = self.val_evaluator.evaluate_spurious_attribute_prediction()
                 
                     wandb.log(results)
                 
