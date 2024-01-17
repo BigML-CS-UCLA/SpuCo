@@ -31,20 +31,21 @@ class WILDSDatasetWrapper(BaseSpuCoCompatibleDataset):
 
         self.dataset = dataset
         self._num_classes = dataset.n_classes 
+        
+        # Subset if needed
+        self.indices = range(len(dataset))
+        if subset_indices is not None:
+            self.indices = subset_indices
 
         # Get index in meta data array corresponding to spurious target 
         spurious_target_idx = dataset.metadata_fields.index(metadata_spurious_label)
 
         # Get labels 
-        self._labels = dataset.y_array.long().tolist()
+        self._labels = dataset.y_array.long()[self.indices].tolist()
 
         # Get spurious labels
-        self._spurious = dataset.metadata_array[:, spurious_target_idx].long().tolist()
+        self._spurious = dataset.metadata_array[:, spurious_target_idx].long()[self.indices].tolist()
 
-        # Subset if needed
-        self.indices = range(len(dataset))
-        if subset_indices is not None:
-            self.indices = subset_indices
             
         # Create group partition using labels and spurious labels
         self._group_partition = {}
@@ -54,8 +55,6 @@ class WILDSDatasetWrapper(BaseSpuCoCompatibleDataset):
             disable=not verbose,
             total=len(self.dataset)
         ):
-            if i not in self.indices:
-                continue
             if group_label not in self._group_partition:
                 self._group_partition[group_label] = []
             self._group_partition[group_label].append(i)
