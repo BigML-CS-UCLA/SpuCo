@@ -35,7 +35,7 @@ parser.add_argument("--infer_lr", type=float, default=1e-3)
 parser.add_argument("--infer_weight_decay", type=float, default=1e-4)
 parser.add_argument("--infer_momentum", type=float, default=0.9)
 parser.add_argument("--infer_num_epochs", type=int, default=1)
-
+parser.add_argument("--num_clusters", type=int, default=4)
 parser.add_argument("--high_sampling_power", type=int, default=2)
 
 args = parser.parse_args()
@@ -91,8 +91,9 @@ trainer.train(num_epochs=args.infer_num_epochs)
 logits = trainer.get_trainset_outputs()
 predictions = torch.nn.functional.softmax(logits, dim=1).detach().cpu().numpy()
 spare_infer = SpareInference(
-    Z=predictions,
+    logits=predictions,
     class_labels=trainset.labels,
+    num_clusters=args.num_clusters,
     device=device,
     high_sampling_power=args.high_sampling_power,
     verbose=True
@@ -168,11 +169,13 @@ results["timestamp"] = pd.Timestamp.now()
 results["seed"] = args.seed
 results["high_sampling_power"] = args.high_sampling_power
 results["lr"] = args.lr
+results["arch"] = args.arch
 results["weight_decay"] = args.weight_decay
 results["momentum"] = args.momentum
 results["num_epochs"] = args.num_epochs
 results["batch_size"] = args.batch_size
 results["infer_num_epochs"] = args.infer_num_epochs
+results["num_clusters"] = args.num_clusters
 results["infer_lr"] = args.infer_lr
 results["infer_weight_decay"] = args.infer_weight_decay
 
