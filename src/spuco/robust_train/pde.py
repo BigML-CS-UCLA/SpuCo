@@ -33,6 +33,7 @@ class PDE(BaseRobustTrain):
         warmup_epochs=15,
         expansion_size=10,
         expansion_interval=10,
+        subsample_cap=-1,
         gamma=1,
     ):  
         """
@@ -62,6 +63,8 @@ class PDE(BaseRobustTrain):
         :type expansion_size: int
         :param expansion_interval: The number of epochs between each expansion (default: 10).
         :type expansion_interval: int
+        :param subsample_cap: The minimum number of samples to keep from each group (default: -1).
+        :type subsample_cap: int
         :param gamma: The learning rate decay factor (default: 1).
         :type gamma: float
         """
@@ -74,12 +77,16 @@ class PDE(BaseRobustTrain):
         self.warmup_epochs = warmup_epochs
         self.expansion_size = expansion_size
         self.expansion_interval = expansion_interval
+        self.subsample_cap = subsample_cap
 
-        len_min_group = min([len(group_partition[key]) for key in group_partition.keys()])
+        len_min_group = max(min([len(group_partition[key]) for key in group_partition.keys()]), self.subsample_cap)
         self.indices = []
         for key in group_partition.keys():
-            group_indices = torch.randperm(len(group_partition[key]))[:len_min_group].tolist()
-            self.indices.extend([group_partition[key][i] for i in group_indices])
+            if len(group_partition[key]) < len_min_group:
+                self.indices.extend(group_partition[key])
+            else:
+                group_indices = torch.randperm(len(group_partition[key]))[:len_min_group].tolist()
+                self.indices.extend([group_partition[key][i] for i in group_indices])
 
         self.trainer = Trainer(
             trainset=trainset,
