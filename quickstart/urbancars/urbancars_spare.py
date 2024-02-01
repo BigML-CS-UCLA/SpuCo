@@ -121,6 +121,16 @@ def main(args):
         device=device,
         verbose=True
     )
+    
+    train_transform = transforms.Compose([
+                transforms.Resize(256),
+                transforms.RandomCrop(224),
+                transforms.RandomHorizontalFlip(),
+                transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+            ])
+
+    trainset=UrbanCars(root=args.root_dir, split="train", spurious_label_type=UrbanCarsSpuriousLabel.BOTH, verbose=True, transform=train_transform)
+    trainset.initialize()
 
     spare_train = SpareTrain(
         model=model,

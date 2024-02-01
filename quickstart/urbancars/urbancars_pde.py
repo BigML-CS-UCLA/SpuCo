@@ -11,10 +11,9 @@ from torch.optim import SGD
 
 from spuco.datasets import GroupLabeledDatasetWrapper, UrbanCars, UrbanCarsSpuriousLabel
 from spuco.evaluate import Evaluator
-from spuco.group_inference import EIIL
-from spuco.robust_train import GroupDRO
+from spuco.robust_train import PDE
 from spuco.models import model_factory
-from spuco.utils import Trainer, set_seed
+from spuco.utils import set_seed
 
 
 def main(args):
@@ -40,15 +39,21 @@ def main(args):
 
     device = torch.device(f"cuda:{args.gpu}" if torch.cuda.is_available() else "cpu")
     set_seed(args.seed)
+    
+    train_transform = transforms.Compose([
+            transforms.Resize(256),
+            transforms.RandomCrop(224),
+            transforms.RandomHorizontalFlip(),
+            transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+        ])
 
-    # Load the full dataset, and download it if necessary
     transform = transforms.Compose([
                 transforms.Resize(256),
                 transforms.CenterCrop(224),
                 transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
             ])
 
-    trainset=UrbanCars(root=args.root_dir, split="train", spurious_label_type=UrbanCarsSpuriousLabel.BOTH, verbose=True, transform=transform)
+    trainset=UrbanCars(root=args.root_dir, split="train", spurious_label_type=UrbanCarsSpuriousLabel.BOTH, verbose=True, transform=train_transform)
     trainset.initialize()
 
     print(f'Using {args.spurious_label_type} spurious labels for validation')
@@ -57,45 +62,8 @@ def main(args):
 
     testset=UrbanCars(root=args.root_dir, split="test", spurious_label_type=UrbanCarsSpuriousLabel.BOTH, verbose=True, transform=transform)
     testset.initialize()
-
-    model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
-
-    trainer = Trainer(
-        trainset=trainset,
-        model=model,
-        batch_size=args.batch_size,
-        optimizer=SGD(model.parameters(), lr=args.erm_lr, weight_decay=args.erm_weight_decay, momentum=args.momentum),
-        device=device,
-        verbose=True
-    )
-    trainer.train(num_epochs=args.infer_num_epochs)
-
-    logits = trainer.get_trainset_outputs()
-    eiil = EIIL(
-        logits=logits,
-        class_labels=trainset.labels,
-        num_steps=args.eiil_num_steps,
-        lr=args.eiil_lr,
-        device=device,
-        verbose=True
-    )
-
-    group_partition = eiil.infer_groups()
-
-    for key in sorted(group_partition.keys()):
-        print(key, len(group_partition[key]))
-    evaluator = Evaluator(
-        testset=trainset,
-        group_partition=group_partition,
-        group_weights=trainset.group_weights,
-        batch_size=args.batch_size,
-        model=model,
-        device=device,
-        verbose=True
-    )
-    evaluator.evaluate()
     
-    robust_trainset = GroupLabeledDatasetWrapper(trainset, group_partition)
+    robust_trainset = GroupLabeledDatasetWrapper(trainset, trainset.group_partition)
 
     # initialize the model and the trainer
     model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
@@ -122,17 +90,24 @@ def main(args):
         verbose=True
     )
 
-    group_dro = GroupDRO(
+    pde = PDE(
         model=model,
+        group_partition=trainset.group_partition,
         val_evaluator=valid_evaluator,
         num_epochs=args.num_epochs,
-        trainset=robust_trainset,
+        trainset=trainset,
         batch_size=args.batch_size,
-        optimizer=SGD(model.parameters(), lr=args.gdro_lr, weight_decay=args.gdro_weight_decay, momentum=args.momentum),
+        optimizer=SGD(model.parameters(), lr=args.lr, weight_decay=args.weight_decay, momentum=args.momentum),
         device=device,
-        verbose=True
+        verbose=True,
+        use_wandb=args.wandb,
+        warmup_epochs=args.warmup_epochs,
+        expansion_size=args.expansion_size,
+        expansion_interval=args.expansion_interval,
+        subsample_cap=args.subsample_cap
     )
-    group_dro.train()
+
+    pde.train()
 
     results = pd.DataFrame(index=[0])
 
@@ -167,7 +142,7 @@ def main(args):
         group_partition=valset.group_partition,
         group_weights=group_weights,
         batch_size=args.batch_size,
-        model=group_dro.best_model,
+        model=pde.best_model,
         device=device,
         verbose=True
     )
@@ -180,7 +155,7 @@ def main(args):
         group_partition=testset.group_partition,
         group_weights=trainset.group_weights,
         batch_size=args.batch_size,
-        model=group_dro.best_model,
+        model=pde.best_model,
         device=device,
         verbose=True
     )
@@ -195,7 +170,7 @@ def main(args):
         results = results.to_dict(orient="records")[0]
         wandb.log(results)
     else:
-        results["alg"] = "eiil"
+        results["alg"] = "pde"
         results["timestamp"] = pd.Timestamp.now()
         args_dict = vars(args)
         for key in args_dict.keys():
@@ -229,25 +204,23 @@ if __name__ == '__main__':
     parser.add_argument("--root_dir", type=str)
     parser.add_argument("--spurious_label_type", type=UrbanCarsSpuriousLabel, choices=list(UrbanCarsSpuriousLabel), default=UrbanCarsSpuriousLabel.BOTH)
     parser.add_argument("--label_noise", type=float, default=0.0)
-    parser.add_argument("--results_csv", type=str, default="results/urbancars_eiil.csv")
-    parser.add_argument("--stdout_file", type=str, default="urbancars_eiil.out")
+    parser.add_argument("--results_csv", type=str, default="results/urbancars_pde.csv")
+    parser.add_argument("--stdout_file", type=str, default="urbancars_pde.out")
     parser.add_argument("--arch", type=str, default="resnet50", choices=["resnet18", "resnet50", "cliprn50"])
     parser.add_argument("--batch_size", type=int, default=128)
     parser.add_argument("--num_epochs", type=int, default=300)
-    parser.add_argument("--erm_lr", type=float, default=1e-3)
-    parser.add_argument("--erm_weight_decay", type=float, default=1e-4)
-    parser.add_argument("--gdro_lr", type=float, default=1e-4)
-    parser.add_argument("--gdro_weight_decay", type=float, default=1e-4)
+    parser.add_argument("--lr", type=float, default=1e-4)
+    parser.add_argument("--weight_decay", type=float, default=1e-4)
     parser.add_argument("--momentum", type=float, default=0.9)
     parser.add_argument("--pretrained", action="store_true")
     parser.add_argument("--wandb", action="store_true")
     parser.add_argument("--wandb_project", type=str, default="spuco")
     parser.add_argument("--wandb_entity", type=str, default=None)
-    parser.add_argument("--wandb_run_name", type=str, default="urbancars_eiil")
+    parser.add_argument("--wandb_run_name", type=str, default="urbancars_pde")
 
-    parser.add_argument("--eiil_num_steps", type=int, default=20000)
-    parser.add_argument("--eiil_lr", type=float, default=0.01)
-    parser.add_argument("--infer_num_epochs", type=int, default=1)
-
+    parser.add_argument("--warmup_epochs", type=int, default=15)
+    parser.add_argument("--expansion_size", type=int, default=10)
+    parser.add_argument("--expansion_interval", type=int, default=10)
+    parser.add_argument("--subsample_cap", type=int, default=-1)
     args = parser.parse_args()
     main(args)

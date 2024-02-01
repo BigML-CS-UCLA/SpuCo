@@ -9,13 +9,13 @@ import torch
 import torchvision.transforms as transforms
 from torch.optim import SGD
 
-from spuco.datasets import GroupLabeledDatasetWrapper, UrbanCars, UrbanCarsSpuriousLabel
+from spuco.datasets import GroupLabeledDatasetWrapper, UrbanCars, UrbanCarsSpuriousLabel, SpuriousTargetDatasetWrapper
 from spuco.evaluate import Evaluator
-from spuco.group_inference import EIIL
+from spuco.group_inference import SSA
 from spuco.robust_train import GroupDRO
 from spuco.models import model_factory
-from spuco.utils import Trainer, set_seed
-
+from spuco.utils import set_seed
+import numpy as np
 
 def main(args):
     if args.wandb:
@@ -48,39 +48,37 @@ def main(args):
                 transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
             ])
 
-    trainset=UrbanCars(root=args.root_dir, split="train", spurious_label_type=UrbanCarsSpuriousLabel.BOTH, verbose=True, transform=transform)
+    trainset=UrbanCars(root=args.root_dir, split="train", spurious_label_type=UrbanCarsSpuriousLabel.BOTH_FLAT, verbose=True, transform=transform)
     trainset.initialize()
 
     print(f'Using {args.spurious_label_type} spurious labels for validation')
     valset=UrbanCars(root=args.root_dir, split="val", spurious_label_type=args.spurious_label_type, verbose=True, transform=transform)
     valset.initialize()
 
-    testset=UrbanCars(root=args.root_dir, split="test", spurious_label_type=UrbanCarsSpuriousLabel.BOTH, verbose=True, transform=transform)
+    testset=UrbanCars(root=args.root_dir, split="test", spurious_label_type=UrbanCarsSpuriousLabel.BOTH_FLAT, verbose=True, transform=transform)
     testset.initialize()
+    
+    # get the number of spuriously labels
+    num_spurious_labels = np.unique(valset.spurious).shape[0]
+    print(f"Number of spurious labels: {num_spurious_labels}")
 
-    model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
+    model = model_factory(args.arch, trainset[0][0].shape, num_spurious_labels, pretrained=args.pretrained).to(device)
 
-    trainer = Trainer(
-        trainset=trainset,
+    ssa = SSA(
+        spurious_unlabeled_dataset=trainset,
+        spurious_labeled_dataset=SpuriousTargetDatasetWrapper(valset, valset.spurious),
         model=model,
+        labeled_valset_size=args.inf_val_frac,
+        lr=args.inf_lr,
         batch_size=args.batch_size,
-        optimizer=SGD(model.parameters(), lr=args.erm_lr, weight_decay=args.erm_weight_decay, momentum=args.momentum),
-        device=device,
-        verbose=True
-    )
-    trainer.train(num_epochs=args.infer_num_epochs)
-
-    logits = trainer.get_trainset_outputs()
-    eiil = EIIL(
-        logits=logits,
-        class_labels=trainset.labels,
-        num_steps=args.eiil_num_steps,
-        lr=args.eiil_lr,
+        weight_decay=args.inf_weight_decay,
+        num_iters=args.inf_num_iters,
+        tau_g_min=0.95,
         device=device,
         verbose=True
     )
 
-    group_partition = eiil.infer_groups()
+    group_partition = ssa.infer_groups()
 
     for key in sorted(group_partition.keys()):
         print(key, len(group_partition[key]))
@@ -104,11 +102,11 @@ def main(args):
     if args.spurious_label_type == UrbanCarsSpuriousLabel.BG:
         group_weights = {}
         for key in valset.group_partition.keys():
-            group_weights[key] = trainset.group_weights[(key[0], (0, key[1]))] + trainset.group_weights[(key[0], (1, key[1]))]
+            group_weights[key] = trainset.group_weights[(key[0], key[1])] + trainset.group_weights[(key[0], key[1] + 2)]
     elif args.spurious_label_type == UrbanCarsSpuriousLabel.CO_OCCUR:
         group_weights = {}
         for key in valset.group_partition.keys():
-            group_weights[key] = trainset.group_weights[(key[0], (key[1], 0))] + trainset.group_weights[(key[0], (key[1], 1))]
+            group_weights[key] = trainset.group_weights[(key[0], key[1] * 2)] + trainset.group_weights[(key[0], key[1] * 2 + 1)]
     else:
         group_weights = trainset.group_weights
             
@@ -195,7 +193,7 @@ def main(args):
         results = results.to_dict(orient="records")[0]
         wandb.log(results)
     else:
-        results["alg"] = "eiil"
+        results["alg"] = "ssa"
         results["timestamp"] = pd.Timestamp.now()
         args_dict = vars(args)
         for key in args_dict.keys():
@@ -229,13 +227,11 @@ if __name__ == '__main__':
     parser.add_argument("--root_dir", type=str)
     parser.add_argument("--spurious_label_type", type=UrbanCarsSpuriousLabel, choices=list(UrbanCarsSpuriousLabel), default=UrbanCarsSpuriousLabel.BOTH)
     parser.add_argument("--label_noise", type=float, default=0.0)
-    parser.add_argument("--results_csv", type=str, default="results/urbancars_eiil.csv")
-    parser.add_argument("--stdout_file", type=str, default="urbancars_eiil.out")
+    parser.add_argument("--results_csv", type=str, default="results/urbancars_ssa.csv")
+    parser.add_argument("--stdout_file", type=str, default="urbancars_ssa.out")
     parser.add_argument("--arch", type=str, default="resnet50", choices=["resnet18", "resnet50", "cliprn50"])
     parser.add_argument("--batch_size", type=int, default=128)
     parser.add_argument("--num_epochs", type=int, default=300)
-    parser.add_argument("--erm_lr", type=float, default=1e-3)
-    parser.add_argument("--erm_weight_decay", type=float, default=1e-4)
     parser.add_argument("--gdro_lr", type=float, default=1e-4)
     parser.add_argument("--gdro_weight_decay", type=float, default=1e-4)
     parser.add_argument("--momentum", type=float, default=0.9)
@@ -243,11 +239,13 @@ if __name__ == '__main__':
     parser.add_argument("--wandb", action="store_true")
     parser.add_argument("--wandb_project", type=str, default="spuco")
     parser.add_argument("--wandb_entity", type=str, default=None)
-    parser.add_argument("--wandb_run_name", type=str, default="urbancars_eiil")
+    parser.add_argument("--wandb_run_name", type=str, default="urbancars_ssa")
 
-    parser.add_argument("--eiil_num_steps", type=int, default=20000)
-    parser.add_argument("--eiil_lr", type=float, default=0.01)
-    parser.add_argument("--infer_num_epochs", type=int, default=1)
+    parser.add_argument("--inf_lr", type=float, default=1e-3, choices=[1e-3, 1e-4, 1e-5])
+    parser.add_argument("--inf_weight_decay", type=float, default=1e-4, choices=[1e-4, 5e-4, 1e-2, 1e-1, 1.0])
+    parser.add_argument("--inf_momentum", type=float, default=0.9)
+    parser.add_argument("--inf_num_iters", type=int, default=1000)
+    parser.add_argument("--inf_val_frac", type=float, default=0.5)
 
     args = parser.parse_args()
     main(args)
