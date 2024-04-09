@@ -32,14 +32,25 @@ class GroupEvaluator:
         
         # TODO: Check if this breaks other things
         for key in inferred_group_partition.keys():
-            if key[0] == key[1]:
+            is_majority = True 
+            for second_key in inferred_group_partition.keys():
+                if key == second_key:
+                    continue
+                # If groupp from same class
+                if key[0] == second_key[0]:
+                    # And new group is larger, then this is not the majority group
+                    if len(inferred_group_partition[second_key]) > len(inferred_group_partition[key]):
+                        is_majority = False
+                        break
+                    
+            if is_majority:
                 self.inferred_group_partition[(key[0], "maj")] = deepcopy(inferred_group_partition[key])
             else:
                 min_group = (key[0], "min")
                 if min_group not in self.inferred_group_partition:
                     self.inferred_group_partition[min_group] = []
                 self.inferred_group_partition[min_group].extend(deepcopy(inferred_group_partition[key]))
-
+            
         if self.verbose:
             print("Inverting partitions")
         self.inferred_group_labels = GroupEvaluator.invert_group_partition(self.inferred_group_partition)
