@@ -37,7 +37,9 @@ dependencies = [
     "tqdm>=4.65.0",
     "scikit-learn>=0.20.0",
     "wilds>=2.0.0",
-    "transformers>=3.5.0"
+    "transformers>=3.5.0",
+    "umap-learn>=0.5.5",
+    "grad-cam>=1.5.0"
 ]
 
 [project.optional-dependencies]

@@ -8,3 +8,4 @@ dist
 **/results/
 **/*.log
 wandb
+**/*.out
