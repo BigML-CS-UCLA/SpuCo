@@ -7,7 +7,7 @@ import torch
 import torchvision.transforms as transforms
 from torch.optim import SGD
 
-from spuco.datasets import GroupLabeledDatasetWrapper, SpuCoAnimals, SpuCoDogs, SpuCoBirds
+from spuco.datasets import GroupLabeledDatasetWrapper, SpuCoAnimals, SpuCoDogs, SpuCoAnimals
 from spuco.evaluate import Evaluator
 from spuco.robust_train import GroupDRO
 from spuco.models import model_factory
@@ -19,8 +19,8 @@ parser.add_argument("--seed", type=int, default=0)
 parser.add_argument("--root_dir", type=str, default="/data")
 parser.add_argument("--label_noise", type=float, default=0.0)
 parser.add_argument("--results_csv", type=str, default="results/spucoanimals_groupdro.csv")
-
-parser.add_argument("--arch", type=str, default="resnet18")
+parser.add_argument("--arch", type=str, default="resnet18", choices=["resnet18", "resnet50", "cliprn50"])
+parser.add_argument("--only_train_projection", action="store_true", help="only train projection, applicable only for cliprn50")
 parser.add_argument("--batch_size", type=int, default=128)
 parser.add_argument("--num_epochs", type=int, default=100)
 parser.add_argument("--lr", type=float, default=1e-4)
@@ -38,7 +38,7 @@ transform = transforms.Compose([
             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
         ])
 
-trainset = SpuCoBirds(
+trainset = SpuCoAnimals(
     root=args.root_dir,
     label_noise=args.label_noise,
     split="train",
@@ -46,7 +46,7 @@ trainset = SpuCoBirds(
 )
 trainset.initialize()
 
-valset = SpuCoBirds(
+valset = SpuCoAnimals(
     root=args.root_dir,
     label_noise=args.label_noise,
     split="val",
@@ -54,7 +54,7 @@ valset = SpuCoBirds(
 )
 valset.initialize()
 
-testset = SpuCoBirds(
+testset = SpuCoAnimals(
     root=args.root_dir,
     label_noise=args.label_noise,
     split="test",
@@ -65,7 +65,12 @@ testset.initialize()
 robust_trainset = GroupLabeledDatasetWrapper(trainset, trainset.group_partition)
 
 model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
-
+if args.arch == "cliprn50" and args.only_train_projection:
+    for param in model.backbone.parameters():
+        param.requires_grad = False
+    for param in model.backbone._modules['attnpool'].parameters():
+        param.requires_grad = True
+        
 valid_evaluator = Evaluator(
     testset=valset,
     group_partition=valset.group_partition,

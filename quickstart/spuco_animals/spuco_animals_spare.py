@@ -10,7 +10,7 @@ from sklearn.metrics import f1_score
 from torch.optim import SGD
 
 from spuco.datasets import SpuCoAnimals
-from spuco.evaluate import Evaluator
+from spuco.evaluate import Evaluator, GroupEvaluator
 from spuco.group_inference import SpareInference
 from spuco.robust_train import SpareTrain
 from spuco.models import model_factory
@@ -23,7 +23,8 @@ parser.add_argument("--root_dir", type=str, default="/data")
 parser.add_argument("--label_noise", type=float, default=0.0)
 parser.add_argument("--results_csv", type=str, default="results/spucoanimals_spare.csv")
 
-parser.add_argument("--arch", type=str, default="resnet18")
+parser.add_argument("--arch", type=str, default="resnet18", choices=["resnet18", "resnet50", "cliprn50"])
+parser.add_argument("--only_train_projection", action="store_true", help="only train projection, applicable only for cliprn50")
 parser.add_argument("--batch_size", type=int, default=128)
 parser.add_argument("--num_epochs", type=int, default=100)
 parser.add_argument("--lr", type=float, default=1e-4)
@@ -75,7 +76,11 @@ testset.initialize()
 print(trainset.group_partition.keys())
 
 model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
-
+if args.arch == "cliprn50" and args.only_train_projection:
+    for param in model.backbone.parameters():
+        param.requires_grad = False
+    for param in model.backbone._modules['attnpool'].parameters():
+        param.requires_grad = True
 
 trainer = Trainer(
     trainset=trainset,
@@ -96,7 +101,8 @@ spare_infer = SpareInference(
     num_clusters=args.num_clusters,
     device=device,
     high_sampling_power=args.high_sampling_power,
-    verbose=True
+    verbose=True,
+    num_clusters=2
 )
 
 group_partition = spare_infer.infer_groups()
@@ -113,8 +119,20 @@ evaluator = Evaluator(
 )
 evaluator.evaluate()
 
+# Log evaluation of groups
+group_eval = GroupEvaluator(group_partition, trainset.group_partition, 4)
+print("group_infer_acc:", group_eval.evaluate_accuracy())
+print("group_infer_precision:", group_eval.evaluate_precision())
+print("group_infer_recall:", group_eval.evaluate_recall())
+
 # reinstantiate the model
 model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
+if args.arch == "cliprn50" and args.only_train_projection:
+    for param in model.backbone.parameters():
+        param.requires_grad = False
+    for param in model.backbone._modules['attnpool'].parameters():
+        param.requires_grad = True
+        
 valid_evaluator = Evaluator(
     testset=valset,
     group_partition=valset.group_partition,
