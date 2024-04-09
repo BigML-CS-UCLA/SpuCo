@@ -10,7 +10,7 @@ import torchvision.transforms as transforms
 from torch.optim import SGD
 
 from spuco.datasets import GroupLabeledDatasetWrapper, SpuCoSun
-from spuco.evaluate import Evaluator
+from spuco.evaluate import Evaluator, GroupEvaluator
 from spuco.group_inference import SpareInference
 from spuco.robust_train import SpareTrain
 from spuco.models import model_factory
@@ -40,7 +40,7 @@ parser.add_argument("--wandb_entity", type=str, default=None)
 parser.add_argument("--wandb_run_name", type=str, default="spuco_sun_spare")
 
 parser.add_argument("--infer_num_epochs", type=int, default=1)
-parser.add_argument("--num_clusters", type=int, default=5, choices=[2, 5])
+parser.add_argument("--num_clusters", type=int, default=4)
 parser.add_argument("--high_sampling_power", type=int, default=2)
 
 args = parser.parse_args()
@@ -108,11 +108,11 @@ trainer = Trainer(
     verbose=True
 )
 trainer.train(num_epochs=args.infer_num_epochs)
-
+print("DEBUG: Clustering outputs.")
 logits = trainer.get_trainset_outputs()
 predictions = torch.nn.functional.softmax(logits, dim=1)
 spare_infer = SpareInference(
-    Z=predictions,
+    logits=predictions,
     class_labels=trainset.labels,
     num_clusters=args.num_clusters,
     device=device,
@@ -122,7 +122,7 @@ spare_infer = SpareInference(
 
 group_partition = spare_infer.infer_groups()
 sampling_powers = spare_infer.sampling_powers
-
+print("Evaluating inferred groups.")
 for key in sorted(group_partition.keys()):
     print(key, len(group_partition[key]))
 evaluator = Evaluator(
@@ -135,6 +135,11 @@ evaluator = Evaluator(
     verbose=True
 )
 evaluator.evaluate()
+
+group_eval = GroupEvaluator(group_partition, trainset.group_partition, 4, verbose=True)
+print("group_eval_acc:", group_eval.evaluate_accuracy())
+print("group_eval_precision:", group_eval.evaluate_precision())
+print("group_eval_recall:", group_eval.evaluate_recall())
 
 robust_trainset = GroupLabeledDatasetWrapper(trainset, group_partition)
 

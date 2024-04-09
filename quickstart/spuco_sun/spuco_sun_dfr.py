@@ -33,6 +33,7 @@ parser.add_argument("--lr", type=float, default=1e-3, choices=[1e-3, 1e-4, 1e-5]
 parser.add_argument("--weight_decay", type=float, default=1e-4, choices=[1e-4, 5e-4, 1e-2, 1e-1, 1.0])
 parser.add_argument("--momentum", type=float, default=0.9)
 parser.add_argument("--pretrained", action="store_true")
+parser.add_argument("--skip_erm", action="store_true")
 parser.add_argument("--wandb", action="store_true")
 parser.add_argument("--wandb_project", type=str, default="spuco")
 parser.add_argument("--wandb_entity", type=str, default=None)
@@ -94,27 +95,29 @@ testset.initialize()
 
 # initialize the model and the trainer
 model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
-erm_valid_evaluator = Evaluator(
-    testset=valset,
-    group_partition=valset.group_partition,
-    group_weights=valset.group_weights,
-    batch_size=args.batch_size,
-    model=model,
-    device=device,
-    verbose=True
-)
-erm = ERM(
-    model=model,
-    val_evaluator=erm_valid_evaluator,
-    num_epochs=args.num_epochs,
-    trainset=trainset,
-    batch_size=args.batch_size,
-    optimizer=SGD(model.parameters(), lr=args.lr, weight_decay=args.weight_decay, momentum=args.momentum),
-    device=device,
-    verbose=True,
-    use_wandb=args.wandb
-)
-erm.train()
+
+if not args.skip_erm:
+    erm_valid_evaluator = Evaluator(
+        testset=valset,
+        group_partition=valset.group_partition,
+        group_weights=valset.group_weights,
+        batch_size=args.batch_size,
+        model=model,
+        device=device,
+        verbose=True
+    )
+    erm = ERM(
+        model=model,
+        val_evaluator=erm_valid_evaluator,
+        num_epochs=args.num_epochs,
+        trainset=trainset,
+        batch_size=args.batch_size,
+        optimizer=SGD(model.parameters(), lr=args.lr, weight_decay=args.weight_decay, momentum=args.momentum),
+        device=device,
+        verbose=True,
+        use_wandb=args.wandb
+    )
+    erm.train()
 
 group_labeled_set = GroupLabeledDatasetWrapper(dataset=valset, group_partition=valset.group_partition)
 

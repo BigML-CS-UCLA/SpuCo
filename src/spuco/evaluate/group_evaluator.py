@@ -29,6 +29,8 @@ class GroupEvaluator:
         if self.verbose:
             print("Merging inferred group partition into majority / minority groups only")
         self.inferred_group_partition = {}
+        
+        # TODO: Check if this breaks other things
         for key in inferred_group_partition.keys():
             if key[0] == key[1]:
                 self.inferred_group_partition[(key[0], "maj")] = deepcopy(inferred_group_partition[key])

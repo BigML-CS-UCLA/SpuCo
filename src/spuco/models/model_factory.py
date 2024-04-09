@@ -28,7 +28,7 @@ class SupportedModels(Enum):
     ResNet18 = "resnet18"
     ResNet50 = "resnet50"
     CLIPRN50 = "cliprn50"
-
+    
 def model_factory(arch: str, input_shape: Tuple[int, int, int], num_classes: int, pretrained: bool = True):
     """
     Factory function to create a SpuCoModel based on the specified architecture.
