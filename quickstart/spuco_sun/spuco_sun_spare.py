@@ -26,6 +26,7 @@ parser.add_argument("--label_noise", type=float, default=0.0)
 parser.add_argument("--results_csv", type=str, default="/data/spucosun/results/spare.csv")
 parser.add_argument("--stdout_file", type=str, default="spuco_sun_spare.out")
 parser.add_argument("--arch", type=str, default="resnet18", choices=["resnet18", "resnet50", "cliprn50"])
+parser.add_argument("--only_train_projection", action="store_true", help="only train projection, applicable only for cliprn50")
 parser.add_argument("--batch_size", type=int, default=128)
 parser.add_argument("--num_epochs", type=int, default=40)
 parser.add_argument("--erm_lr", type=float, default=1e-3)
@@ -98,6 +99,11 @@ testset = SpuCoSun(
 testset.initialize()
 
 model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
+if args.arch == "cliprn50" and args.only_train_projection:
+    for param in model.backbone.parameters():
+        param.requires_grad = False
+    for param in model.backbone._modules['attnpool'].parameters():
+        param.requires_grad = True
 
 trainer = Trainer(
     trainset=trainset,
@@ -145,6 +151,12 @@ robust_trainset = GroupLabeledDatasetWrapper(trainset, group_partition)
 
 # initialize the model and the trainer
 model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
+if args.arch == "cliprn50" and args.only_train_projection:
+    for param in model.backbone.parameters():
+        param.requires_grad = False
+    for param in model.backbone._modules['attnpool'].parameters():
+        param.requires_grad = True
+        
 valid_evaluator = Evaluator(
     testset=valset,
     group_partition=valset.group_partition,
@@ -184,6 +196,10 @@ spare_train = SpareTrain(
 spare_train.train()
 
 results = pd.DataFrame(index=[0])
+
+results["group_eval_acc"] = group_eval.evaluate_accuracy()
+results["group_eval_precision"] = group_eval.evaluate_precision()
+results["group_eval_recall"] = group_eval.evaluate_recall()
 
 evaluator = Evaluator(
     testset=valset,
