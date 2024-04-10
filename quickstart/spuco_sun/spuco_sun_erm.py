@@ -145,7 +145,7 @@ evaluator = Evaluator(
     group_partition=valset.group_partition,
     group_weights=trainset.group_weights,
     batch_size=args.batch_size,
-    model=spare_train.best_model,
+    model=erm.best_model,
     device=device,
     verbose=True
 )
