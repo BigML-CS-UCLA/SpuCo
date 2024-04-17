@@ -4,7 +4,7 @@ from typing import Dict, List, Tuple
 import numpy as np
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader, Dataset, SubsetRandomSampler
+from torch.utils.data import DataLoader, Dataset, Subset
 from tqdm import tqdm
 
 from spuco.datasets import SpuriousTargetDatasetWrapper
@@ -70,8 +70,7 @@ class Evaluator:
 
         # Group-Wise DataLoader
         for key in group_partition.keys():
-            sampler = SubsetRandomSampler(group_partition[key])
-            self.testloaders[key] = DataLoader(testset, batch_size=batch_size, sampler=sampler, num_workers=4, pin_memory=True, shuffle=False)
+            self.testloaders[key] = DataLoader(Subset(testset, group_partition[key]), batch_size=batch_size, num_workers=4, pin_memory=True, shuffle=False)
         
         # SpuriousTarget Dataloader
         core_labels = []
