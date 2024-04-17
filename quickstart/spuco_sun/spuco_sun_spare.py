@@ -39,7 +39,6 @@ parser.add_argument("--wandb", action="store_true")
 parser.add_argument("--wandb_project", type=str, default="spuco")
 parser.add_argument("--wandb_entity", type=str, default=None)
 parser.add_argument("--wandb_run_name", type=str, default="spuco_sun_spare")
-
 parser.add_argument("--infer_num_epochs", type=int, default=1)
 parser.add_argument("--num_clusters", type=int, default=4)
 parser.add_argument("--high_sampling_power", type=int, default=2)
@@ -143,9 +142,12 @@ evaluator = Evaluator(
 evaluator.evaluate()
 
 group_eval = GroupEvaluator(group_partition, trainset.group_partition, 4, verbose=True)
-print("group_eval_acc:", group_eval.evaluate_accuracy())
-print("group_eval_precision:", group_eval.evaluate_precision())
-print("group_eval_recall:", group_eval.evaluate_recall())
+group_acc = group_eval.evaluate_accuracy()
+group_precision = group_eval.evaluate_precision()
+group_recall = group_eval.evaluate_recall()
+print("group_eval_acc:", group_acc)
+print("group_eval_precision:", group_precision)
+print("group_eval_recall:", group_recall)
 
 robust_trainset = GroupLabeledDatasetWrapper(trainset, group_partition)
 
@@ -196,10 +198,11 @@ spare_train = SpareTrain(
 spare_train.train()
 
 results = pd.DataFrame(index=[0])
-
-results["group_eval_acc"] = group_eval.evaluate_accuracy()
-results["group_eval_precision"] = group_eval.evaluate_precision()
-results["group_eval_recall"] = group_eval.evaluate_recall()
+results["group_eval_acc"] = group_acc
+results["avg_group_eval_precision"] = group_precision[0]
+results["min_group_eval_precision"] = group_precision[1]
+results["avg_group_eval_recall"] = group_recall[0]
+results["min_group_eval_recall"] = group_recall[1]
 
 evaluator = Evaluator(
     testset=valset,
