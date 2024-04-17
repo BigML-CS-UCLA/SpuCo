@@ -43,7 +43,7 @@ class BaseRobustTrain(ABC):
             train_avg_acc, train_avg_loss = self.train_epoch(epoch)
             if self.val_evaluator is not None:
                 self.val_evaluator.evaluate()
-                if self.val_evaluator.worst_group_accuracy[1] >= self._best_wg_acc:
+                if self.val_evaluator.worst_group_accuracy[1] > self._best_wg_acc:
                     self._best_wg_acc = self.val_evaluator.worst_group_accuracy[1]
                     self._avg_acc_at_best_wg_acc = self.val_evaluator.average_accuracy
                     self._best_model = deepcopy(self.trainer.model)
