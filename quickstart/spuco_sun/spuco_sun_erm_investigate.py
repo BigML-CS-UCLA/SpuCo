@@ -101,7 +101,16 @@ if args.arch == "cliprn50" and args.only_train_projection:
     for param in model.backbone._modules['attnpool'].parameters():
         param.requires_grad = True
 
-erm_valid_evaluator = Evaluator(
+erm_val_evaluator = Evaluator(
+    testset=valset,
+    group_partition=valset.group_partition,
+    group_weights=valset.group_weights,
+    batch_size=args.batch_size,
+    model=model,
+    device=device,
+    verbose=True
+)
+erm_test_evaluator = Evaluator(
     testset=testset,
     group_partition=testset.group_partition,
     group_weights=testset.group_weights,
@@ -112,7 +121,6 @@ erm_valid_evaluator = Evaluator(
 )
 erm = ERM(
     model=model,
-    val_evaluator=erm_valid_evaluator,
     num_epochs=args.num_epochs,
     trainset=trainset,
     batch_size=args.batch_size,
@@ -121,25 +129,14 @@ erm = ERM(
     verbose=True,
     use_wandb=args.wandb
 )
-erm.train()
-
-results = pd.DataFrame(index=[0])
-
-evaluator = Evaluator(
-    testset=valset,
-    group_partition=valset.group_partition,
-    group_weights=trainset.group_weights,
-    batch_size=args.batch_size,
-    model=model,
-    device=device,
-    verbose=True
-)
-evaluator.evaluate()
-results["val_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
-results[f"val_wg_acc"] = evaluator.worst_group_accuracy[1]
-results[f"val_avg_acc"] = evaluator.average_accuracy
-
-
+for epoch in range(args.num_epochs):
+    erm.train_epoch(epoch)
+    print(f"Validation Accuracy at Epoch {epoch}")
+    erm_val_evaluator.evaluate()
+    print(f"Test Accuracy at Epoch {epoch}")
+    erm_test_evaluator.evaluate()
+    
+print("Final Test Acc")
 evaluator = Evaluator(
     testset=testset,
     group_partition=testset.group_partition,
@@ -150,47 +147,10 @@ evaluator = Evaluator(
     verbose=True
 )
 evaluator.evaluate()
-results["test_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
-results[f"test_wg_acc"] = evaluator.worst_group_accuracy[1]
-results[f"test_avg_acc"] = evaluator.average_accuracy
-
-evaluator = Evaluator(
-    testset=testset,
-    group_partition=testset.group_partition,
-    group_weights=trainset.group_weights,
-    batch_size=args.batch_size,
-    model=erm.best_model,
-    device=device,
-    verbose=True
-)
-evaluator.evaluate()
-results["test_early_stopping_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
-results[f"test_early_stopping_wg_acc"] = evaluator.worst_group_accuracy[1]
-results[f"test_early_stopping_avg_acc"] = evaluator.average_accuracy
-
-print(results)
 
 if args.wandb:
-    # convert the results to a dictionary
-    results = results.to_dict(orient="records")[0]
-    wandb.log(results)
+    pass
 else:
-    results["alg"] = "erm"
-    results["timestamp"] = pd.Timestamp.now()
-    args_dict = vars(args)
-    for key in args_dict.keys():
-        results[key] = args_dict[key]
-
-    if os.path.exists(args.results_csv):
-        results_df = pd.read_csv(args.results_csv)
-    else:
-        results_df = pd.DataFrame()
-
-    results_df = pd.concat([results_df, results], ignore_index=True)
-    results_df.to_csv(args.results_csv, index=False)
-
-    print('Results saved to', args.results_csv)
-
     # close the stdout file
     sys.stdout.close()
 
