@@ -10,6 +10,7 @@ import torchvision.transforms as transforms
 from torch.optim import SGD
 from spuco.datasets import GroupLabeledDatasetWrapper
 from spuco.evaluate import Evaluator
+from spuco.evaluate.group_evaluator import GroupEvaluator
 from spuco.group_inference import JTTInference
 from spuco.robust_train import CustomSampleERM
 from spuco.models import model_factory
@@ -26,6 +27,7 @@ parser.add_argument("--label_noise", type=float, default=0.0)
 parser.add_argument("--results_csv", type=str, default="/data/spucosun/results/jtt.csv")
 parser.add_argument("--stdout_file", type=str, default="spuco_sun_jtt.out")
 parser.add_argument("--arch", type=str, default="resnet18", choices=["resnet18", "resnet50", "cliprn50"])
+parser.add_argument("--only_train_projection", action="store_true", help="only train projection, applicable only for cliprn50")
 parser.add_argument("--batch_size", type=int, default=128)
 parser.add_argument("--num_epochs", type=int, default=40)
 parser.add_argument("--lr", type=float, default=1e-3, choices=[1e-3, 1e-4, 1e-5])
@@ -37,6 +39,8 @@ parser.add_argument("--wandb_project", type=str, default="spuco")
 parser.add_argument("--wandb_entity", type=str, default=None)
 parser.add_argument("--wandb_run_name", type=str, default="spuco_sun_jtt")
 parser.add_argument("--upsample_factor", type=int, default=100, choices=[50,100])
+parser.add_argument("--infer_num_epochs", type=int, default=1)
+
 args = parser.parse_args()
 
 if args.wandb:
@@ -96,7 +100,12 @@ testset.initialize()
 
 # initialize the model and the trainer
 model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
-
+if args.arch == "cliprn50" and args.only_train_projection:
+    for param in model.backbone.parameters():
+        param.requires_grad = False
+    for param in model.backbone._modules['attnpool'].parameters():
+        param.requires_grad = True
+        
 trainer = Trainer(
     trainset=trainset,
     model=model,
@@ -106,7 +115,7 @@ trainer = Trainer(
     verbose=True
 )
 
-trainer.train(num_epochs=args.num_epochs) 
+trainer.train(num_epochs=args.infer_num_epochs) 
 
 # currently, infer_num_epochs = num_epochs
 
@@ -144,6 +153,14 @@ evaluator.evaluate()
 
 robust_trainset = GroupLabeledDatasetWrapper(trainset, group_partition)
 
+group_eval = GroupEvaluator(group_partition, trainset.group_partition, 4, verbose=True)
+group_acc = group_eval.evaluate_accuracy()
+group_precision = group_eval.evaluate_precision()
+group_recall = group_eval.evaluate_recall()
+print("group_eval_acc:", group_acc)
+print("group_eval_precision:", group_precision)
+print("group_eval_recall:", group_recall)
+
 val_evaluator = Evaluator(
     testset=valset,
     group_partition=valset.group_partition,
@@ -161,7 +178,12 @@ indices.extend(group_partition[(0,1)] * args.upsample_factor)
 print("Training on", len(indices), "samples")
 
 model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
-
+if args.arch == "cliprn50" and args.only_train_projection:
+    for param in model.backbone.parameters():
+        param.requires_grad = False
+    for param in model.backbone._modules['attnpool'].parameters():
+        param.requires_grad = True
+        
 jtt_train = CustomSampleERM(
     model=model,
     num_epochs=args.num_epochs,
@@ -176,6 +198,11 @@ jtt_train = CustomSampleERM(
 jtt_train.train()
 
 results = pd.DataFrame(index=[0])
+results["group_eval_acc"] = group_acc
+results["avg_group_eval_precision"] = group_precision[0]
+results["min_group_eval_precision"] = group_precision[1]
+results["avg_group_eval_recall"] = group_recall[0]
+results["min_group_eval_recall"] = group_recall[1]
 
 evaluator = Evaluator(
     testset=valset,

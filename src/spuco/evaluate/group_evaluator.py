@@ -2,6 +2,7 @@ from copy import deepcopy
 from typing import Dict, List, Tuple, Any, Optional
 import numpy as np 
 
+# FIXME: What if there are more than two groups in inferred group partition, but it is still not class-wise
 class GroupEvaluator:
     def __init__(
         self,
@@ -16,6 +17,8 @@ class GroupEvaluator:
         
         if self.verbose:
             print("Merging true group partition into majority / minority groups only")
+            
+        # Merging true group partition into min and maj
         self.true_group_partition = {}
         for key in true_group_partition.keys():
             if key[0] == key[1]:
@@ -31,26 +34,59 @@ class GroupEvaluator:
         self.inferred_group_partition = {}
         
         # TODO: Check if this breaks other things
-        for key in inferred_group_partition.keys():
-            is_majority = True 
-            for second_key in inferred_group_partition.keys():
-                if key == second_key:
-                    continue
-                # If groupp from same class
-                if key[0] == second_key[0]:
-                    # And new group is larger, then this is not the majority group
-                    if len(inferred_group_partition[second_key]) > len(inferred_group_partition[key]):
-                        is_majority = False
-                        break
-                    
-            if is_majority:
-                self.inferred_group_partition[(key[0], "maj")] = deepcopy(inferred_group_partition[key])
-            else:
-                min_group = (key[0], "min")
-                if min_group not in self.inferred_group_partition:
-                    self.inferred_group_partition[min_group] = []
-                self.inferred_group_partition[min_group].extend(deepcopy(inferred_group_partition[key]))
+        
+        
+        # Merging / Processing inferred group partition
+        if len(inferred_group_partition) <= 2:
+            if self.verbose:
+                print("Inferred groups are global. Processing...")
+            group_keys = list(inferred_group_partition.keys())
             
+            min_group_key = None 
+            maj_group_key = None 
+            if len(group_keys) == 1:
+                if self.verbose:
+                    print("WARNING: Single group found. Inferred group partition useless.")
+                maj_group_key = group_keys[0]
+            else:
+                if len(inferred_group_partition[group_keys[0]]) > len(inferred_group_partition[group_keys[0]]):
+                    maj_group_key = group_keys[0]
+                    min_group_key = group_keys[1]
+                else:
+                    maj_group_key = group_keys[1]
+                    min_group_key = group_keys[0]
+                    
+            # Split up partition into per-class partition
+            for key in self.true_group_partition.keys():
+                if key[1] == "min":
+                    continue
+                class_partition = np.union1d(self.true_group_partition[key], self.true_group_partition[key[0], "min"])
+                self.inferred_group_partition[(key[0], "maj")] = np.intersect1d(class_partition, inferred_group_partition[maj_group_key])
+                if min_group_key is not None:
+                    self.inferred_group_partition[(key[0], "min")] = np.intersect1d(class_partition, inferred_group_partition[min_group_key])
+        else:
+            if self.verbose:
+                print("Inferred groups are per-class. Processing...")
+            for key in inferred_group_partition.keys():
+                is_majority = True 
+                for second_key in inferred_group_partition.keys():
+                    if key == second_key:
+                        continue
+                    # If group from same class
+                    if key[0] == second_key[0]:
+                        # And new group is larger, then this is not the majority group
+                        if len(inferred_group_partition[second_key]) > len(inferred_group_partition[key]):
+                            is_majority = False
+                            break
+                        
+                if is_majority:
+                    self.inferred_group_partition[(key[0], "maj")] = deepcopy(inferred_group_partition[key])
+                else:
+                    min_group = (key[0], "min")
+                    if min_group not in self.inferred_group_partition:
+                        self.inferred_group_partition[min_group] = []
+                    self.inferred_group_partition[min_group].extend(deepcopy(inferred_group_partition[key]))
+                
         if self.verbose:
             print("Inverting partitions")
         self.inferred_group_labels = GroupEvaluator.invert_group_partition(self.inferred_group_partition)

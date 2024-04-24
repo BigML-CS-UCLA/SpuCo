@@ -140,16 +140,15 @@ evaluator = Evaluator(
     verbose=True
 )
 evaluator.evaluate()
+robust_trainset = GroupLabeledDatasetWrapper(trainset, group_partition)
 
-group_eval = GroupEvaluator(group_partition, trainset.group_partition, 4)
+group_eval = GroupEvaluator(group_partition, trainset.group_partition, 4, verbose=True)
 group_acc = group_eval.evaluate_accuracy()
 group_precision = group_eval.evaluate_precision()
 group_recall = group_eval.evaluate_recall()
 print("group_eval_acc:", group_acc)
 print("group_eval_precision:", group_precision)
 print("group_eval_recall:", group_recall)
-
-robust_trainset = GroupLabeledDatasetWrapper(trainset, group_partition)
 
 # initialize the model and the trainer
 model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
