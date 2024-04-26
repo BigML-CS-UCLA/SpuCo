@@ -47,6 +47,8 @@ if args.wandb:
     del args.results_csv
 else:
     # check if the stdout file already exists, and if want to overwrite it
+    DT_STRING = "".join(str(datetime.now()).split())
+    args.stdout_file = f"{DT_STRING}-{args.stdout_file}"
     if os.path.exists(args.stdout_file):
         print(f"stdout file {args.stdout_file} already exists, overwrite? (y/n)")
         response = input()
@@ -63,6 +65,14 @@ set_seed(args.seed)
 
 
 # Load the full dataset, and download it if necessary
+train_transform = transforms.Compose([
+                transforms.Resize(256),
+                transforms.RandomCrop(224),
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+            ])
+
 transform = transforms.Compose([
             transforms.Resize(256),
             transforms.CenterCrop(224),
@@ -77,7 +87,7 @@ dataset = get_dataset(dataset="celebA", download=False, root_dir="/home/data")
 
 train_data = dataset.get_subset(
         "train",
-        transform=transform
+        transform=train_transform
     )
 val_data = dataset.get_subset(
     "val",

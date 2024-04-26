@@ -14,8 +14,9 @@ from spuco.evaluate import Evaluator
 from spuco.robust_train import ERM
 from spuco.models import model_factory
 from spuco.utils import set_seed
-from spuco.datasets import GroupLabeledDatasetWrapper, SpuCoAnimals
-
+from spuco.datasets import SpuCoSun
+from spuco.datasets import GroupLabeledDatasetWrapper, WILDSDatasetWrapper
+from wilds import get_dataset
 
 # parse the command line arguments
 parser = argparse.ArgumentParser()
@@ -23,8 +24,8 @@ parser.add_argument("--gpu", type=int, default=0)
 parser.add_argument("--seed", type=int, default=0)
 parser.add_argument("--root_dir", type=str, default="/data")
 parser.add_argument("--label_noise", type=float, default=0.0)
-parser.add_argument("--results_csv", type=str, default="/data/spucoanimals/results/dfr.csv")
-parser.add_argument("--stdout_file", type=str, default="spuco_animals_dfr.out")
+parser.add_argument("--results_csv", type=str, default="/data/waterbirds/results/dfr.csv")
+parser.add_argument("--stdout_file", type=str, default="waterbirds_dfr.out")
 parser.add_argument("--arch", type=str, default="resnet18", choices=["resnet18", "resnet50", "cliprn50"])
 parser.add_argument("--batch_size", type=int, default=128)
 parser.add_argument("--num_epochs", type=int, default=40)
@@ -36,7 +37,7 @@ parser.add_argument("--skip_erm", action="store_true")
 parser.add_argument("--wandb", action="store_true")
 parser.add_argument("--wandb_project", type=str, default="spuco")
 parser.add_argument("--wandb_entity", type=str, default=None)
-parser.add_argument("--wandb_run_name", type=str, default="spuco_animals_dfr")
+parser.add_argument("--wandb_run_name", type=str, default="waterbirds_dfr")
 args = parser.parse_args()
 
 if args.wandb:
@@ -63,39 +64,41 @@ device = torch.device(f"cuda:{args.gpu}" if torch.cuda.is_available() else "cpu"
 set_seed(args.seed)
 
 # Load the full dataset, and download it if necessary
+
+train_transform = transforms.Compose([
+                transforms.Resize(256),
+                transforms.RandomCrop(224),
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+            ])
+
 transform = transforms.Compose([
             transforms.Resize(256),
-            transforms.RandomCrop(224),
-            transforms.RandomHorizontalFlip(),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
         ])
-
 ######
 # ERM #
 ######
-trainset = SpuCoAnimals(
-    root=args.root_dir,
-    label_noise=args.label_noise,
-    split="train",
-    transform=transform,
+dataset = get_dataset(dataset="waterbirds", download=True, root_dir=args.root_dir)
+train_data = dataset.get_subset(
+    "train",
+    transform=train_transform
 )
-trainset.initialize()
+val_data = dataset.get_subset(
+    "val",
+    transform=transform
+)
+test_data = dataset.get_subset(
+    "test",
+    transform=transform
+)
 
-valset = SpuCoAnimals(
-    root=args.root_dir,
-    label_noise=args.label_noise,
-    split="val",
-    transform=transform,
-)
-valset.initialize()
-
-testset = SpuCoAnimals(
-    root=args.root_dir,
-    label_noise=args.label_noise,
-    split="test",
-    transform=transform,
-)
-testset.initialize()
+trainset = WILDSDatasetWrapper(dataset=train_data, metadata_spurious_label="background", verbose=True)
+valset = WILDSDatasetWrapper(dataset=val_data, metadata_spurious_label="background", verbose=True)
+testset = WILDSDatasetWrapper(dataset=test_data, metadata_spurious_label="background", verbose=True)
 
 # initialize the model and the trainer
 model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
