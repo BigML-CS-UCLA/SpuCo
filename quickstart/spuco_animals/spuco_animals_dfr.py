@@ -8,14 +8,14 @@ import pandas as pd
 import torch
 import torchvision.transforms as transforms
 from torch.optim import SGD
+from spuco.last_layer_retrain import DFR
 
 from spuco.evaluate import Evaluator
-from spuco.group_inference import SSA
-from spuco.robust_train import GroupDRO
+from spuco.robust_train import ERM
 from spuco.models import model_factory
 from spuco.utils import set_seed
-from spuco.datasets import WILDSDatasetWrapper, GroupLabeledDatasetWrapper, SpuriousTargetDatasetWrapper
-from wilds import get_dataset
+from spuco.datasets import GroupLabeledDatasetWrapper, SpuCoAnimals
+
 
 # parse the command line arguments
 parser = argparse.ArgumentParser()
@@ -23,8 +23,8 @@ parser.add_argument("--gpu", type=int, default=0)
 parser.add_argument("--seed", type=int, default=0)
 parser.add_argument("--root_dir", type=str, default="/data")
 parser.add_argument("--label_noise", type=float, default=0.0)
-parser.add_argument("--results_csv", type=str, default="/data/waterbirds/results/ssa.csv")
-parser.add_argument("--stdout_file", type=str, default="waterbirds_ssa.out")
+parser.add_argument("--results_csv", type=str, default="/data/spucoanimals/results/dfr.csv")
+parser.add_argument("--stdout_file", type=str, default="spuco_animals_dfr.out")
 parser.add_argument("--arch", type=str, default="resnet18", choices=["resnet18", "resnet50", "cliprn50"])
 parser.add_argument("--batch_size", type=int, default=128)
 parser.add_argument("--num_epochs", type=int, default=40)
@@ -32,17 +32,11 @@ parser.add_argument("--lr", type=float, default=1e-3, choices=[1e-3, 1e-4, 1e-5]
 parser.add_argument("--weight_decay", type=float, default=1e-4, choices=[1e-4, 5e-4, 1e-2, 1e-1, 1.0])
 parser.add_argument("--momentum", type=float, default=0.9)
 parser.add_argument("--pretrained", action="store_true")
+parser.add_argument("--skip_erm", action="store_true")
 parser.add_argument("--wandb", action="store_true")
 parser.add_argument("--wandb_project", type=str, default="spuco")
 parser.add_argument("--wandb_entity", type=str, default=None)
-parser.add_argument("--wandb_run_name", type=str, default="waterbirds_ssa")
-
-parser.add_argument("--inf_lr", type=float, default=1e-3, choices=[1e-3, 1e-4, 1e-5])
-parser.add_argument("--inf_weight_decay", type=float, default=1e-4, choices=[1e-4, 5e-4, 1e-2, 1e-1, 1.0])
-parser.add_argument("--inf_momentum", type=float, default=0.9)
-parser.add_argument("--inf_num_iters", type=int, default=1000)
-parser.add_argument("--inf_val_frac", type=float, default=0.5)
-
+parser.add_argument("--wandb_run_name", type=str, default="spuco_animals_dfr")
 args = parser.parse_args()
 
 if args.wandb:
@@ -69,100 +63,92 @@ device = torch.device(f"cuda:{args.gpu}" if torch.cuda.is_available() else "cpu"
 set_seed(args.seed)
 
 # Load the full dataset, and download it if necessary
-dataset = get_dataset(dataset="waterbirds", download=True, root_dir=args.root_dir)
 transform = transforms.Compose([
             transforms.Resize(256),
-            transforms.CenterCrop(224),
-            transforms.ToTensor(),
+            transforms.RandomCrop(224),
+            transforms.RandomHorizontalFlip(),
             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
         ])
 
-# Get the training set
-train_data = dataset.get_subset(
-    "train",
-    transform=transform
+######
+# ERM #
+######
+trainset = SpuCoAnimals(
+    root=args.root_dir,
+    label_noise=args.label_noise,
+    split="train",
+    transform=transform,
 )
+trainset.initialize()
 
-val_data = dataset.get_subset(
-    "val",
-    transform=transform
+valset = SpuCoAnimals(
+    root=args.root_dir,
+    label_noise=args.label_noise,
+    split="val",
+    transform=transform,
 )
+valset.initialize()
 
-# Get the training set
-test_data = dataset.get_subset(
-    "test",
-    transform=transform
+testset = SpuCoAnimals(
+    root=args.root_dir,
+    label_noise=args.label_noise,
+    split="test",
+    transform=transform,
 )
+testset.initialize()
 
-trainset = WILDSDatasetWrapper(dataset=train_data, metadata_spurious_label="background", verbose=True)
-valset = WILDSDatasetWrapper(dataset=val_data, metadata_spurious_label="background", verbose=True)
-testset = WILDSDatasetWrapper(dataset=test_data, metadata_spurious_label="background", verbose=True)
-
+# initialize the model and the trainer
 model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
-ssa = SSA(
-    spurious_unlabeled_dataset=trainset,
-    spurious_labeled_dataset=SpuriousTargetDatasetWrapper(valset, valset.spurious),
+
+if not args.skip_erm:
+    erm_valid_evaluator = Evaluator(
+        testset=valset,
+        group_partition=valset.group_partition,
+        group_weights=valset.group_weights,
+        batch_size=args.batch_size,
+        model=model,
+        device=device,
+        verbose=True
+    )
+    erm = ERM(
+        model=model,
+        val_evaluator=erm_valid_evaluator,
+        num_epochs=args.num_epochs,
+        trainset=trainset,
+        batch_size=args.batch_size,
+        optimizer=SGD(model.parameters(), lr=args.lr, weight_decay=args.weight_decay, momentum=args.momentum),
+        device=device,
+        verbose=True,
+        use_wandb=args.wandb
+    )
+    erm.train()
+
+group_labeled_set = GroupLabeledDatasetWrapper(dataset=valset, group_partition=valset.group_partition)
+
+dfr = DFR(
+    group_labeled_set=group_labeled_set,
     model=model,
-    labeled_valset_size=args.inf_val_frac,
-    lr=args.inf_lr,
-    weight_decay=args.inf_weight_decay,
-    num_iters=args.inf_num_iters,
-    tau_g_min=0.95,
+    data_for_scaler=trainset,
     device=device,
-    verbose=True
+    verbose=True,
 )
 
-group_partition = ssa.infer_groups()
-for key in sorted(group_partition.keys()):
-    print(key, len(group_partition[key]))
-evaluator = Evaluator(
-    testset=trainset,
-    group_partition=group_partition,
-    group_weights=trainset.group_weights,
-    batch_size=args.batch_size,
-    model=model,
-    device=device,
-    verbose=True
-)
-evaluator.evaluate()
-
-robust_trainset = GroupLabeledDatasetWrapper(trainset, group_partition)
-
-valid_evaluator = Evaluator(
-    testset=valset,
-    group_partition=valset.group_partition,
-    group_weights=trainset.group_weights,
-    batch_size=64,
-    model=model,
-    device=device,
-    verbose=True
-)
-
-# Get the training set
-
-group_dro = GroupDRO(
-    model=model,
-    val_evaluator=valid_evaluator,
-    num_epochs=args.num_epochs,
-    trainset=robust_trainset,
-    batch_size=args.batch_size,
-    optimizer=SGD(model.parameters(), lr=args.lr, weight_decay=args.weight_decay, momentum=args.momentum),
-    device=device,
-    verbose=True
-)
-group_dro.train()
+dfr.train()
 
 results = pd.DataFrame(index=[0])
+
 evaluator = Evaluator(
     testset=valset,
     group_partition=valset.group_partition,
     group_weights=trainset.group_weights,
     batch_size=64,
     model=model,
+    sklearn_linear_model=dfr.linear_model,
     device=device,
     verbose=True
-)
+    )
 evaluator.evaluate()
+
 results["val_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
 results[f"val_wg_acc"] = evaluator.worst_group_accuracy[1]
 results[f"val_avg_acc"] = evaluator.average_accuracy
@@ -173,43 +159,15 @@ evaluator = Evaluator(
     group_weights=trainset.group_weights,
     batch_size=64,
     model=model,
+    sklearn_linear_model=dfr.linear_model,
     device=device,
     verbose=True
-)
+    )
 evaluator.evaluate()
+
 results["test_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
 results[f"test_wg_acc"] = evaluator.worst_group_accuracy[1]
 results[f"test_avg_acc"] = evaluator.average_accuracy
-
-
-evaluator = Evaluator(
-    testset=valset,
-    group_partition=valset.group_partition,
-    group_weights=trainset.group_weights,
-    batch_size=args.batch_size,
-    model=group_dro.best_model,
-    device=device,
-    verbose=True
-)
-evaluator.evaluate()
-results["val_early_stopping_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
-results[f"val_early_stopping_wg_acc"] = evaluator.worst_group_accuracy[1]
-results[f"val_early_stopping_avg_acc"] = evaluator.average_accuracy
-
-evaluator = Evaluator(
-    testset=testset,
-    group_partition=testset.group_partition,
-    group_weights=trainset.group_weights,
-    batch_size=args.batch_size,
-    model=group_dro.best_model,
-    device=device,
-    verbose=True
-)
-evaluator.evaluate()
-results["test_early_stopping_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
-results[f"test_early_stopping_wg_acc"] = evaluator.worst_group_accuracy[1]
-results[f"test_early_stopping_avg_acc"] = evaluator.average_accuracy
-
 
 print(results)
 
@@ -223,7 +181,6 @@ else:
     args_dict = vars(args)
     for key in args_dict.keys():
         results[key] = args_dict[key]
-
 
     if os.path.exists(args.results_csv):
         results_df = pd.read_csv(args.results_csv)
