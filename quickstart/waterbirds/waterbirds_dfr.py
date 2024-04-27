@@ -27,6 +27,7 @@ parser.add_argument("--label_noise", type=float, default=0.0)
 parser.add_argument("--results_csv", type=str, default="/data/waterbirds/results/dfr.csv")
 parser.add_argument("--stdout_file", type=str, default="waterbirds_dfr.out")
 parser.add_argument("--arch", type=str, default="resnet18", choices=["resnet18", "resnet50", "cliprn50"])
+parser.add_argument("--only_train_projection", action="store_true", help="only train projection, applicable only for cliprn50")
 parser.add_argument("--batch_size", type=int, default=128)
 parser.add_argument("--num_epochs", type=int, default=40)
 parser.add_argument("--lr", type=float, default=1e-3, choices=[1e-3, 1e-4, 1e-5])
@@ -102,6 +103,11 @@ testset = WILDSDatasetWrapper(dataset=test_data, metadata_spurious_label="backgr
 
 # initialize the model and the trainer
 model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
+if args.arch == "cliprn50" and args.only_train_projection:
+    for param in model.backbone.parameters():
+        param.requires_grad = False
+    for param in model.backbone._modules['attnpool'].parameters():
+        param.requires_grad = True
 
 if not args.skip_erm:
     erm_valid_evaluator = Evaluator(
