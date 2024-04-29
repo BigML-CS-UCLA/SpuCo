@@ -8,8 +8,9 @@ import pandas as pd
 import torch
 import torchvision.transforms as transforms
 from torch.optim import SGD
+from wilds import get_dataset
 
-from spuco.datasets import SpuCoAnimals
+from spuco.datasets import WILDSDatasetWrapper
 from spuco.evaluate import Evaluator, GroupEvaluator
 from spuco.group_inference import SpareInference
 from spuco.robust_train import SpareTrain
@@ -22,9 +23,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--gpu", type=int, default=0)
 parser.add_argument("--seed", type=int, default=0)
 parser.add_argument("--root_dir", type=str, default="/data")
-parser.add_argument("--label_noise", type=float, default=0.0)
-parser.add_argument("--results_csv", type=str, default="/data/spucoanimals/results/spare.csv")
-parser.add_argument("--stdout_file", type=str, default="spare.out")
+parser.add_argument("--results_csv", type=str, default="/data/celebA/results/spare.csv")
+parser.add_argument("--stdout_file", type=str, default="celebA_spare.out")
 parser.add_argument("--arch", type=str, default="resnet18", choices=["resnet18", "resnet50", "cliprn50"])
 parser.add_argument("--only_train_projection", action="store_true", help="only train projection, applicable only for cliprn50")
 parser.add_argument("--batch_size", type=int, default=128)
@@ -38,7 +38,7 @@ parser.add_argument("--pretrained", action="store_true")
 parser.add_argument("--wandb", action="store_true")
 parser.add_argument("--wandb_project", type=str, default="spuco")
 parser.add_argument("--wandb_entity", type=str, default=None)
-parser.add_argument("--wandb_run_name", type=str, default="spucoanimals_spare")
+parser.add_argument("--wandb_run_name", type=str, default="celebA_spare")
 parser.add_argument("--infer_num_epochs", type=int, default=1)
 parser.add_argument("--num_clusters", type=int, default=4)
 parser.add_argument("--high_sampling_power", type=int, default=2)
@@ -69,33 +69,35 @@ device = torch.device(f"cuda:{args.gpu}" if torch.cuda.is_available() else "cpu"
 set_seed(args.seed)
 
 # Load the full dataset, and download it if necessary
+dataset = get_dataset(dataset="celebA", download=True, root_dir=args.root_dir)
 transform = transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
         ])
 
-trainset = SpuCoAnimals(
-    root=args.root_dir,
-    label_noise=args.label_noise,
-    split="train",
-    transform=transform,
+# Get the training set
+train_data = dataset.get_subset(
+    "train",
+    transform=transform
 )
-trainset.initialize()
 
-valset = SpuCoAnimals(
-    root=args.root_dir,
-    label_noise=args.label_noise,
-    split="val",
-    transform=transform,
+val_data = dataset.get_subset(
+    "val",
+    transform=transform
 )
-valset.initialize()
 
-testset = SpuCoAnimals(
-    root=args.root_dir,
-    label_noise=args.label_noise,
-    split="test",
-    transform=transform,
+# Get the training set
+test_data = dataset.get_subset(
+    "test",
+    transform=transform
 )
-testset.initialize()
+
+trainset = WILDSDatasetWrapper(dataset=train_data, metadata_spurious_label="background", verbose=True)
+valset = WILDSDatasetWrapper(dataset=val_data, metadata_spurious_label="background", verbose=True)
+testset = WILDSDatasetWrapper(dataset=test_data, metadata_spurious_label="background", verbose=True)
+
 
 print(trainset.group_partition.keys())
 
@@ -115,12 +117,10 @@ trainer = Trainer(
     verbose=True
 )
 
-trainer.train(num_epochs=args.infer_num_epochs)
 print("Clustering outputs.")
-logits = trainer.get_trainset_outputs()
-predictions = torch.nn.functional.softmax(logits, dim=1)
+outputs = trainer.get_trainset_outputs(features=True)
 spare_infer = SpareInference(
-    logits=predictions,
+    logits=outputs,
     class_labels=trainset.labels,
     num_clusters=args.num_clusters,
     device=device,
@@ -170,19 +170,19 @@ valid_evaluator = Evaluator(
     verbose=True
 )
 train_transform = transforms.Compose([
-    transforms.ToPILImage(),
+    transforms.Resize(256),
+    transforms.RandomCrop(224),
     transforms.RandomHorizontalFlip(),
     transforms.ToTensor(),
-    transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+    transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
 ])
 
-trainset = SpuCoAnimals(
-    root=args.root_dir,
-    label_noise=args.label_noise,
-    split="train",
-    transform=train_transform,
+# Get the training set
+train_data = dataset.get_subset(
+    "train",
+    transform=train_transform
 )
-trainset.initialize()
+trainset = WILDSDatasetWrapper(dataset=train_data, metadata_spurious_label="background", verbose=True)
 
 spare_train = SpareTrain(
     model=model,
