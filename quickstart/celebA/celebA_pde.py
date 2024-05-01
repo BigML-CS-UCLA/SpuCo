@@ -8,13 +8,13 @@ import pandas as pd
 import torch
 import torchvision.transforms as transforms
 from torch.optim import SGD
+from wilds import get_dataset
 
-from spuco.datasets import SpuCoAnimals
-from spuco.evaluate import Evaluator, GroupEvaluator
-from spuco.group_inference import SpareInference
-from spuco.robust_train import SpareTrain
+from spuco.datasets import WILDSDatasetWrapper
+from spuco.evaluate import Evaluator
+from spuco.robust_train import PDE
 from spuco.models import model_factory
-from spuco.utils import Trainer, set_seed
+from spuco.utils import set_seed
 
 
 # parse the command line arguments
@@ -22,15 +22,12 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--gpu", type=int, default=0)
 parser.add_argument("--seed", type=int, default=0)
 parser.add_argument("--root_dir", type=str, default="/data")
-parser.add_argument("--label_noise", type=float, default=0.0)
-parser.add_argument("--results_csv", type=str, default="/data/spucoanimals/results/spare.csv")
-parser.add_argument("--stdout_file", type=str, default="spare.out")
+parser.add_argument("--results_csv", type=str, default="/data/celebA/results/pde.csv")
+parser.add_argument("--stdout_file", type=str, default="pde.out")
 parser.add_argument("--arch", type=str, default="resnet18", choices=["resnet18", "resnet50", "cliprn50"])
 parser.add_argument("--only_train_projection", action="store_true", help="only train projection, applicable only for cliprn50")
 parser.add_argument("--batch_size", type=int, default=128)
 parser.add_argument("--num_epochs", type=int, default=100)
-parser.add_argument("--erm_lr", type=float, default=1e-3)
-parser.add_argument("--erm_weight_decay", type=float, default=1e-4)
 parser.add_argument("--lr", type=float, default=1e-4)
 parser.add_argument("--weight_decay", type=float, default=0.1)
 parser.add_argument("--momentum", type=float, default=0.9)
@@ -38,11 +35,11 @@ parser.add_argument("--pretrained", action="store_true")
 parser.add_argument("--wandb", action="store_true")
 parser.add_argument("--wandb_project", type=str, default="spuco")
 parser.add_argument("--wandb_entity", type=str, default=None)
-parser.add_argument("--wandb_run_name", type=str, default="spucoanimals_spare")
-parser.add_argument("--infer_num_epochs", type=int, default=1)
-parser.add_argument("--num_clusters", type=int, default=4)
-parser.add_argument("--high_sampling_power", type=int, default=2)
+parser.add_argument("--wandb_run_name", type=str, default="celebA_pde")
 
+parser.add_argument("--warmup_epochs", type=int, default=15)
+parser.add_argument("--expansion_size", type=int, default=10)
+parser.add_argument("--expansion_interval", type=int, default=10)
 args = parser.parse_args()
 
 if args.wandb:
@@ -69,88 +66,37 @@ device = torch.device(f"cuda:{args.gpu}" if torch.cuda.is_available() else "cpu"
 set_seed(args.seed)
 
 # Load the full dataset, and download it if necessary
+dataset = get_dataset(dataset="celebA", download=True, root_dir=args.root_dir)
 transform = transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
         ])
 
-trainset = SpuCoAnimals(
-    root=args.root_dir,
-    label_noise=args.label_noise,
-    split="train",
-    transform=transform,
+# Get the training set
+train_data = dataset.get_subset(
+    "train",
+    transform=transform
 )
-trainset.initialize()
 
-valset = SpuCoAnimals(
-    root=args.root_dir,
-    label_noise=args.label_noise,
-    split="val",
-    transform=transform,
+val_data = dataset.get_subset(
+    "val",
+    transform=transform
 )
-valset.initialize()
 
-testset = SpuCoAnimals(
-    root=args.root_dir,
-    label_noise=args.label_noise,
-    split="test",
-    transform=transform,
+# Get the training set
+test_data = dataset.get_subset(
+    "test",
+    transform=transform
 )
-testset.initialize()
+
+trainset = WILDSDatasetWrapper(dataset=train_data, metadata_spurious_label="background", verbose=True)
+valset = WILDSDatasetWrapper(dataset=val_data, metadata_spurious_label="background", verbose=True)
+testset = WILDSDatasetWrapper(dataset=test_data, metadata_spurious_label="background", verbose=True)
+
 
 print(trainset.group_partition.keys())
-
-model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
-if args.arch == "cliprn50" and args.only_train_projection:
-    for param in model.backbone.parameters():
-        param.requires_grad = False
-    for param in model.backbone._modules['attnpool'].parameters():
-        param.requires_grad = True
-
-trainer = Trainer(
-    trainset=trainset,
-    model=model,
-    batch_size=args.batch_size,
-    optimizer=SGD(model.parameters(), lr=args.erm_lr, weight_decay=args.erm_weight_decay, momentum=args.momentum),
-    device=device,
-    verbose=True
-)
-
-trainer.train(num_epochs=args.infer_num_epochs)
-print("Clustering outputs.")
-logits = trainer.get_trainset_outputs()
-predictions = torch.nn.functional.softmax(logits, dim=1)
-spare_infer = SpareInference(
-    logits=predictions,
-    class_labels=trainset.labels,
-    num_clusters=args.num_clusters,
-    device=device,
-    high_sampling_power=args.high_sampling_power,
-    verbose=True
-)
-
-group_partition = spare_infer.infer_groups()
-sampling_powers = spare_infer.sampling_powers
-print("Evaluating inferred groups.")
-for key in sorted(group_partition.keys()):
-    print(key, len(group_partition[key]))
-evaluator = Evaluator(
-    testset=trainset,
-    group_partition=group_partition,
-    group_weights=trainset.group_weights,
-    batch_size=args.batch_size,
-    model=model,
-    device=device,
-    verbose=True
-)
-evaluator.evaluate()
-
-group_eval = GroupEvaluator(group_partition, trainset.group_partition, 4, verbose=True)
-group_acc = group_eval.evaluate_accuracy()
-group_precision = group_eval.evaluate_precision()
-group_recall = group_eval.evaluate_recall()
-print("group_eval_acc:", group_acc)
-print("group_eval_precision:", group_precision)
-print("group_eval_recall:", group_recall)
 
 # initialize the model and the trainer
 model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
@@ -170,40 +116,37 @@ valid_evaluator = Evaluator(
     verbose=True
 )
 train_transform = transforms.Compose([
-    transforms.ToPILImage(),
+    transforms.Resize(256),
+    transforms.RandomCrop(224),
     transforms.RandomHorizontalFlip(),
     transforms.ToTensor(),
-    transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+    transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
 ])
 
-trainset = SpuCoAnimals(
-    root=args.root_dir,
-    label_noise=args.label_noise,
-    split="train",
-    transform=train_transform,
+# Get the training set
+train_data = dataset.get_subset(
+    "train",
+    transform=train_transform
 )
-trainset.initialize()
+trainset = WILDSDatasetWrapper(dataset=train_data, metadata_spurious_label="background", verbose=True)
 
-spare_train = SpareTrain(
+pde = PDE(
     model=model,
     num_epochs=args.num_epochs,
     trainset=trainset,
-    group_partition=group_partition,
-    sampling_powers=sampling_powers,
+    group_partition=trainset.group_partition,
+    warmup_epochs=args.warmup_epochs,
+    expansion_size=args.expansion_size,
+    expansion_interval=args.expansion_interval,
     batch_size=args.batch_size,
     optimizer=SGD(model.parameters(), lr=args.lr, weight_decay=args.weight_decay, momentum=args.momentum),
     device=device,
     val_evaluator=valid_evaluator,
     verbose=True
 )
-spare_train.train()
+pde.train()
 
 results = pd.DataFrame(index=[0])
-results["group_eval_acc"] = group_acc
-results["avg_group_eval_precision"] = group_precision[0]
-results["min_group_eval_precision"] = group_precision[1]
-results["avg_group_eval_recall"] = group_recall[0]
-results["min_group_eval_recall"] = group_recall[1]
 
 evaluator = Evaluator(
     testset=valset,
@@ -238,7 +181,7 @@ evaluator = Evaluator(
     group_partition=valset.group_partition,
     group_weights=trainset.group_weights,
     batch_size=args.batch_size,
-    model=spare_train.best_model,
+    model=pde.best_model,
     device=device,
     verbose=True
 )
@@ -252,7 +195,7 @@ evaluator = Evaluator(
     group_partition=testset.group_partition,
     group_weights=trainset.group_weights,
     batch_size=args.batch_size,
-    model=spare_train.best_model,
+    model=pde.best_model,
     device=device,
     verbose=True
 )
@@ -268,7 +211,7 @@ if args.wandb:
     results = results.to_dict(orient="records")[0]
     wandb.log(results)
 else:
-    results["alg"] = "spare"
+    results["alg"] = "pde"
     results["timestamp"] = pd.Timestamp.now()
     args_dict = vars(args)
     for key in args_dict.keys():
