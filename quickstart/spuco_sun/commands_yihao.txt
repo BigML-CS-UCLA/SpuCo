@@ -1,15 +1,15 @@
-guild run ssa.py lr='[1e-3, 1e-4, 1e-5]' weight_decay='[1e-4, 5e-4, 1e-2, 1e-1, 1.0]' infer_lr='[1e-3, 1e-4, 1e-5]' infer_weight_decay='[1e-4, 5e-4, 1e-2, 1e-1, 1.0]'  root_dir='[/data/spucosun/10.0]' arch=cliprn50 only_train_projection=True pretrained=True -m 16 --stage-trials 
+guild run spuco_sun_ssa.py lr='[1e-3, 1e-4, 1e-5]' weight_decay='[1e-4, 5e-4, 1e-2, 1e-1, 1.0]' infer_lr='[1e-3, 1e-4, 1e-5]' infer_weight_decay='[1e-4, 5e-4, 1e-2, 1e-1, 1.0]'  root_dir='[/data/spucosun/10.0]' arch=cliprn50 only_train_projection=True pretrained=True -m 16 --stage-trials 
 
-guild run ssa.py lr='[1e-3, 1e-4, 1e-5]' weight_decay='[1e-4, 5e-4, 1e-2, 1e-1, 1.0]' infer_lr='[1e-3, 1e-4, 1e-5]' infer_weight_decay='[1e-4, 5e-4, 1e-2, 1e-1, 1.0]'  root_dir='[/data/spucosun/10.21]' arch=cliprn50 only_train_projection=True pretrained=True -m 16 --stage-trials 
+guild run spuco_sun_ssa.py lr='[1e-3, 1e-4, 1e-5]' weight_decay='[1e-4, 5e-4, 1e-2, 1e-1, 1.0]' infer_lr='[1e-3, 1e-4, 1e-5]' infer_weight_decay='[1e-4, 5e-4, 1e-2, 1e-1, 1.0]'  root_dir='[/data/spucosun/10.21]' arch=cliprn50 only_train_projection=True pretrained=True -m 16 --stage-trials 
 
-guild run dfr.py lr='[1e-3, 1e-4, 1e-5]' weight_decay='[1e-4, 5e-4, 1e-2, 1e-1, 1.0]' root_dir='[/data/spucosun/10.0]' arch=cliprn50 only_train_projection=True pretrained=True -m 16 --stage-trials 
+guild run spuco_sun_dfr.py lr='[1e-3, 1e-4, 1e-5]' weight_decay='[1e-4, 5e-4, 1e-2, 1e-1, 1.0]' root_dir='[/data/spucosun/10.0]' arch=cliprn50 only_train_projection=True pretrained=True -m 16 --stage-trials 
 
-guild run dfr.py lr='[1e-3, 1e-4, 1e-5]' weight_decay='[1e-4, 5e-4, 1e-2, 1e-1, 1.0]' root_dir='[/data/spucosun/10.21]' arch=cliprn50 only_train_projection=True pretrained=True -m 16 --stage-trials 
+guild run spuco_sun_dfr.py lr='[1e-3, 1e-4, 1e-5]' weight_decay='[1e-4, 5e-4, 1e-2, 1e-1, 1.0]' root_dir='[/data/spucosun/10.21]' arch=cliprn50 only_train_projection=True pretrained=True -m 16 --stage-trials 
 
-guild run lrmix.py lr='[1e-3, 1e-4, 1e-5]' weight_decay='[1e-4, 5e-4, 1e-2, 1e-1, 1.0]' root_dir='[/data/spucosun/10.0]' arch=cliprn50 only_train_projection=True pretrained=True -m 16 --stage-trials 
+guild run spuco_sun_lrmix.py lr='[1e-3, 1e-4, 1e-5]' weight_decay='[1e-4, 5e-4, 1e-2, 1e-1, 1.0]' root_dir='[/data/spucosun/10.0]' arch=cliprn50 only_train_projection=True pretrained=True -m 16 --stage-trials 
 
-guild run lrmix.py lr='[1e-3, 1e-4, 1e-5]' weight_decay='[1e-4, 5e-4, 1e-2, 1e-1, 1.0]' root_dir='[/data/spucosun/10.21]' arch=cliprn50 only_train_projection=True pretrained=True -m 16 --stage-trials 
+guild run spuco_sun_lrmix.py lr='[1e-3, 1e-4, 1e-5]' weight_decay='[1e-4, 5e-4, 1e-2, 1e-1, 1.0]' root_dir='[/data/spucosun/10.21]' arch=cliprn50 only_train_projection=True pretrained=True -m 16 --stage-trials 
 
-guild run cnc.py inf_lr='[1e-3, 1e-4, 1e-5]' inf_weight_decay='[1e-4, 5e-4, 1e-2, 1e-1, 1.0]' root_dir='[/data/spucosun/10.0]' arch=cliprn50 only_train_projection=True pretrained=True -m 16 --stage-trials 
+guild run spuco_sun_cnc.py inf_lr='[1e-3, 1e-4, 1e-5]' inf_weight_decay='[1e-4, 5e-4, 1e-2, 1e-1, 1.0]' root_dir='[/data/spucosun/10.0]' arch=cliprn50 only_train_projection=True pretrained=True -m 16 --stage-trials 
 
-guild run cnc.py inf_lr='[1e-3, 1e-4, 1e-5]' inf_weight_decay='[1e-4, 5e-4, 1e-2, 1e-1, 1.0]' root_dir='[/data/spucosun/10.21]' arch=cliprn50 only_train_projection=True pretrained=True -m 16 --stage-trials 
+guild run spuco_sun_cnc.py inf_lr='[1e-3, 1e-4, 1e-5]' inf_weight_decay='[1e-4, 5e-4, 1e-2, 1e-1, 1.0]' root_dir='[/data/spucosun/10.21]' arch=cliprn50 only_train_projection=True pretrained=True -m 16 --stage-trials 
