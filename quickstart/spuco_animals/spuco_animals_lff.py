@@ -9,34 +9,34 @@ import torch
 import torchvision.transforms as transforms
 from torch.optim import Adam, SGD
 
+from spuco.datasets import SpuCoAnimals
 from spuco.evaluate import Evaluator
 from spuco.end2end import LFF
 from spuco.models import model_factory
 from spuco.utils import set_seed
-from spuco.datasets import SpuCoSun, IndexDatasetWrapper
 
 
 # parse the command line arguments
 parser = argparse.ArgumentParser()
 parser.add_argument("--gpu", type=int, default=0)
 parser.add_argument("--seed", type=int, default=0)
-parser.add_argument("--root_dir", type=str, default="/data/spucosun/4.0/")
+parser.add_argument("--root_dir", type=str, default="/data")
 parser.add_argument("--label_noise", type=float, default=0.0)
-parser.add_argument("--results_csv", type=str, default="/data/spucosun/results/lff.csv")
-parser.add_argument("--stdout_file", type=str, default="spuco_sun_lff.out")
+parser.add_argument("--results_csv", type=str, default="/data/spucoanimals/results/lff.csv")
+parser.add_argument("--stdout_file", type=str, default="lff.out")
 parser.add_argument("--arch", type=str, default="resnet18", choices=["resnet18", "resnet50", "cliprn50"])
 parser.add_argument("--only_train_projection", action="store_true", help="only train projection, applicable only for cliprn50")
 parser.add_argument("--batch_size", type=int, default=128)
-parser.add_argument("--num_epochs", type=int, default=40)
+parser.add_argument("--num_epochs", type=int, default=100)
 parser.add_argument("--optimizer", type=str, default="adam", choices=["adam", "sgd"])
-parser.add_argument("--lr", type=float, default=1e-3)
-parser.add_argument("--weight_decay", type=float, default=1e-4)
+parser.add_argument("--lr", type=float, default=1e-4)
+parser.add_argument("--weight_decay", type=float, default=0.1)
 parser.add_argument("--momentum", type=float, default=0.9)
 parser.add_argument("--pretrained", action="store_true")
 parser.add_argument("--wandb", action="store_true")
 parser.add_argument("--wandb_project", type=str, default="spuco")
 parser.add_argument("--wandb_entity", type=str, default=None)
-parser.add_argument("--wandb_run_name", type=str, default="spuco_sun_lff")
+parser.add_argument("--wandb_run_name", type=str, default="spucoanimals_lff")
 
 args = parser.parse_args()
 
@@ -68,7 +68,7 @@ transform = transforms.Compose([
             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
         ])
 
-trainset = SpuCoSun(
+trainset = SpuCoAnimals(
     root=args.root_dir,
     label_noise=args.label_noise,
     split="train",
@@ -76,7 +76,7 @@ trainset = SpuCoSun(
 )
 trainset.initialize()
 
-valset = SpuCoSun(
+valset = SpuCoAnimals(
     root=args.root_dir,
     label_noise=args.label_noise,
     split="val",
@@ -84,13 +84,15 @@ valset = SpuCoSun(
 )
 valset.initialize()
 
-testset = SpuCoSun(
+testset = SpuCoAnimals(
     root=args.root_dir,
     label_noise=args.label_noise,
     split="test",
     transform=transform,
 )
 testset.initialize()
+
+print(trainset.group_partition.keys())
 
 def get_model_and_optimizer(args, trainset, valset, device):
     # initialize the model and the trainer
@@ -100,11 +102,10 @@ def get_model_and_optimizer(args, trainset, valset, device):
             param.requires_grad = False
         for param in model.backbone._modules['attnpool'].parameters():
             param.requires_grad = True
-    
     valid_evaluator = Evaluator(
         testset=valset,
         group_partition=valset.group_partition,
-        group_weights=valset.group_weights,
+        group_weights=trainset.group_weights,
         batch_size=args.batch_size,
         model=model,
         device=device,
@@ -168,6 +169,33 @@ results["test_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attr
 results[f"test_wg_acc"] = evaluator.worst_group_accuracy[1]
 results[f"test_avg_acc"] = evaluator.average_accuracy
 
+evaluator = Evaluator(
+    testset=valset,
+    group_partition=valset.group_partition,
+    group_weights=trainset.group_weights,
+    batch_size=args.batch_size,
+    model=lff.best_model,
+    device=device,
+    verbose=True
+)
+evaluator.evaluate()
+results["val_early_stopping_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
+results[f"val_early_stopping_wg_acc"] = evaluator.worst_group_accuracy[1]
+results[f"val_early_stopping_avg_acc"] = evaluator.average_accuracy
+
+evaluator = Evaluator(
+    testset=testset,
+    group_partition=testset.group_partition,
+    group_weights=trainset.group_weights,
+    batch_size=args.batch_size,
+    model=lff.best_model,
+    device=device,
+    verbose=True
+)
+evaluator.evaluate()
+results["test_early_stopping_spurious_attribute_prediction"] = evaluator.evaluate_spurious_attribute_prediction()
+results[f"test_early_stopping_wg_acc"] = evaluator.worst_group_accuracy[1]
+results[f"test_early_stopping_avg_acc"] = evaluator.average_accuracy
 
 print(results)
 
