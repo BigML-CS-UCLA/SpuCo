@@ -36,11 +36,11 @@ parser.add_argument("--wandb_project", type=str, default="spuco")
 parser.add_argument("--wandb_entity", type=str, default=None)
 parser.add_argument("--wandb_run_name", type=str, default="spuco_sun_ssa")
 
-parser.add_argument("--inf_lr", type=float, default=1e-3, choices=[1e-3, 1e-4, 1e-5])
-parser.add_argument("--inf_weight_decay", type=float, default=1e-4, choices=[1e-4, 5e-4, 1e-2, 1e-1, 1.0])
-parser.add_argument("--inf_momentum", type=float, default=0.9)
-parser.add_argument("--inf_num_iters", type=int, default=1000)
-parser.add_argument("--inf_val_frac", type=float, default=0.5)
+parser.add_argument("--infer_lr", type=float, default=1e-3, choices=[1e-3, 1e-4, 1e-5])
+parser.add_argument("--infer_weight_decay", type=float, default=1e-4, choices=[1e-4, 5e-4, 1e-2, 1e-1, 1.0])
+parser.add_argument("--infer_momentum", type=float, default=0.9)
+parser.add_argument("--infer_num_iters", type=int, default=1000)
+parser.add_argument("--infer_val_frac", type=float, default=0.5)
 
 args = parser.parse_args()
 
@@ -104,10 +104,10 @@ ssa = SSA(
     spurious_unlabeled_dataset=trainset,
     spurious_labeled_dataset=SpuriousTargetDatasetWrapper(valset, valset.spurious),
     model=model,
-    labeled_valset_size=args.inf_val_frac,
-    lr=args.inf_lr,
-    weight_decay=args.inf_weight_decay,
-    num_iters=args.inf_num_iters,
+    labeled_valset_size=args.infer_val_frac,
+    lr=args.infer_lr,
+    weight_decay=args.infer_weight_decay,
+    num_iters=args.infer_num_iters,
     tau_g_min=0.95,
     device=device,
     verbose=True
