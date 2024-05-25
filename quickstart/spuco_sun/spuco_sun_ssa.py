@@ -37,11 +37,11 @@ parser.add_argument("--wandb_project", type=str, default="spuco")
 parser.add_argument("--wandb_entity", type=str, default=None)
 parser.add_argument("--wandb_run_name", type=str, default="spuco_sun_ssa")
 
-parser.add_argument("--inf_lr", type=float, default=1e-3)
-parser.add_argument("--inf_weight_decay", type=float, default=1e-4)
-parser.add_argument("--inf_momentum", type=float, default=0.9)
-parser.add_argument("--inf_num_iters", type=int, default=1000)
-parser.add_argument("--inf_val_frac", type=float, default=0.5)
+parser.add_argument("--infer_lr", type=float, default=1e-3)
+parser.add_argument("--infer_weight_decay", type=float, default=1e-4)
+parser.add_argument("--infer_momentum", type=float, default=0.9)
+parser.add_argument("--infer_num_iters", type=int, default=1000)
+parser.add_argument("--infer_val_frac", type=float, default=0.5)
 
 args = parser.parse_args()
 
