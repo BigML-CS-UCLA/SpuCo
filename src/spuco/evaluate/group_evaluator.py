@@ -49,7 +49,7 @@ class GroupEvaluator:
                     print("WARNING: Single group found. Inferred group partition useless.")
                 maj_group_key = group_keys[0]
             else:
-                if len(inferred_group_partition[group_keys[0]]) > len(inferred_group_partition[group_keys[0]]):
+                if len(inferred_group_partition[group_keys[0]]) > len(inferred_group_partition[group_keys[1]]):
                     maj_group_key = group_keys[0]
                     min_group_key = group_keys[1]
                 else:
@@ -64,6 +64,10 @@ class GroupEvaluator:
                 self.inferred_group_partition[(key[0], "maj")] = np.intersect1d(class_partition, inferred_group_partition[maj_group_key])
                 if min_group_key is not None:
                     self.inferred_group_partition[(key[0], "min")] = np.intersect1d(class_partition, inferred_group_partition[min_group_key])
+            if self.verbose:
+                print("Inferred Group Sizes")
+                for key in self.inferred_group_partition.keys():
+                    print(key, len(self.inferred_group_partition[key]))
         else:
             if self.verbose:
                 print("Inferred groups are per-class. Processing...")
