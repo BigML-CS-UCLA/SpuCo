@@ -31,8 +31,8 @@ parser.add_argument("--batch_size", type=int, default=128)
 parser.add_argument("--num_epochs", type=int, default=100)
 parser.add_argument("--erm_lr", type=float, default=1e-3)
 parser.add_argument("--erm_weight_decay", type=float, default=1e-4)
-parser.add_argument("--lr", type=float, default=1e-3)
-parser.add_argument("--weight_decay", type=float, default=1.0)
+parser.add_argument("--gdro_lr", type=float, default=1e-3)
+parser.add_argument("--gdro_weight_decay", type=float, default=1.0)
 parser.add_argument("--momentum", type=float, default=0.9)
 parser.add_argument("--pretrained", action="store_true")
 parser.add_argument("--wandb", action="store_true")
@@ -175,7 +175,7 @@ group_dro = GroupDRO(
     num_epochs=args.num_epochs,
     trainset=robust_trainset,
     batch_size=args.batch_size,
-    optimizer=SGD(model.parameters(), lr=args.lr, weight_decay=args.weight_decay, momentum=args.momentum),
+    optimizer=SGD(model.parameters(), lr=args.gdro_lr, weight_decay=args.gdro_weight_decay, momentum=args.momentum),
     device=device,
     val_evaluator=valid_evaluator,
     verbose=True
