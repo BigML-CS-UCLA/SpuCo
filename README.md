@@ -35,6 +35,13 @@ pip install spuco
 
 Requires >= Python 3.10
 
+## Using with GuildAI
+
+Creating gpu-affinitized queues 
+```
+for i in {0..7}; do guild run queue -b --gpus="$i" -y; done
+```
+
 ## About Us
 
 This package is maintained by [Siddharth Joshi](https://sjoshi804.github.io/) from the BigML group at UCLA, headed by [Professor Baharan Mirzasoleiman](http://web.cs.ucla.edu/~baharan/group.htm).
