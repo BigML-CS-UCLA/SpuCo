@@ -185,6 +185,7 @@ if args.arch == "cliprn50" and args.only_train_projection:
         param.requires_grad = True
         
 gb = GroupBalanceBatchERM(
+    group_partition=group_partition,
     model=model,
     num_epochs=args.num_epochs,
     trainset=trainset,

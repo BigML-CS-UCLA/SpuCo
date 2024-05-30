@@ -188,7 +188,6 @@ gb = GroupBalanceBatchERM(
     num_epochs=args.num_epochs,
     trainset=trainset,
     group_partition=group_partition,
-    sampling_powers=sampling_powers,
     batch_size=args.batch_size,
     optimizer=SGD(model.parameters(), lr=args.lr, weight_decay=args.weight_decay, momentum=args.momentum),
     device=device,
