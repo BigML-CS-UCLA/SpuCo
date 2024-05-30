@@ -168,10 +168,11 @@ valid_evaluator = Evaluator(
     verbose=True
 )
 gb = GroupBalanceBatchERM(
+    group_partition=group_partition,
     model=model,
     val_evaluator=valid_evaluator,
     num_epochs=args.num_epochs,
-    trainset=robust_trainset,
+    trainset=trainset,
     batch_size=args.batch_size,
     optimizer=SGD(model.parameters(), lr=args.gdro_lr, weight_decay=args.gdro_weight_decay, momentum=args.momentum),
     device=device,
