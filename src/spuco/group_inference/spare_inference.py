@@ -6,7 +6,7 @@ import torch
 from sklearn.metrics import silhouette_score
 from tqdm import tqdm
 
-from spuco.group_inference.cluster import ClusterAlg
+from spuco.group_inference.cluster import ClusterAlg, convert_labels_to_partition
 from spuco.group_inference import Cluster
 from spuco.utils.random_seed import seed_randomness
 
@@ -58,7 +58,7 @@ class SpareInference(Cluster):
         self.silhouette_threshold = silhoutte_threshold
         self.high_sampling_power = high_sampling_power
     
-    def infer_groups(self) -> Dict[Tuple[int,int], List[int]]:
+    def infer_groups(self, per_class=True) -> Dict[Tuple[int,int], List[int]]:
         """
         Infers the group partition based on the clustering results.
 
@@ -68,18 +68,34 @@ class SpareInference(Cluster):
         # Get class-wise group partitions
         cluster_partitions = [] 
         self.sampling_powers = []
-        for class_label in tqdm(self.class_partition.keys(), disable=not self.verbose, desc="Clustering class-wise"):
-            Z = self.Z[self.class_partition[class_label]]
-            if self.num_clusters == -1:
-                partition, silhouette = self.silhouette(Z)
-            else:
-                cluster_labels, partition = self.kmeans(Z, num_clusters=self.num_clusters)
-                silhouette = silhouette_score(Z, cluster_labels)
-            cluster_partitions.append(partition)
-            if silhouette < self.silhouette_threshold:
-                self.sampling_powers.append(self.high_sampling_power)
-            else:
-                self.sampling_powers.append(1)
+        
+        if per_class:
+            for class_label in tqdm(self.class_partition.keys(), disable=not self.verbose, desc="Clustering class-wise"):
+                Z = self.Z[self.class_partition[class_label]]
+                if self.num_clusters == -1:
+                    partition, silhouette = self.silhouette(Z)
+                else:
+                    cluster_labels, partition = self.kmeans(Z, num_clusters=self.num_clusters)
+                    silhouette = silhouette_score(Z, cluster_labels)
+                cluster_partitions.append(partition)
+                print(f"Silhouette score for class {class_label}: {silhouette}")
+                if silhouette < self.silhouette_threshold:
+                    self.sampling_powers.append(self.high_sampling_power)
+                else:
+                    self.sampling_powers.append(1)
+                    
+        else:
+            Z = self.Z
+            cluster_labels, partition = self.kmeans(Z, num_clusters=self.num_clusters)
+            
+            for class_label in self.class_partition.keys():
+                cluster_partitions.append(convert_labels_to_partition(cluster_labels[self.class_partition[class_label]]))
+                silhouette = silhouette_score(Z[self.class_partition[class_label]], cluster_labels[self.class_partition[class_label]])
+                print(f"Silhouette score for class {class_label}: {silhouette}")
+                if silhouette < self.silhouette_threshold:
+                    self.sampling_powers.append(self.high_sampling_power)
+                else:
+                    self.sampling_powers.append(1)
 
         # Merge class-wise group partitions into one dictionary
         group_partition = {}

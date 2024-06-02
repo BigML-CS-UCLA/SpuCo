@@ -25,22 +25,22 @@ parser.add_argument("--seed", type=int, default=0)
 parser.add_argument("--root_dir", type=str, default="/data")
 parser.add_argument("--results_csv", type=str, default="/data/celebA/results/spare.csv")
 parser.add_argument("--stdout_file", type=str, default="celebA_spare.out")
-parser.add_argument("--arch", type=str, default="resnet18", choices=["resnet18", "resnet50", "cliprn50"])
+parser.add_argument("--arch", type=str, default="resnet50", choices=["resnet18", "resnet50", "cliprn50"])
 parser.add_argument("--only_train_projection", action="store_true", help="only train projection, applicable only for cliprn50")
 parser.add_argument("--batch_size", type=int, default=128)
-parser.add_argument("--num_epochs", type=int, default=100)
+parser.add_argument("--num_epochs", type=int, default=50)
 parser.add_argument("--erm_lr", type=float, default=1e-3)
 parser.add_argument("--erm_weight_decay", type=float, default=1e-4)
-parser.add_argument("--lr", type=float, default=1e-4)
-parser.add_argument("--weight_decay", type=float, default=0.1)
+parser.add_argument("--lr", type=float, default=1e-5)
+parser.add_argument("--weight_decay", type=float, default=1.0)
 parser.add_argument("--momentum", type=float, default=0.9)
 parser.add_argument("--pretrained", action="store_true")
 parser.add_argument("--wandb", action="store_true")
 parser.add_argument("--wandb_project", type=str, default="spuco")
 parser.add_argument("--wandb_entity", type=str, default=None)
 parser.add_argument("--wandb_run_name", type=str, default="celebA_spare")
-parser.add_argument("--infer_num_epochs", type=int, default=1)
-parser.add_argument("--num_clusters", type=int, default=4)
+parser.add_argument("--infer_num_epochs", type=int, default=0)
+parser.add_argument("--num_clusters", type=int, default=2)
 parser.add_argument("--high_sampling_power", type=int, default=2)
 
 args = parser.parse_args()
@@ -94,9 +94,9 @@ test_data = dataset.get_subset(
     transform=transform
 )
 
-trainset = WILDSDatasetWrapper(dataset=train_data, metadata_spurious_label="background", verbose=True)
-valset = WILDSDatasetWrapper(dataset=val_data, metadata_spurious_label="background", verbose=True)
-testset = WILDSDatasetWrapper(dataset=test_data, metadata_spurious_label="background", verbose=True)
+trainset = WILDSDatasetWrapper(dataset=train_data, metadata_spurious_label="male", verbose=True)
+valset = WILDSDatasetWrapper(dataset=val_data, metadata_spurious_label="male", verbose=True)
+testset = WILDSDatasetWrapper(dataset=test_data, metadata_spurious_label="male", verbose=True)
 
 
 print(trainset.group_partition.keys())
@@ -128,7 +128,7 @@ spare_infer = SpareInference(
     verbose=True
 )
 
-group_partition = spare_infer.infer_groups()
+group_partition = spare_infer.infer_groups(per_class=False)
 sampling_powers = spare_infer.sampling_powers
 print("Evaluating inferred groups.")
 for key in sorted(group_partition.keys()):
@@ -144,7 +144,7 @@ evaluator = Evaluator(
 )
 evaluator.evaluate()
 
-group_eval = GroupEvaluator(group_partition, trainset.group_partition, 4, verbose=True)
+group_eval = GroupEvaluator(group_partition, trainset.group_partition, 2, verbose=True)
 group_acc = group_eval.evaluate_accuracy()
 group_precision = group_eval.evaluate_precision()
 group_recall = group_eval.evaluate_recall()
@@ -182,7 +182,7 @@ train_data = dataset.get_subset(
     "train",
     transform=train_transform
 )
-trainset = WILDSDatasetWrapper(dataset=train_data, metadata_spurious_label="background", verbose=True)
+trainset = WILDSDatasetWrapper(dataset=train_data, metadata_spurious_label="male", verbose=True)
 
 spare_train = SpareTrain(
     model=model,
