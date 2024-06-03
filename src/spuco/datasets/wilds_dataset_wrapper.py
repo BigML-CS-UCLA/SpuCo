@@ -31,16 +31,22 @@ class WILDSDatasetWrapper(BaseSpuCoCompatibleDataset):
 
         self.dataset = dataset
         self._num_classes = dataset.n_classes 
+        
+        # Subset if needed
+        self.indices = range(len(dataset))
+        if subset_indices is not None:
+            self.indices = subset_indices
 
         # Get index in meta data array corresponding to spurious target 
         spurious_target_idx = dataset.metadata_fields.index(metadata_spurious_label)
 
         # Get labels 
-        self._labels = dataset.y_array.long().tolist()
+        self._labels = dataset.y_array.long()[self.indices].tolist()
 
         # Get spurious labels
-        self._spurious = dataset.metadata_array[:, spurious_target_idx].long().tolist()
+        self._spurious = dataset.metadata_array[:, spurious_target_idx].long()[self.indices].tolist()
 
+            
         # Create group partition using labels and spurious labels
         self._group_partition = {}
         for i, group_label in tqdm(
@@ -57,46 +63,6 @@ class WILDSDatasetWrapper(BaseSpuCoCompatibleDataset):
         self._group_weights = {}
         for group_label in self._group_partition.keys():
             self._group_weights[group_label] = len(self._group_partition[group_label]) / len(self.dataset)
-        
-        # Subset if needed
-        self.indices = range(len(dataset))
-        if subset_indices is not None:
-            self.indices = subset_indices
-
-    @property
-    def group_partition(self) -> Dict[Tuple[int, int], List[int]]:
-        """
-        Dictionary partitioning indices into groups
-        """
-        return self._group_partition 
-    
-    @property
-    def group_weights(self) -> Dict[Tuple[int, int], float]:
-        """
-        Dictionary containing the fractional weights of each group
-        """
-        return self._group_weights
-    
-    @property
-    def spurious(self) -> List[int]:
-        """
-        List containing spurious labels for each example
-        """
-        return self._spurious
-
-    @property
-    def labels(self) -> List[int]:
-        """
-        List containing class labels for each example
-        """
-        return self._labels
-    
-    @property
-    def num_classes(self) -> int:
-        """
-        Number of classes
-        """
-        return self._num_classes
     
     def __getitem__(self, index):
         """

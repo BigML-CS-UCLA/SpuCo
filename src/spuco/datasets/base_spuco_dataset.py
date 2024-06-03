@@ -51,7 +51,7 @@ class SourceData():
     This class contains the input data and corresponding labels.
     """
 
-    def __init__(self, data=None):
+    def __init__(self, data=None, verbose=False):
         """
         Initialize the SourceData object.
 
@@ -59,12 +59,13 @@ class SourceData():
         :type data: List[Tuple]
         """
         self.X = []
+        self.verbose = verbose
         self.labels = []
         self.spurious = []
         self.clean_labels = None
         self.core_feature_noise = None
         if data is not None:
-            for x, label in tqdm(data):
+            for x, label in tqdm(data, desc="Initializing data", disable=not self.verbose):
                 self.X.append(x)
                 self.labels.append(label)
 

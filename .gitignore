@@ -7,3 +7,9 @@ logs
 dist
 **/results/
 **/*.log
+wandb
+**/*.out
+**/*.jpg
+quickstart/spuco_sun/plot_figs.ipynb
+**/*.pkl
+quickstart/spuco_sun/parse_logs.py

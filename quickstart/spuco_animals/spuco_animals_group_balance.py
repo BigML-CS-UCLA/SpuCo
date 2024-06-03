@@ -17,9 +17,9 @@ parser.add_argument("--gpu", type=int, default=0)
 parser.add_argument("--seed", type=int, default=0)
 parser.add_argument("--root_dir", type=str, default="/data")
 parser.add_argument("--label_noise", type=float, default=0.0)
-parser.add_argument("--results_csv", type=str, default="results/spucoanimals_group_balance.csv")
-
-parser.add_argument("--arch", type=str, default="resnet18")
+parser.add_argument("--results_csv", type=str, default="/data/spucoanimals/results/gb.csv")
+parser.add_argument("--arch", type=str, default="resnet18", choices=["resnet18", "resnet50", "cliprn50"])
+parser.add_argument("--only_train_projection", action="store_true", help="only train projection, applicable only for cliprn50")
 parser.add_argument("--batch_size", type=int, default=128)
 parser.add_argument("--num_epochs", type=int, default=100)
 parser.add_argument("--lr", type=float, default=1e-4)
@@ -62,7 +62,12 @@ testset = SpuCoAnimals(
 testset.initialize()
 
 model = model_factory(args.arch, trainset[0][0].shape, trainset.num_classes, pretrained=args.pretrained).to(device)
-
+if args.arch == "cliprn50" and args.only_train_projection:
+    for param in model.backbone.parameters():
+        param.requires_grad = False
+    for param in model.backbone._modules['attnpool'].parameters():
+        param.requires_grad = True
+        
 valid_evaluator = Evaluator(
     testset=valset,
     group_partition=valset.group_partition,

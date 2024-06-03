@@ -148,4 +148,4 @@ class GroupDRO(BaseRobustTrain):
             weights=self.sampling_weights, 
             k=len(self.trainer.trainset)
         )
-        self.trainer.train_epoch(epoch)
+        return self.trainer.train_epoch(epoch)

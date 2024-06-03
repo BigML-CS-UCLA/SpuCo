@@ -1,6 +1,6 @@
 import random
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import torch
@@ -16,6 +16,7 @@ from spuco.utils.random_seed import seed_randomness, get_seed
 
 class ClusterAlg(Enum):
     KMEANS = "kmeans"
+    GMM = "gmm"
     KMEDOIDS = "kmedoids"
 
 class Cluster(BaseGroupInference):
@@ -79,14 +80,15 @@ class Cluster(BaseGroupInference):
         # Processing Z
         self.Z = Z
         if cluster_alg == ClusterAlg.KMEANS:
-            self.Z = self.Z.detach().cpu().numpy()
+            if type(self.Z) == torch.Tensor:
+                self.Z = self.Z.detach().cpu().numpy()
 
-    def infer_groups(self) -> Dict[int, List[int]]:
+    def infer_groups(self) -> Dict[Tuple[int,int], List[int]]:
         """
         Infers the group partition based on the clustering results.
 
-        :return: The group partition where each key is a cluster label and the value is a list of indices belonging to that cluster.
-        :rtype: Dict[int, List[int]]
+        :return: The group partition.
+        :rtype: Dict[Tuple[int,int], List[int]]
         """ 
         # Get class-wise group partitions
         cluster_partitions = [] 

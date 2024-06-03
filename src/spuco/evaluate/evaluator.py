@@ -4,7 +4,7 @@ from typing import Dict, List, Tuple
 import numpy as np
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader, Dataset, SubsetRandomSampler
+from torch.utils.data import DataLoader, Dataset, Subset
 from tqdm import tqdm
 
 from spuco.datasets import SpuriousTargetDatasetWrapper
@@ -13,7 +13,6 @@ from spuco.utils.random_seed import seed_randomness
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from typing import Tuple, Optional
-
 
 class Evaluator:
     def __init__(
@@ -71,16 +70,20 @@ class Evaluator:
 
         # Group-Wise DataLoader
         for key in group_partition.keys():
-            sampler = SubsetRandomSampler(group_partition[key])
-            self.testloaders[key] = DataLoader(testset, batch_size=batch_size, sampler=sampler, num_workers=4, pin_memory=True, shuffle=False)
+            self.testloaders[key] = DataLoader(Subset(testset, group_partition[key]), batch_size=batch_size, num_workers=4, pin_memory=True, shuffle=False)
         
         # SpuriousTarget Dataloader
-        spurious = torch.zeros(len(testset))
+        core_labels = []
+        spurious = []
         for key in self.group_partition.keys():
-            for i in self.group_partition[key]:
-                spurious[i] = key[1]
-        spurious_dataset = SpuriousTargetDatasetWrapper(dataset=testset, spurious_labels=spurious)
-        self.spurious_dataloader = DataLoader(spurious_dataset, batch_size=batch_size, num_workers=4, pin_memory=True)
+            for _ in self.group_partition[key]:
+                core_labels.append(key[0])
+                spurious.append(key[1])
+        try:
+            spurious_dataset = SpuriousTargetDatasetWrapper(dataset=testset, spurious_labels=spurious, num_classes=np.max(core_labels) + 1)
+            self.spurious_dataloader = DataLoader(spurious_dataset, batch_size=batch_size, num_workers=4, pin_memory=True)
+        except:
+            print("WARNING: spurious dataloader not correctly intiialized, evaluating spurious attribute prediction may fail.")
 
     def evaluate(self):
         """
@@ -124,7 +127,7 @@ class Evaluator:
         logreg.coef_ = coef
         logreg.intercept_ = intercept
         preds_test = logreg.predict(X_test)
-        return (preds_test == y_test).mean()
+        return (preds_test == y_test).mean() * 100
     
     def _encode_testset(self, testloader):
         X_test = []

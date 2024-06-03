@@ -26,7 +26,8 @@ class GroupBalanceBatchERM(BaseRobustTrain):
         num_epochs: int,
         device: torch.device = torch.device("cpu"),
         val_evaluator: Evaluator = None,
-        verbose=False
+        verbose=False,
+        use_wandb=False
     ):
         """
         Initializes GroupBalanceBatchERM.
@@ -51,7 +52,7 @@ class GroupBalanceBatchERM(BaseRobustTrain):
         
         seed_randomness(random_module=random, torch_module=torch, numpy_module=np)
 
-        super().__init__(val_evaluator=val_evaluator, verbose=verbose)
+        super().__init__(val_evaluator=val_evaluator, verbose=verbose, use_wandb=use_wandb)
         
         assert batch_size >= len(trainset.group_partition), "batch_size must be >= number of groups (Group DRO requires at least 1 example from each group)"
         
@@ -64,7 +65,9 @@ class GroupBalanceBatchERM(BaseRobustTrain):
             optimizer=optimizer,
             sampler=CustomIndicesSampler(indices=[]),
             verbose=verbose,
-            device=device
+            device=device,
+            name="GB",
+            use_wandb=use_wandb
         )
 
         max_group_len = max([len(self.group_partition[key]) for key in self.group_partition.keys()])
@@ -86,4 +89,4 @@ class GroupBalanceBatchERM(BaseRobustTrain):
             weights=self.sampling_weights, 
             k=len(self.trainer.trainset)
         )
-        self.trainer.train_epoch(epoch)
+        return self.trainer.train_epoch(epoch)

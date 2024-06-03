@@ -103,7 +103,7 @@ class SpuCoBirds(BaseSpuCoDataset):
             os.remove(self.filename)
             
         try:
-            self.data = SourceData()
+            self.data = SourceData(verbose=False)
             
             # Landbirds Land 
             landbirds_land = os.listdir(os.path.join(self.dset_dir, f"{LANDBIRDS}/{LAND}"))

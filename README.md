@@ -20,7 +20,7 @@ The SpuCo package is designed to help researchers and practitioners evaluate the
 
 Refer to quickstart for scripts and notebooks to get started with *SpuCo*
 
-Google Colab Notebooks: 
+Google Colab Notebooks:
 
 - [Explore Data](https://colab.research.google.com/drive/1jwZJ27gTh2t9V3rY6Co-oSIeUvCt3php?authuser=1>)
 - [SpuCoMNIST GroupDRO](https://colab.research.google.com/drive/1LXAwbkIt4nryI6K6OYhv7zo3LRNmBCW0?authuser=1>)
@@ -35,7 +35,15 @@ pip install spuco
 
 Requires >= Python 3.10
 
+## Using with GuildAI
+
+Creating gpu-affinitized queues 
+```
+for i in {0..7}; do guild run queue -b --gpus="$i" -y; done
+```
+
 ## About Us
 
 This package is maintained by [Siddharth Joshi](https://sjoshi804.github.io/) from the BigML group at UCLA, headed by [Professor Baharan Mirzasoleiman](http://web.cs.ucla.edu/~baharan/group.htm).
+
 

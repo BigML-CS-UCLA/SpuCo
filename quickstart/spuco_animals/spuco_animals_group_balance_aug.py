@@ -17,7 +17,7 @@ parser.add_argument("--gpu", type=int, default=0)
 parser.add_argument("--seed", type=int, default=0)
 parser.add_argument("--root_dir", type=str, default="/data")
 parser.add_argument("--label_noise", type=float, default=0.0)
-parser.add_argument("--results_csv", type=str, default="results/spucoanimals_group_balance.csv")
+parser.add_argument("--results_csv", type=str, default="/data/spucoanimals/results/gb.csv")
 
 parser.add_argument("--arch", type=str, default="resnet18")
 parser.add_argument("--batch_size", type=int, default=128)

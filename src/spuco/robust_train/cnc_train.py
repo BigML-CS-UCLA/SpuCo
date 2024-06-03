@@ -180,6 +180,7 @@ class CNCTrainer:
         self.sampler = sampler
         self.verbose = verbose
         self.device = device
+        self.name = 'CnC'
         
         if forward_pass is None:
             def forward_pass(self, batch):
@@ -224,6 +225,7 @@ class CNCTrainer:
         with tqdm(self.trainloader, unit="batch", total=len(self.trainloader), disable=not self.verbose) as pbar:
             pbar.set_description(f"Epoch {epoch}")
             average_accuracy = 0.
+            average_loss = 0.
             idx_batch = 1
             for batch in pbar:
                 loss, outputs, labels = self.forward_pass(self, batch)
@@ -249,8 +251,9 @@ class CNCTrainer:
 
                 pbar.set_postfix(loss=loss.item(), accuracy=f"{accuracy}%")
                 average_accuracy += accuracy
+                average_loss += loss.item()
                 idx_batch += 1
-            return average_accuracy / len(pbar)
+            return average_accuracy / len(pbar), average_loss
     
     @staticmethod
     def compute_accuracy(outputs: torch.Tensor, labels: torch.Tensor) -> float:
