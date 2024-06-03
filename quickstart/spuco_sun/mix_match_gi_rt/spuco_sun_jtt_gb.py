@@ -22,16 +22,18 @@ from spuco.datasets import SpuCoSun
 parser = argparse.ArgumentParser()
 parser.add_argument("--gpu", type=int, default=0)
 parser.add_argument("--seed", type=int, default=0)
-parser.add_argument("--root_dir", type=str, default="/data/spuco_image_folder_demo/")
+parser.add_argument("--root_dir", type=str, default="/data/spucosun/10.0/")
 parser.add_argument("--label_noise", type=float, default=0.0)
-parser.add_argument("--results_csv", type=str, default="/data/spucosun/results/jtt.csv")
+parser.add_argument("--results_csv", type=str, default="/data/spucosun/results/jtt_gb.csv")
 parser.add_argument("--stdout_file", type=str, default="spuco_sun_jtt.out")
 parser.add_argument("--arch", type=str, default="resnet18", choices=["resnet18", "resnet50", "cliprn50"])
 parser.add_argument("--only_train_projection", action="store_true", help="only train projection, applicable only for cliprn50")
 parser.add_argument("--batch_size", type=int, default=128)
 parser.add_argument("--num_epochs", type=int, default=40)
-parser.add_argument("--lr", type=float, default=1e-3, choices=[1e-3, 1e-4, 1e-5])
-parser.add_argument("--weight_decay", type=float, default=1e-4, choices=[1e-4, 5e-4, 1e-2, 1e-1, 1.0])
+parser.add_argument("--lr", type=float, default=1e-3)
+parser.add_argument("--weight_decay", type=float, default=1e-4)
+parser.add_argument("--gb_lr", type=float, default=1e-3)
+parser.add_argument("--gb_weight_decay", type=float, default=1e-4)
 parser.add_argument("--momentum", type=float, default=0.9)
 parser.add_argument("--pretrained", action="store_true")
 parser.add_argument("--wandb", action="store_true")
@@ -191,7 +193,7 @@ gb = GroupBalanceBatchERM(
     trainset=trainset,
     batch_size=args.batch_size,
     val_evaluator=val_evaluator,
-    optimizer=SGD(model.parameters(), lr=args.lr, weight_decay=args.weight_decay, momentum=args.momentum),
+    optimizer=SGD(model.parameters(), lr=args.gb_lr, weight_decay=args.gb_weight_decay, momentum=args.momentum),
     device=device,
     verbose=True
 )
