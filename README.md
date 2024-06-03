@@ -13,6 +13,7 @@ The SpuCo package is designed to help researchers and practitioners evaluate the
 - Modular implementations of current state-of-the-art (SOTA) methods to address spurious correlations
 - SpuCoMNIST: a controllable synthetic dataset that explores real-world data properties such as spurious feature difficulty, label noise, and feature noise
 - SpuCoAnimals: a large-scale vision dataset curated from ImageNet to explore real-world spurious correlations
+- SpuCoSun: a large-scale vision dataset with created using backgrounds from SUN397 (class feature) and foregrounds (spurious feature) created using a text-to-image diffusion model corresponding to OpenImagesV7. Two versions of this dataset are provided: SpuCoSun Easy and SpuCoSun Hard with *easy* and *hard* spurious features, respectively. 
 
 > Note: This project is under active development.
 
