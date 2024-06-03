@@ -18,6 +18,9 @@ from spuco.datasets import (TEST_SPLIT, TRAIN_SPLIT, VAL_SPLIT,
 from spuco.datasets.spuco_mnist_config import config
 from spuco.utils.random_seed import seed_randomness
 
+class GrayscaleToRGBTransform():
+    def __call__(self, x):
+        return torch.stack([x[0], x[0], x[0]], dim=0)  # convert grayscale to RGB
 
 class ColourMap(Enum):
     HSV = "hsv"
@@ -112,7 +115,7 @@ class SpuCoMNIST(BaseSpuCoDataset):
             download=self.download,
             transform=T.Compose([
                 T.ToTensor(),
-                T.Lambda(lambda x: torch.cat([x, x, x], dim=0))  # convert grayscale to RGB
+                T.transforms.Lambda(GrayscaleToRGBTransform())  # convert grayscale to RGB
             ])
         )
             
