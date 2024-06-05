@@ -28,6 +28,7 @@ class SupportedModels(Enum):
     ResNet18 = "resnet18"
     ResNet50 = "resnet50"
     CLIPRN50 = "cliprn50"
+    CLIPVIT = "clipvit"
     
 def model_factory(arch: str, input_shape: Tuple[int, int, int], num_classes: int, pretrained: bool = True):
     """
@@ -82,6 +83,11 @@ def model_factory(arch: str, input_shape: Tuple[int, int, int], num_classes: int
     elif arch == SupportedModels.CLIPRN50:
         import clip
         backbone, _ = clip.load('RN50', device='cpu')
+        backbone = backbone.visual
+        representation_dim = backbone.output_dim
+    elif arch == SupportedModels.CLIPVIT:
+        import clip
+        backbone, _ = clip.load('ViT-L/14@336px', device='cpu')
         backbone = backbone.visual
         representation_dim = backbone.output_dim
     else:

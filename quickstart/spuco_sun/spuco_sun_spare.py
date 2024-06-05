@@ -25,7 +25,7 @@ parser.add_argument("--root_dir", type=str, default="/data/spucosun/4.0/")
 parser.add_argument("--label_noise", type=float, default=0.0)
 parser.add_argument("--results_csv", type=str, default="/data/spucosun/results/spare.csv")
 parser.add_argument("--stdout_file", type=str, default="spuco_sun_spare.out")
-parser.add_argument("--arch", type=str, default="resnet18", choices=["resnet18", "resnet50", "cliprn50"])
+parser.add_argument("--arch", type=str, default="resnet18", choices=["resnet18", "resnet50", "cliprn50", "clipvit"])
 parser.add_argument("--only_train_projection", action="store_true", help="only train projection, applicable only for cliprn50")
 parser.add_argument("--batch_size", type=int, default=128)
 parser.add_argument("--num_epochs", type=int, default=40)
@@ -69,7 +69,13 @@ device = torch.device(f"cuda:{args.gpu}" if torch.cuda.is_available() else "cpu"
 set_seed(args.seed)
 
 # Load the full dataset, and download it if necessary
-transform = transforms.Compose([
+if args.arch == "clipvit":
+    transform = transforms.Compose([
+                transforms.Resize((336, 336)),
+                transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+            ])
+else:
+    transform = transforms.Compose([
             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
         ])
 
@@ -103,6 +109,10 @@ if args.arch == "cliprn50" and args.only_train_projection:
         param.requires_grad = False
     for param in model.backbone._modules['attnpool'].parameters():
         param.requires_grad = True
+if args.arch == "clipvit" and args.only_train_projection:
+    for param in model.backbone.parameters():
+        param.requires_grad = False
+    model.backbone.proj.requires_grad = True
 
 trainer = Trainer(
     trainset=trainset,
@@ -158,6 +168,10 @@ if args.arch == "cliprn50" and args.only_train_projection:
         param.requires_grad = False
     for param in model.backbone._modules['attnpool'].parameters():
         param.requires_grad = True
+if args.arch == "clipvit" and args.only_train_projection:
+    for param in model.backbone.parameters():
+        param.requires_grad = False
+    model.backbone.proj.requires_grad = True
         
 valid_evaluator = Evaluator(
     testset=valset,
@@ -168,12 +182,22 @@ valid_evaluator = Evaluator(
     device=device,
     verbose=True
 )
-train_transform = transforms.Compose([
-    transforms.ToPILImage(),
-    transforms.RandomHorizontalFlip(),
-    transforms.ToTensor(),
-    transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
-])
+
+if args.arch == "clipvit":
+    train_transform = transforms.Compose([
+                transforms.Resize((336, 336)),
+                transforms.ToPILImage(),
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+            ])
+else:
+    train_transform = transforms.Compose([
+        transforms.ToPILImage(),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+    ])
 
 trainset = SpuCoSun(
     root=args.root_dir,
