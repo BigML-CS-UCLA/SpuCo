@@ -20,8 +20,21 @@ class GroupEvaluator:
             
         # Merging true group partition into min and maj
         self.true_group_partition = {}
+        
+        # find the largest group for each class
         for key in true_group_partition.keys():
-            if key[0] == key[1]:
+            is_majority = True 
+            for second_key in true_group_partition.keys():
+                if key == second_key:
+                    continue
+                # If group from same class
+                if key[0] == second_key[0]:
+                    # And new group is larger, then this is not the majority group
+                    if len(true_group_partition[second_key]) > len(true_group_partition[key]):
+                        is_majority = False
+                        break
+                    
+            if is_majority:
                 self.true_group_partition[(key[0], "maj")] = deepcopy(true_group_partition[key])
             else:
                 min_group = (key[0], "min")
