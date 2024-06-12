@@ -23,7 +23,7 @@ class GroupEvaluator:
         self.verbose = verbose
         
         if self.verbose:
-            print("Merging true group partition into majority / minority groups only")
+            print("Merging true group partition into maj / min groups only")
         
         if self.verbose:
             print("Processing group partition to get class partition")
@@ -49,41 +49,41 @@ class GroupEvaluator:
         # Single spurious only
         if type(list(true_group_partition.keys())[0][1]) == int:   
             for class_id in self.class_wise_partition.keys():
-                self.true_group_partition[(class_id, "majority")] = []
-                self.true_group_partition[(class_id, "minority")] = [] 
+                self.true_group_partition[(class_id, "maj")] = []
+                self.true_group_partition[(class_id, "min")] = [] 
             for key in true_group_partition.keys():
                 if key[0] == key[1]:
-                    self.true_group_partition[(key[0], "majority")].extend(true_group_partition[key])
+                    self.true_group_partition[(key[0], "maj")].extend(true_group_partition[key])
                 else:
-                    self.true_group_partition[(key[0], "minority")].extend(true_group_partition[key])
+                    self.true_group_partition[(key[0], "min")].extend(true_group_partition[key])
         else:
             raise NotImplementedError("Not supporting multiple spurious currently")
         self.true_group_labels = GroupEvaluator.invert_group_partition(self.true_group_partition)
            
         if self.verbose:
-            print("Merging inferred group partition into majority / minority groups only for {method.value}")
+            print("Merging inferred group partition into maj / min groups only for {method.value}")
         if method == GroupEvalSupportedMethod.JTT:
-            # Error set is referenced as (0,1) and corresponds to minority
-            # Partition to create class-wise majority, minority
+            # Error set is referenced as (0,1) and corresponds to min
+            # Partition to create class-wise maj, min
             self.inferred_group_partition = {}
             for class_id in self.class_wise_partition.keys():
-                self.inferred_group_partition[(class_id, "majority")] = np.intersect1d(self.class_wise_partition[class_id], inferred_group_partition[(0,0)])
-                self.inferred_group_partition[(class_id, "minority")] = np.intersect1d(self.class_wise_partition[class_id], inferred_group_partition[(0,1)])
+                self.inferred_group_partition[(class_id, "maj")] = np.intersect1d(self.class_wise_partition[class_id], inferred_group_partition[(0,0)])
+                self.inferred_group_partition[(class_id, "min")] = np.intersect1d(self.class_wise_partition[class_id], inferred_group_partition[(0,1)])
         elif method == GroupEvalSupportedMethod.EIIL:
-            # Guess group (0,0) for majority
+            # Guess group (0,0) for maj
             self.inferred_group_partition = {}
             for class_id in self.class_wise_partition.keys():
-                self.inferred_group_partition[(class_id, "majority")] = np.intersect1d(self.class_wise_partition[class_id], inferred_group_partition[(0,0)])
-                self.inferred_group_partition[(class_id, "minority")] = np.intersect1d(self.class_wise_partition[class_id], inferred_group_partition[(0,1)])
+                self.inferred_group_partition[(class_id, "maj")] = np.intersect1d(self.class_wise_partition[class_id], inferred_group_partition[(0,0)])
+                self.inferred_group_partition[(class_id, "min")] = np.intersect1d(self.class_wise_partition[class_id], inferred_group_partition[(0,1)])
             inferred_group_partition1 = deepcopy(self.inferred_group_partition)
             self.inferred_group_labels = GroupEvaluator.invert_group_partition(self.inferred_group_partition)
             acc1 = self.evaluate_accuracy()
             
-            # Guess grouo (0,1) for majority
+            # Guess group (0,1) for maj
             self.inferred_group_partition = {}
             for class_id in self.class_wise_partition.keys():
-                self.inferred_group_partition[(class_id, "majority")] = np.intersect1d(self.class_wise_partition[class_id], inferred_group_partition[(0,1)])
-                self.inferred_group_partition[(class_id, "minority")] = np.intersect1d(self.class_wise_partition[class_id], inferred_group_partition[(0,0)])
+                self.inferred_group_partition[(class_id, "maj")] = np.intersect1d(self.class_wise_partition[class_id], inferred_group_partition[(0,1)])
+                self.inferred_group_partition[(class_id, "min")] = np.intersect1d(self.class_wise_partition[class_id], inferred_group_partition[(0,0)])
             inferred_group_partition2 = deepcopy(self.inferred_group_partition)
             self.inferred_group_labels = GroupEvaluator.invert_group_partition(self.inferred_group_partition)
             acc2 = self.evaluate_accuracy()
@@ -101,22 +101,22 @@ class GroupEvaluator:
                 
                 # limit group labels to just this class 
                 group_partition_for_class = {
-                    (class_id, "majority"): self.true_group_partition[(class_id, "majority")],
-                    (class_id, "minority"): self.true_group_partition[(class_id, "minority")]
+                    (class_id, "maj"): self.true_group_partition[(class_id, "maj")],
+                    (class_id, "min"): self.true_group_partition[(class_id, "min")]
                 }
                 self.true_group_labels = GroupEvaluator.invert_group_partition(group_partition_for_class)
                 
-                # Get accuracy by assuming each group is majority / rest are minority
+                # Get accuracy by assuming each group is maj / rest are min
                 curr_class_wise_keys = list(class_wise_keys[class_id])
                 for key in curr_class_wise_keys:
-                    # Assume the current key is majority and rest are minority
+                    # Assume the current key is maj and rest are min
                     self.inferred_group_partition = {}
-                    self.inferred_group_partition[(class_id, "majority")] = inferred_group_partition[key]
-                    self.inferred_group_partition[(class_id, "minority")] = []
+                    self.inferred_group_partition[(class_id, "maj")] = inferred_group_partition[key]
+                    self.inferred_group_partition[(class_id, "min")] = []
                     for other_key in class_wise_keys[class_id]:
                         if key == other_key:
                             continue
-                        self.inferred_group_partition[(class_id, "minority")].extend(inferred_group_partition[other_key])
+                        self.inferred_group_partition[(class_id, "min")].extend(inferred_group_partition[other_key])
                     # Save a copy of current inferred groups
                     trial_inferred_group_partitions.append(deepcopy(self.inferred_group_partition))
                     # Evaluate accuracy for current inferred groups
