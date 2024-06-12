@@ -70,7 +70,7 @@ class GroupEvaluator:
                 self.inferred_group_partition[(class_id, "majority")] = np.intersect1d(self.class_wise_partition[class_id], inferred_group_partition[(0,0)])
                 self.inferred_group_partition[(class_id, "minority")] = np.intersect1d(self.class_wise_partition[class_id], inferred_group_partition[(0,1)])
         elif method == GroupEvalSupportedMethod.EIIL:
-            # Guess 1 for majority
+            # Guess group (0,0) for majority
             self.inferred_group_partition = {}
             for class_id in self.class_wise_partition.keys():
                 self.inferred_group_partition[(class_id, "majority")] = np.intersect1d(self.class_wise_partition[class_id], inferred_group_partition[(0,0)])
@@ -79,7 +79,7 @@ class GroupEvaluator:
             self.inferred_group_labels = GroupEvaluator.invert_group_partition(self.inferred_group_partition)
             acc1 = self.evaluate_accuracy()
             
-            # Guess 2 for majority
+            # Guess grouo (0,1) for majority
             self.inferred_group_partition = {}
             for class_id in self.class_wise_partition.keys():
                 self.inferred_group_partition[(class_id, "majority")] = np.intersect1d(self.class_wise_partition[class_id], inferred_group_partition[(0,1)])
@@ -92,7 +92,44 @@ class GroupEvaluator:
                 self.inferred_group_partition = inferred_group_partition1
             else:
                 self.inferred_group_partition = inferred_group_partition2
-        else:
+        elif method == GroupEvalSupportedMethod.SPARE:
+            final_inferred_group_partition = {}
+            # For each class
+            for class_id in self.class_wise_partition.keys():
+                trial_inferred_group_partitions = []
+                accs = []
+                
+                # limit group labels to just this class 
+                group_partition_for_class = {
+                    (class_id, "majority"): self.true_group_partition[(class_id, "majority")],
+                    (class_id, "minority"): self.true_group_partition[(class_id, "minority")]
+                }
+                self.true_group_labels = GroupEvaluator.invert_group_partition(group_partition_for_class)
+                
+                # Get accuracy by assuming each group is majority / rest are minority
+                curr_class_wise_keys = list(class_wise_keys[class_id])
+                for key in curr_class_wise_keys:
+                    # Assume the current key is majority and rest are minority
+                    self.inferred_group_partition = {}
+                    self.inferred_group_partition[(class_id, "majority")] = inferred_group_partition[key]
+                    self.inferred_group_partition[(class_id, "minority")] = []
+                    for other_key in class_wise_keys[class_id]:
+                        if key == other_key:
+                            continue
+                        self.inferred_group_partition[(class_id, "minority")].extend(inferred_group_partition[other_key])
+                    # Save a copy of current inferred groups
+                    trial_inferred_group_partitions.append(deepcopy(self.inferred_group_partition))
+                    # Evaluate accuracy for current inferred groups
+                    self.inferred_group_labels = GroupEvaluator.invert_group_partition(self.inferred_group_partition)
+                    accs.append(self.evaluate_accuracy())
+                    
+                # Add this inferred group to the final inferred group
+                final_inferred_group_partition.update(trial_inferred_group_partitions[np.argmax(accs)])
+                    
+            # Redo true group labels due to only class wise group labels being considered above
+            self.true_group_labels = GroupEvaluator.invert_group_partition(self.true_group_partition)
+            self.inferred_group_partition = final_inferred_group_partition
+        else:    
             raise NotImplementedError("Unsupported method")
         
                 
