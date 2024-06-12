@@ -69,30 +69,7 @@ class GroupEvaluator:
             for class_id in self.class_wise_partition.keys():
                 self.inferred_group_partition[(class_id, "maj")] = np.intersect1d(self.class_wise_partition[class_id], inferred_group_partition[(0,0)])
                 self.inferred_group_partition[(class_id, "min")] = np.intersect1d(self.class_wise_partition[class_id], inferred_group_partition[(0,1)])
-        elif method == GroupEvalSupportedMethod.EIIL:
-            # Guess group (0,0) for maj
-            self.inferred_group_partition = {}
-            for class_id in self.class_wise_partition.keys():
-                self.inferred_group_partition[(class_id, "maj")] = np.intersect1d(self.class_wise_partition[class_id], inferred_group_partition[(0,0)])
-                self.inferred_group_partition[(class_id, "min")] = np.intersect1d(self.class_wise_partition[class_id], inferred_group_partition[(0,1)])
-            inferred_group_partition1 = deepcopy(self.inferred_group_partition)
-            self.inferred_group_labels = GroupEvaluator.invert_group_partition(self.inferred_group_partition)
-            acc1 = self.evaluate_accuracy()
-            
-            # Guess group (0,1) for maj
-            self.inferred_group_partition = {}
-            for class_id in self.class_wise_partition.keys():
-                self.inferred_group_partition[(class_id, "maj")] = np.intersect1d(self.class_wise_partition[class_id], inferred_group_partition[(0,1)])
-                self.inferred_group_partition[(class_id, "min")] = np.intersect1d(self.class_wise_partition[class_id], inferred_group_partition[(0,0)])
-            inferred_group_partition2 = deepcopy(self.inferred_group_partition)
-            self.inferred_group_labels = GroupEvaluator.invert_group_partition(self.inferred_group_partition)
-            acc2 = self.evaluate_accuracy()
-            
-            if acc1 > acc2:
-                self.inferred_group_partition = inferred_group_partition1
-            else:
-                self.inferred_group_partition = inferred_group_partition2
-        elif method == GroupEvalSupportedMethod.SPARE:
+        elif method == GroupEvalSupportedMethod.EIIL or method == GroupEvalSupportedMethod.SPARE:
             final_inferred_group_partition = {}
             # For each class
             for class_id in self.class_wise_partition.keys():
@@ -107,13 +84,13 @@ class GroupEvaluator:
                 self.true_group_labels = GroupEvaluator.invert_group_partition(group_partition_for_class)
                 
                 # Get accuracy by assuming each group is maj / rest are min
-                curr_class_wise_keys = list(class_wise_keys[class_id])
+                curr_class_wise_keys = [key for key in inferred_group_partition.keys() if key[0] == class_id]
                 for key in curr_class_wise_keys:
                     # Assume the current key is maj and rest are min
                     self.inferred_group_partition = {}
                     self.inferred_group_partition[(class_id, "maj")] = inferred_group_partition[key]
                     self.inferred_group_partition[(class_id, "min")] = []
-                    for other_key in class_wise_keys[class_id]:
+                    for other_key in curr_class_wise_keys:
                         if key == other_key:
                             continue
                         self.inferred_group_partition[(class_id, "min")].extend(inferred_group_partition[other_key])
@@ -145,7 +122,7 @@ class GroupEvaluator:
                 group_labels_dict[i] = key
                 
         group_labels = []
-        for i in range(len(group_labels_dict)):
+        for i in group_labels_dict.keys():
             group_labels.append(group_labels_dict[i])
         
         return group_labels
