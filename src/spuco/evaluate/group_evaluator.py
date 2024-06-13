@@ -110,7 +110,7 @@ class GroupEvaluator:
             raise NotImplementedError("Unsupported method")
         
         # Ensure every class has min/maj group in inferred group partition
-        for class_id in num_classes:
+        for class_id in range(num_classes):
             for group_type in ["min", "maj"]:
                 key = (class_id, group_type)
                 if key not in self.inferred_group_partition:
