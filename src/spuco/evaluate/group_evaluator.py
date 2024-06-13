@@ -151,10 +151,13 @@ class GroupEvaluator:
         for class_num in range(self.num_classes):
             true_pos = 0
             min_group = (class_num, "min")
-            for i in self.inferred_group_partition[min_group]:
-                if self.true_group_labels[i] == min_group:
-                    true_pos += 1
-            precisions.append(true_pos / len(self.inferred_group_partition[min_group]))
+            if len(self.inferred_group_partition[min_group]) == 0:
+                precisions.append(0)
+            else:
+                for i in self.inferred_group_partition[min_group]:
+                    if self.true_group_labels[i] == min_group:
+                        true_pos += 1
+                precisions.append(true_pos / len(self.inferred_group_partition[min_group]))
         
         return np.mean(precisions), np.min(precisions)
     
