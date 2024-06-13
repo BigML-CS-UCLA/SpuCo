@@ -109,7 +109,14 @@ class GroupEvaluator:
         else:    
             raise NotImplementedError("Unsupported method")
         
-                
+        # Ensure every class has min/maj group in inferred group partition
+        for class_id in num_classes:
+            for group_type in ["min", "maj"]:
+                key = (class_id, group_type)
+                if key not in self.inferred_group_partition:
+                    if self.verbose:
+                        print("WARNING: missing examples from {key} in inferred group partition")
+                    self.inferred_group_partition[key] = []
         if self.verbose:
             print("Inverting inferred group partition")
         self.inferred_group_labels = GroupEvaluator.invert_group_partition(self.inferred_group_partition)
