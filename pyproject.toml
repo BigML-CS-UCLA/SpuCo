@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "spuco"
-version = "1.0.3"
+version = "2.0"
 authors = [
     { name = "Siddharth Joshi", email = "sjoshi804@cs.ucla.edu" }
 ]

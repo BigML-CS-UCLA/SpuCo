@@ -4,7 +4,9 @@ build
 **/__pycache__/
 **/data/
 logs
-dist
+dist 
+**/wandb
+**/*.out
 **/results/
 **/*.log
 wandb
