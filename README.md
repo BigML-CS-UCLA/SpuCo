@@ -21,6 +21,9 @@ The SpuCo package is designed to help researchers and practitioners evaluate the
 
 Refer to quickstart for scripts and notebooks to get started with *SpuCo*
 
+You can explore the data with the notebook: [Explore Data](quickstart/explore_data.ipynb)
+
+You can find scripts / notebooks for training with SOTA methods in the folders under quickstart. These are organized by dataset name. 
 
 ## Installation
 
