@@ -82,7 +82,7 @@ trainer = Trainer(
 trainer.train(num_epochs=args.infer_num_epochs)
 
 logits = trainer.get_trainset_outputs()
-predictions = torch.nn.functional.softmax(logits, dim=1).detach().cpu().numpy()
+predictions = torch.nn.functional.softmax(logits, dim=1)
 spare_infer = SpareInference(
     Z=predictions,
     class_labels=trainset.labels,
