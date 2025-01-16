@@ -24,7 +24,8 @@ class Evaluator:
         model: nn.Module,
         sklearn_linear_model: Optional[Tuple[float, float, float, Optional[StandardScaler]]] = None,
         device: torch.device = torch.device("cpu"),
-        verbose: bool = False
+        verbose: bool = False,
+        num_workers: int = 4,
     ):
         """
         Initializes an instance of the Evaluator class.
@@ -65,12 +66,13 @@ class Evaluator:
         self.accuracies = None
         self.sklearn_linear_model = sklearn_linear_model
         self.n_classes = np.max(testset.labels) + 1
+        self.num_workers = num_workers
 
         # Create DataLoaders 
 
         # Group-Wise DataLoader
         for key in group_partition.keys():
-            self.testloaders[key] = DataLoader(Subset(testset, group_partition[key]), batch_size=batch_size, num_workers=4, pin_memory=True, shuffle=False)
+            self.testloaders[key] = DataLoader(Subset(testset, group_partition[key]), batch_size=batch_size, num_workers=self.num_workers, pin_memory=True, shuffle=False)
         
         # SpuriousTarget Dataloader
         core_labels = []
@@ -81,7 +83,7 @@ class Evaluator:
                 spurious.append(key[1])
         try:
             spurious_dataset = SpuriousTargetDatasetWrapper(dataset=testset, spurious_labels=spurious, num_classes=np.max(core_labels) + 1)
-            self.spurious_dataloader = DataLoader(spurious_dataset, batch_size=batch_size, num_workers=4, pin_memory=True)
+            self.spurious_dataloader = DataLoader(spurious_dataset, batch_size=batch_size, num_workers=self.num_workers, pin_memory=True)
         except:
             print("WARNING: spurious dataloader not correctly intiialized, evaluating spurious attribute prediction may fail.")
 
